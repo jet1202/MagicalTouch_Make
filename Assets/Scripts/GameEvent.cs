@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -295,8 +296,8 @@ public class GameEvent : MonoBehaviour
 
         try
         {
-            Export.ExportingSheet(notes, path + $"\\{file}.bat");
-            Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bat");
+            Export.ExportingSheet(notes, path + $"\\{file}.bin");
+            Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bin");
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
         }
         catch (Exception e)
@@ -351,6 +352,20 @@ public class GameEvent : MonoBehaviour
             }
 
             audioClip = www.GetAudioClip();
+            audioClip.name = "Audio";
+            
+            //AudioClipの圧縮設定
+            // Debug.Log(AssetDatabase.GetAssetPath(audioClip.GetInstanceID()));
+            // AudioImporter audioImporter = AssetImporter.GetAtPath("File///" + fileName) as AudioImporter;
+            // audioImporter.forceToMono = true;
+            // audioImporter.loadInBackground = true;
+            //
+            // AudioImporterSampleSettings settings = audioImporter.defaultSampleSettings;
+            // settings.loadType = AudioClipLoadType.Streaming;
+            // settings.compressionFormat = AudioCompressionFormat.Vorbis;
+            // settings.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
+            // ここまで
+
             audioSource.clip = audioClip;
             isFileSet = true;
             timeSlider.maxValue = audioSource.clip.length;

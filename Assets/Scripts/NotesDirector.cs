@@ -76,7 +76,14 @@ public class NotesDirector : MonoBehaviour
                 if (focusNote != null)
                 {
                     Note data = focusNote.GetComponent<NotesData>().note;
-                    NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane() - 1);
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    {
+                        NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane());
+                    }
+                    else
+                    {
+                        NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane() - 1);
+                    }
                 }
             }
 
@@ -85,7 +92,14 @@ public class NotesDirector : MonoBehaviour
                 if (focusNote != null)
                 {
                     Note data = focusNote.GetComponent<NotesData>().note;
-                    NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane() + 1);
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    {
+                        NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane());
+                    }
+                    else
+                    {
+                        NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane() + 1);
+                    }
                 }
             }
 
@@ -141,8 +155,12 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLaneSet()
     {
-        noteLaneF = Mathf.Min(int.Parse(laneFieldF.text), 11);
-        noteLaneL = Mathf.Min(Mathf.Max(int.Parse(laneFieldL.text), noteLaneF + 1), 12);
+        noteLaneF = int.Parse(laneFieldF.text);
+        noteLaneL = int.Parse(laneFieldL.text);
+
+        noteLaneF = Mathf.Min(Mathf.Max(0, noteLaneF), 11);
+        noteLaneL = Mathf.Max(Mathf.Min(12, noteLaneL), noteLaneF + 1);
+        
         laneFieldF.text = noteLaneF.ToString();
         laneFieldL.text = noteLaneL.ToString();
         
@@ -154,8 +172,12 @@ public class NotesDirector : MonoBehaviour
     
     public void NoteLaneSet(int start, int end)
     {
-        noteLaneF = Mathf.Min(start, 11);
-        noteLaneL = Mathf.Min(Mathf.Max(end, noteLaneF + 1), 12);
+        noteLaneF = start;
+        noteLaneL = end;
+        
+        noteLaneF = Mathf.Min(Mathf.Max(0, noteLaneF), 11);
+        noteLaneL = Mathf.Max(Mathf.Min(12, noteLaneL), noteLaneF + 1);
+        
         laneFieldF.text = noteLaneF.ToString();
         laneFieldL.text = noteLaneL.ToString();
         
