@@ -24,7 +24,7 @@ public class NotesController : MonoBehaviour
     {
         if (audio.clip == null) return;
         
-        measureDistance = 60 / bpm * speed * 4;
+        measureDistance = 60 / bpm * speed * gameEvent.timeSignature;
         time = audio.clip.length;
         offset = gameEvent.offset * gameEvent.speed;
         // 既存のラインを削除

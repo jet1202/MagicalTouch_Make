@@ -34,6 +34,11 @@ public class NotesDirector : MonoBehaviour
         obj.GetComponent<NotesData>().note = new Note(time, start, end, kind);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
+        if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
+        focusNote = obj;
+        focusNote.GetComponent<NotesData>().Choose();
+        SetChoose();
+        gameEvent.nowBeat = -1;
     }
 
     public void ResetNote()
@@ -46,7 +51,7 @@ public class NotesDirector : MonoBehaviour
 
     private void Update()
     {
-        if (gameEvent.isFileSet)
+        if (gameEvent.isEdit)
         {
             if (Input.GetMouseButtonDown(0))
             {

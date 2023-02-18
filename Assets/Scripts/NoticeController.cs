@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class NoticeController : MonoBehaviour
 {
+    [SerializeField] private GameEvent gameEvent;
     [SerializeField] private Image panel;
     [SerializeField] private Text title;
     [SerializeField] private Text notice;
@@ -24,11 +25,13 @@ public class NoticeController : MonoBehaviour
         }
 
         notice.text = name;
+        gameEvent.isOpenTab = true;
         this.gameObject.SetActive(true);
     }
 
     public void CloseNotice()
     {
         this.gameObject.SetActive(false);
+        gameEvent.isOpenTab = false;
     }
 }

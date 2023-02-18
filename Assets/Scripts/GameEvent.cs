@@ -42,9 +42,12 @@ public class GameEvent : MonoBehaviour
     private string file;
     private string fileAddress = "";
     public bool isFileSet = false;
+    public bool isOpenTab = false;
+    public bool isEdit;
 
     private float beatTime;
     public int nowBeat = -1;
+    public int timeSignature = 4;
 
 
     private void Start()
@@ -77,15 +80,19 @@ public class GameEvent : MonoBehaviour
     {
         // キーボード入力
         if (Input.GetKeyDown(KeyCode.Space)) PlayClick();
+        isEdit = !isPlaying && isFileSet && !isOpenTab;
 
-        if (!isPlaying || isFileSet)
+        if (isEdit)
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                beatTime = (60f / bpm * 4) / split;
+                beatTime = (60f / bpm * timeSignature) / split;
                 if (nowBeat == -1)
                 {
-                    nowBeat = (int)((time - offset) / beatTime);
+                    if (notesDirector.focusNote == null)
+                        nowBeat = (int)((time - offset) / beatTime);
+                    else
+                        nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime);
                 }
                 else
                 {
@@ -101,10 +108,13 @@ public class GameEvent : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                beatTime = (60f / bpm * 4) / split;
+                beatTime = (60f / bpm * timeSignature) / split;
                 if (nowBeat == -1)
                 {
-                    nowBeat = (int)((time - offset) / beatTime) + 1;
+                    if (notesDirector.focusNote == null)
+                        nowBeat = (int)((time - offset) / beatTime) + 1;
+                    else
+                        nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime) + 1;
                 }
                 else
                 {
@@ -115,6 +125,17 @@ public class GameEvent : MonoBehaviour
                     ChangeTime(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
                 else
                     notesDirector.NoteTimeSet(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+            }
+            
+            // 複製機能の実装
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                if (notesDirector.focusNote != null)
+                {
+                    Note data = notesDirector.focusNote.GetComponent<NotesData>().note;
+                    beatTime = (60f / bpm * timeSignature) / split;
+                    notesDirector.NewNote(data.GetTime() + beatTime, data.GetStartLane(), data.GetEndLane(), data.GetKind());
+                }
             }
             
             // sliderの監視
@@ -130,6 +151,7 @@ public class GameEvent : MonoBehaviour
     {
         // Settingsボタン
         settingCanvas.gameObject.SetActive(true);
+        isOpenTab = true;
     }
 
     public void BpmSet()
@@ -218,11 +240,13 @@ public class GameEvent : MonoBehaviour
     public void ExportClick()
     {
         dataExportCanvas.gameObject.SetActive(true);
+        isOpenTab = true;
     }
 
     public void ImportClick()
     {
         dataImportCanvas.gameObject.SetActive(true);
+        isOpenTab = true;
     }
 
     public void MusicImport()
@@ -275,13 +299,13 @@ public class GameEvent : MonoBehaviour
         }
         catch (Exception e)
         {
-            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
             TabClose();
+            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
             return;
         }
         
-        noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
         TabClose();
+        noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
     }
 
     public void DataExport()
@@ -290,6 +314,7 @@ public class GameEvent : MonoBehaviour
 
         if (!Directory.Exists(path))
         {
+            TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, "Export: ディレクトリを見つけられませんでした");
             return;
         }
@@ -298,10 +323,12 @@ public class GameEvent : MonoBehaviour
         {
             Export.ExportingSheet(notes, path + $"\\{file}.bin");
             Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bin");
+            TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
         }
         catch (Exception e)
         {
+            TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Export: {e}");
         }
     }
@@ -311,11 +338,13 @@ public class GameEvent : MonoBehaviour
         settingCanvas.gameObject.SetActive(false);
         dataExportCanvas.gameObject.SetActive(false);
         dataImportCanvas.gameObject.SetActive(false);
+        isOpenTab = false;
     }
 
     public void NoticeClose()
     {
         noticeCanvas.GetComponent<NoticeController>().CloseNotice();
+        isOpenTab = false;
     }
 
     private void ChangeTime(float cTime)
