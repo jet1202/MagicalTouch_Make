@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +18,7 @@ public class NotesDirector : MonoBehaviour
     private int noteLaneF;
     private int noteLaneL;
     private int noteKind;
+    private float rayDistance = 30f;
 
     public void NewNote()
     {
@@ -55,8 +55,9 @@ public class NotesDirector : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                var hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance);
+                
                 if (hit.collider != null && IsNote(hit.collider.gameObject.tag))
                 {
                     if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();

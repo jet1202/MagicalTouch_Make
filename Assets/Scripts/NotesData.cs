@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class NotesData : MonoBehaviour
 {
@@ -32,6 +31,11 @@ public class NotesData : MonoBehaviour
         
         Number = centerDirector.NotesData.Count; ;
         centerDirector.NotesData.Add(Number, new KeyValuePair<float, char>(note.GetTime(), note.GetKind()));
+    }
+
+    public void ChangeTimeBySpeed()
+    {
+        transform.localPosition = new Vector3(note.GetTime() * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
     }
 
     public void Choose()

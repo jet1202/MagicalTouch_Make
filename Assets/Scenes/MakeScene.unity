@@ -2614,7 +2614,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 589802109}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3167,7 +3167,6 @@ GameObject:
   m_Component:
   - component: {fileID: 659290938}
   - component: {fileID: 659290939}
-  - component: {fileID: 2442341845438239160}
   - component: {fileID: 2442341845438239161}
   m_Layer: 0
   m_Name: Note
@@ -8630,19 +8629,7 @@ MonoBehaviour:
         m_CallState: 2
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SpeedSet
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
@@ -9464,7 +9451,9 @@ MonoBehaviour:
   split: 0
   isFileSet: 0
   isOpenTab: 0
+  isEdit: 0
   nowBeat: -1
+  timeSignature: 4
 --- !u!4 &1825082432
 Transform:
   m_ObjectHideFlags: 0
@@ -11724,24 +11713,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133821005}
   m_CullTransparentMesh: 1
---- !u!114 &2442341845438239160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 659290937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 436b9626f918deb4c933f04ce7c9217e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 1825082431}
-  centerDirector: {fileID: 1673888454}
-  normalNote: {fileID: 21300000, guid: d148730cecbcd81429d03fbb3e64738f, type: 3}
-  holdNote: {fileID: 21300000, guid: 405d4f135cda5ae47bb2f2471d43101f, type: 3}
-  flickNote: {fileID: 21300000, guid: 540909eb9f1d7144d96897c7e10828e0, type: 3}
-  Number: 0
 --- !u!61 &2442341845438239161
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using UnityEngine;
 
 public class NotesController : MonoBehaviour
@@ -45,7 +44,7 @@ public class NotesController : MonoBehaviour
         // ノーツの位置調整
         foreach (Transform g in notes.gameObject.transform)
         {
-            g.GetComponent<NotesData>().DefaultSettings();
+            g.GetComponent<NotesData>().ChangeTimeBySpeed();
         }
     }
 }
