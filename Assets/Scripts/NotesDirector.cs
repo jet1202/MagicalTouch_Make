@@ -8,33 +8,38 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
+
+    [SerializeField] private GameObject lengthObj;
     public GameObject focusNote = null;
 
     [SerializeField] private InputField timeField;
     [SerializeField] private InputField laneFieldF;
     [SerializeField] private InputField laneFieldL;
     [SerializeField] private Dropdown kindDropdown;
+    [SerializeField] private InputField lengthField;
     private float noteTime;
     private int noteLaneF;
     private int noteLaneL;
     private int noteKind;
+    private float noteLength;
     private float rayDistance = 30f;
 
     public void NewNote()
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(gameEvent.time, 5, 7, 'N');
+        obj.GetComponent<NotesData>().note = new Note(gameEvent.time, 5, 7, 'N', 0f);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
         focusNote = obj;
         focusNote.GetComponent<NotesData>().Choose();
+        SetChoose();
     }
     
-    public void NewNote(float time, int start, int end, char kind)
+    public void NewNote(float time, int start, int end, char kind, float length)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(time, start, end, kind);
+        obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
@@ -42,6 +47,7 @@ public class NotesDirector : MonoBehaviour
         focusNote.GetComponent<NotesData>().Choose();
         SetChoose();
         gameEvent.nowBeat = -1;
+        gameEvent.nowBeatLong = -1;
     }
 
     public void ResetNote()
@@ -68,6 +74,7 @@ public class NotesDirector : MonoBehaviour
                     focusNote.GetComponent<NotesData>().Choose();
                     SetChoose();
                     gameEvent.nowBeat = -1;
+                    gameEvent.nowBeatLong = -1;
                 }
                 else if (hit.collider != null)
                 {
@@ -76,6 +83,7 @@ public class NotesDirector : MonoBehaviour
                         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
                         focusNote = null;
                         gameEvent.nowBeat = -1;
+                        gameEvent.nowBeatLong = -1;
                     }
                 }
             }
@@ -131,16 +139,22 @@ public class NotesDirector : MonoBehaviour
         laneFieldF.text = n.GetStartLane().ToString();
         laneFieldL.text = n.GetEndLane().ToString();
         kindDropdown.value = NoteKindToInt(n.GetKind());
+        lengthField.text = n.GetLength().ToString("F2");
+
+        Debug.Log("length");
+        
+        if (n.GetKind() == 'L')
+            lengthObj.SetActive(true);
+        else
+            lengthObj.SetActive(false);
     }
 
     private bool IsNote(string _tag)
     {
-        if (_tag == "Normal" || _tag == "Hold" || _tag == "Flick")
+        if (_tag == "Normal" || _tag == "Hold" || _tag == "Flick" || _tag == "Long")
             return true;
         else
-        {
             return false;
-        }
     }
 
     public void NoteTimeSet()
@@ -159,7 +173,10 @@ public class NotesDirector : MonoBehaviour
     {
         noteTime = cTime;
         timeField.text = noteTime.ToString("F2");
-        focusNote.GetComponent<NotesData>().ChangeTime(noteTime);
+        if (focusNote != null)
+        {
+            focusNote.GetComponent<NotesData>().ChangeTime(noteTime);
+        }
     }
 
     public void NoteLaneSet()
@@ -203,6 +220,42 @@ public class NotesDirector : MonoBehaviour
         {
             focusNote.GetComponent<NotesData>().ChangeKind(NoteKindToChar(noteKind));
         }
+        
+        if (focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
+            lengthObj.SetActive(true);
+        else
+            lengthObj.SetActive(false);
+    }
+
+    public void NoteLengthSet()
+    {
+        string sLength = float.Parse(lengthField.text).ToString("F2");
+        noteLength = Mathf.Max(float.Parse(sLength), 0f);
+        if (focusNote != null)
+        {
+            if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
+            {
+                noteLength = gameEvent.GetComponent<AudioSource>().clip.length - noteTime;
+            }
+            
+            lengthField.text = noteLength.ToString();
+            focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
+        }
+    }
+
+    public void NoteLengthSet(float cLength)
+    {
+        noteLength = Mathf.Max(cLength, 0f);
+        if (focusNote != null)
+        {
+            if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
+            {
+                noteLength = gameEvent.GetComponent<AudioSource>().clip.length - noteTime;
+            }
+            
+            lengthField.text = noteLength.ToString();
+            focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
+        }
     }
 
     private char NoteKindToChar(int kind)
@@ -218,6 +271,9 @@ public class NotesDirector : MonoBehaviour
                 break;
             case 2:
                 result = 'F';
+                break;
+            case 3:
+                result = 'L';
                 break;
         }
 
@@ -237,6 +293,9 @@ public class NotesDirector : MonoBehaviour
                 break;
             case 'F':
                 result = 2;
+                break;
+            case 'L':
+                result = 3;
                 break;
         }
 

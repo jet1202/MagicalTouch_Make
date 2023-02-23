@@ -46,6 +46,7 @@ public class GameEvent : MonoBehaviour
     private float beatTime;
     private float mouseVal;
     public int nowBeat = -1;
+    public int nowBeatLong = -1;
     public int timeSignature = 4;
 
 
@@ -85,47 +86,108 @@ public class GameEvent : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                beatTime = (60f / bpm * timeSignature) / split;
-                if (nowBeat == -1)
+                if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
+                    notesDirector.focusNote != null)
                 {
-                    if (notesDirector.focusNote == null)
-                        nowBeat = (int)((time - offset) / beatTime);
-                    else
-                        nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime);
-                }
-                else
-                {
-                    nowBeat--;
-                }
+                    if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
+                    {
+                        beatTime = (60f / bpm * timeSignature) / split;
+                        if (nowBeatLong == -1)
+                        {
+                            nowBeatLong =
+                                (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
+                                       notesDirector.focusNote.GetComponent<NotesData>().note.GetLength() - offset) / beatTime);
+                        }
+                        else
+                        {
+                            nowBeatLong--;
+                        }
 
-                nowBeat = Mathf.Max(0, nowBeat);
-                if (notesDirector.focusNote == null)
-                    ChangeTime(nowBeat * beatTime + offset);
+                        nowBeatLong = Mathf.Max(0, nowBeatLong);
+                        float len = nowBeatLong * beatTime + offset -
+                                    notesDirector.focusNote.GetComponent<NotesData>().note.GetTime();
+                        if (len < 0f) nowBeatLong++;
+                        notesDirector.NoteLengthSet(len);
+                        
+                        nowBeat = -1;
+                    }
+                }
                 else
-                    notesDirector.NoteTimeSet(nowBeat * beatTime + offset);
+                {
+                    beatTime = (60f / bpm * timeSignature) / split;
+                    if (nowBeat == -1)
+                    {
+                        if (notesDirector.focusNote == null)
+                            nowBeat = (int)((time - offset) / beatTime);
+                        else
+                            nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime);
+                    }
+                    else
+                    {
+                        nowBeat--;
+                    }
+
+                    nowBeat = Mathf.Max(0, nowBeat);
+                    if (notesDirector.focusNote == null)
+                        ChangeTime(nowBeat * beatTime + offset);
+                    else
+                        notesDirector.NoteTimeSet(nowBeat * beatTime + offset);
+                    nowBeatLong = -1;
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                beatTime = (60f / bpm * timeSignature) / split;
-                if (nowBeat == -1)
+                if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
+                    notesDirector.focusNote != null)
                 {
-                    if (notesDirector.focusNote == null)
-                        nowBeat = (int)((time - offset) / beatTime) + 1;
-                    else
-                        nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime) + 1;
-                }
-                else
-                {
-                    nowBeat++;
-                }
+                    if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
+                    {
+                        beatTime = (60f / bpm * timeSignature) / split;
+                        if (nowBeatLong == -1)
+                        {
+                            nowBeatLong =
+                                (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
+                                    notesDirector.focusNote.GetComponent<NotesData>().note.GetLength() - offset) / beatTime) + 1;
+                        }
+                        else
+                        {
+                            nowBeatLong++;
+                        }
 
-                if (notesDirector.focusNote == null)
-                    ChangeTime(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+                        float len = nowBeatLong * beatTime + offset -
+                                    notesDirector.focusNote.GetComponent<NotesData>().note.GetTime();
+                        if (len + notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() >
+                            audioSource.clip.length)
+                            nowBeatLong--;
+                        notesDirector.NoteLengthSet(len);
+                        
+                        nowBeat = -1;
+                    }
+                }
                 else
-                    notesDirector.NoteTimeSet(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+                {
+                    beatTime = (60f / bpm * timeSignature) / split;
+                    if (nowBeat == -1)
+                    {
+                        if (notesDirector.focusNote == null)
+                            nowBeat = (int)((time - offset) / beatTime) + 1;
+                        else
+                            nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime) + 1;
+                    }
+                    else
+                    {
+                        nowBeat++;
+                    }
+
+                    if (notesDirector.focusNote == null)
+                        ChangeTime(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+                    else
+                        notesDirector.NoteTimeSet(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+
+                    nowBeatLong = -1;
+                }
             }
-            Debug.Log(nowBeat);
             
             // スクロールで時間移動できる機能
             mouseVal = Input.GetAxis("Mouse ScrollWheel");
@@ -146,7 +208,7 @@ public class GameEvent : MonoBehaviour
                 {
                     Note data = notesDirector.focusNote.GetComponent<NotesData>().note;
                     beatTime = (60f / bpm * timeSignature) / split;
-                    notesDirector.NewNote(data.GetTime() + beatTime, data.GetStartLane(), data.GetEndLane(), data.GetKind());
+                    notesDirector.NewNote(data.GetTime() + beatTime, data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength());
                 }
             }
             
@@ -214,6 +276,7 @@ public class GameEvent : MonoBehaviour
         split = Mathf.Max(1, int.Parse(splitField.text));
         splitField.text = split.ToString();
         nowBeat = -1;
+        nowBeatLong = -1;
     }
 
     public void PlayClick()
@@ -230,6 +293,7 @@ public class GameEvent : MonoBehaviour
                 if (audioSource.clip.length > time)
                     audioSource.Play();
                 nowBeat = -1;
+                nowBeatLong = -1;
             }
             else
             {
@@ -245,6 +309,7 @@ public class GameEvent : MonoBehaviour
         // TimeFieldの変更
         ChangeTime(float.Parse(timeField.text));
         nowBeat = -1;
+        nowBeatLong = -1;
     }
 
     public void SpeedSet()
@@ -301,7 +366,7 @@ public class GameEvent : MonoBehaviour
 
                 foreach (Note n in notesData)
                 {
-                    notesDirector.NewNote(n.Time, n.GetStartLane(), n.GetEndLane(), n.GetKind());
+                    notesDirector.NewNote(n.Time, n.GetStartLane(), n.GetEndLane(), n.GetKind(), n.GetLength());
                 }
             }
 

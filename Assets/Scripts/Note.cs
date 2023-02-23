@@ -9,13 +9,15 @@ public class Note
     private int StartLane { get; set; }
     private int EndLane { get; set; }
     private char Kind { get; set; }
+    private float Length { get; set; }
 
-    public Note(float time, int startLane, int endLane, char kind)
+    public Note(float time, int startLane, int endLane, char kind, float length)
     {
         this.Time = time;
         this.StartLane = startLane;
         this.EndLane = endLane;
         this.Kind = kind;
+        this.Length = length;
     }
 
     public float GetTime()
@@ -38,6 +40,11 @@ public class Note
         return Kind;
     }
 
+    public float GetLength()
+    {
+        return Length;
+    }
+
     public void SetTime(float time)
     {
         this.Time = time;
@@ -52,5 +59,10 @@ public class Note
     public void SetKind(char kind)
     {
         this.Kind = kind;
+    }
+
+    public void SetLength(float length)
+    {
+        this.Length = length;
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - Hold
   - Flick
   - EditRange
+  - Long
   layers:
   - Default
   - TransparentFX

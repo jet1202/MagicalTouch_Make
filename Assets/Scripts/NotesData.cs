@@ -10,10 +10,12 @@ public class NotesData : MonoBehaviour
     [SerializeField] private Sprite normalNote;
     [SerializeField] private Sprite holdNote;
     [SerializeField] private Sprite flickNote;
+    [SerializeField] private Sprite longNote;
     private float startLanePosy = 4f;
     private float laneDif = 0.6f;
     private GameObject noteBody;
     private GameObject noteFlame;
+    private GameObject noteLength;
     public Note note;
     public int Number;
 
@@ -21,11 +23,10 @@ public class NotesData : MonoBehaviour
     {
         noteBody = transform.GetChild(0).gameObject;
         noteFlame = transform.GetChild(1).gameObject;
-        int dis = note.GetEndLane() - note.GetStartLane();
-        transform.localPosition = new Vector3(note.GetTime() * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
-        noteBody.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.5f, 1f);
-        noteFlame.transform.localScale = new Vector3(noteFlame.transform.localScale.x, dis * 0.6f + 0.1f, 1f);
-        GetComponent<BoxCollider2D>().size = new Vector2(0.3f, 0.6f * dis);
+        noteLength = transform.GetChild(2).gameObject;
+        
+        Change();
+        
         noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
         transform.gameObject.tag = "Normal";
 
@@ -41,9 +42,33 @@ public class NotesData : MonoBehaviour
         }
     }
 
+    private void Change()
+    {
+        int dis = note.GetEndLane() - note.GetStartLane();
+        Vector3 pos = new Vector3(note.GetTime() * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
+        // noteBody
+        transform.localPosition = pos;
+        noteBody.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.5f, 1f);
+        // noteFlame
+        noteFlame.transform.localPosition =
+            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 2 - 0.075f, 0f), 0f, pos.z);
+        noteFlame.transform.localScale = 
+            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() - 0.15f, 0f) + 0.4f, dis * 0.6f + 0.1f, 1f);
+        // noteLength
+        noteLength.transform.localPosition = 
+            new Vector3(gameEvent.speed * note.GetLength() / 2, 0f, 0f);
+        noteLength.transform.localScale = 
+            new Vector3(gameEvent.speed * note.GetLength(), dis * 0.6f - 0.1f, 1f);
+        // collider2D
+        GetComponent<BoxCollider2D>().offset =
+            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2 - 0.075f, 0f), 0f);
+        GetComponent<BoxCollider2D>().size = 
+            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() - 0.15f, 0f) + 0.3f, 0.6f * dis);
+    }
+
     public void ChangeTimeBySpeed()
     {
-        transform.localPosition = new Vector3(note.GetTime() * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
+        Change();
     }
 
     public void Choose()
@@ -69,9 +94,7 @@ public class NotesData : MonoBehaviour
         float start = startLanePosy - (laneDif * startLane);
         float end = startLanePosy - (laneDif * endLane);
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
-        noteBody.GetComponent<SpriteRenderer>().size = new Vector2((endLane - startLane) * 0.5f, 1f);
-        this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, (endLane - startLane) * 0.6f);
-        noteFlame.transform.localScale = new Vector3(noteFlame.transform.localScale.x, (endLane - startLane) * 0.6f + 0.1f, 1f);
+        Change();
     }
 
     public void ChangeKind(char kind)
@@ -91,8 +114,18 @@ public class NotesData : MonoBehaviour
                 noteBody.GetComponent<SpriteRenderer>().sprite = flickNote;
                 transform.gameObject.tag = "Flick";
                 break;
+            case 'L':
+                noteBody.GetComponent<SpriteRenderer>().sprite = longNote;
+                transform.gameObject.tag = "Long";
+                break;
         }
         CenterNotesDataUpdate();
+    }
+
+    public void ChangeLength(float length)
+    {
+        note.SetLength(length);
+        Change();
     }
 
     private void CenterNotesDataUpdate()
@@ -119,6 +152,9 @@ public class NotesData : MonoBehaviour
                 break;
             case 'F':
                 result = flickNote;
+                break;
+            case 'L':
+                result = longNote;
                 break;
         }
 
