@@ -28,9 +28,17 @@ public class NotesData : MonoBehaviour
         GetComponent<BoxCollider2D>().size = new Vector2(0.3f, 0.6f * dis);
         noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
         transform.gameObject.tag = "Normal";
-        
-        Number = centerDirector.NotesData.Count; ;
-        centerDirector.NotesData.Add(Number, new KeyValuePair<float, char>(note.GetTime(), note.GetKind()));
+
+        int leng = centerDirector.NotesData.Count;
+        for (int i = 0; i <= leng; i++)
+        {
+            if (!centerDirector.NotesData.ContainsKey(i))
+            {
+                Number = i;
+                centerDirector.NotesData.Add(Number, new KeyValuePair<float, char>(note.GetTime(), note.GetKind()));
+                break;
+            }
+        }
     }
 
     public void ChangeTimeBySpeed()

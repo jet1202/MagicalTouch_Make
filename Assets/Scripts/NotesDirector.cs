@@ -26,6 +26,9 @@ public class NotesDirector : MonoBehaviour
         obj.GetComponent<NotesData>().note = new Note(gameEvent.time, 5, 7, 'N');
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
+        if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
+        focusNote = obj;
+        focusNote.GetComponent<NotesData>().Choose();
     }
     
     public void NewNote(float time, int start, int end, char kind)
@@ -109,7 +112,7 @@ public class NotesDirector : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Delete))
+            if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))
             {
                 if (focusNote != null)
                 {

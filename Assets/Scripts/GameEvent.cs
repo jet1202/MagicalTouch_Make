@@ -44,6 +44,7 @@ public class GameEvent : MonoBehaviour
     public bool isEdit;
 
     private float beatTime;
+    private float mouseVal;
     public int nowBeat = -1;
     public int timeSignature = 4;
 
@@ -124,6 +125,19 @@ public class GameEvent : MonoBehaviour
                 else
                     notesDirector.NoteTimeSet(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
             }
+            Debug.Log(nowBeat);
+            
+            // スクロールで時間移動できる機能
+            mouseVal = Input.GetAxis("Mouse ScrollWheel");
+            if (mouseVal > 0)
+            {
+                ChangeTime(time - 5f / speed);
+            }
+            else if (mouseVal < 0)
+            {
+                ChangeTime(time + 5f / speed);
+            }
+            
             
             // 複製機能の実装
             if (Input.GetKeyDown(KeyCode.C))
@@ -141,6 +155,12 @@ public class GameEvent : MonoBehaviour
             {
                 ChangeTime(timeSlider.value);
             }
+        }
+        
+        // フルスクリーンモード切り替え
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            Screen.fullScreen = !Screen.fullScreen;
         }
     }
     
@@ -193,6 +213,7 @@ public class GameEvent : MonoBehaviour
         // SplitFieldの変更
         split = Mathf.Max(1, int.Parse(splitField.text));
         splitField.text = split.ToString();
+        nowBeat = -1;
     }
 
     public void PlayClick()
