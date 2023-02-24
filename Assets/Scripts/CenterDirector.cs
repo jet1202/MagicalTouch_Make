@@ -7,6 +7,7 @@ using UnityEngine;
 public class CenterDirector : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private LongNoteMusic longNoteMusic;
     [SerializeField] private AudioClip normalAudio;
     [SerializeField] private AudioClip holdAudio;
     [SerializeField] private AudioClip flickAudio;
@@ -14,8 +15,8 @@ public class CenterDirector : MonoBehaviour
     private bool playing = false;
     private KeyValuePair<float, char> nextTiming;
 
-    public SortedDictionary<int, KeyValuePair<float, char>> NotesData =
-        new SortedDictionary<int, KeyValuePair<float, char>>();
+    public SortedDictionary<int, KeyValuePair<float, KeyValuePair<char, float>>> NotesData =
+        new SortedDictionary<int, KeyValuePair<float, KeyValuePair<char, float>>>();
 
     private int preliminaryNum = 0;
     private List<KeyValuePair<float, char>> notesTiming;
@@ -29,22 +30,37 @@ public class CenterDirector : MonoBehaviour
     {
         preliminaryNum = 0;
         notesTiming = new List<KeyValuePair<float, char>>();
-        var hoge = new List<KeyValuePair<float, char>>(NotesData.Values).OrderBy(x => x.Key);
+        var n = new List<KeyValuePair<float, char>>();
+        var hoge = new List<KeyValuePair<float, KeyValuePair<char, float>>>(NotesData.Values);
         foreach (var p in hoge)
+        {
+            n.Add(new KeyValuePair<float, char>(p.Key, p.Value.Key));
+            if (p.Value.Key == 'L')
+                n.Add(new KeyValuePair<float, char>(p.Key + p.Value.Value, 'E'));
+        }
+
+        var h = n.OrderBy(x => x.Key);
+        foreach (var p in h)
         {
             notesTiming.Add(p);
         }
 
+        int longNumber = 0;
         preliminaryNum = 0;
         foreach (var pair in notesTiming)
         {
             if (pair.Key < gameEvent.time) preliminaryNum++;
+            if (pair.Value == 'L') longNumber++;
+            else if (pair.Value == 'E') longNumber--;
         }
+
+        longNoteMusic.longNumber = longNumber;
 
         if (preliminaryNum < notesTiming.Count)
         {
             nextTiming = notesTiming[preliminaryNum];
             playing = true;
+            longNoteMusic.playing = true;
         }
     }
 
@@ -52,12 +68,19 @@ public class CenterDirector : MonoBehaviour
     {
         if (playing)
         {
-            if (!gameEvent.isPlaying) playing = false;
+            if (!gameEvent.isPlaying)
+            {
+                playing = false;
+                longNoteMusic.playing = false;
+            }
 
             if (nextTiming.Key <= gameEvent.time)
             {
                 _play(nextTiming.Value);
                 preliminaryNum++;
+                
+                // ノーツの種類に応じてLongNoteMusicを再生
+                
                 if (preliminaryNum >= notesTiming.Count)
                     playing = false;
                 else

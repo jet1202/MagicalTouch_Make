@@ -36,7 +36,7 @@ public class NotesData : MonoBehaviour
             if (!centerDirector.NotesData.ContainsKey(i))
             {
                 Number = i;
-                centerDirector.NotesData.Add(Number, new KeyValuePair<float, char>(note.GetTime(), note.GetKind()));
+                centerDirector.NotesData.Add(Number, new KeyValuePair<float, KeyValuePair<char, float>>(note.GetTime(), new KeyValuePair<char, float>(note.GetKind(), note.GetLength())));
                 break;
             }
         }
@@ -130,7 +130,7 @@ public class NotesData : MonoBehaviour
 
     private void CenterNotesDataUpdate()
     {
-        centerDirector.NotesData[Number] = new KeyValuePair<float, char>(note.GetTime(), note.GetKind());
+        centerDirector.NotesData[Number] = new KeyValuePair<float, KeyValuePair<char, float>>(note.GetTime(), new KeyValuePair<char, float>(note.GetKind(), note.GetLength()));
     }
 
     public void ClearNote()
