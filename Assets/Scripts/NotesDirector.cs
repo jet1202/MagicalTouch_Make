@@ -140,8 +140,6 @@ public class NotesDirector : MonoBehaviour
         laneFieldL.text = n.GetEndLane().ToString();
         kindDropdown.value = NoteKindToInt(n.GetKind());
         lengthField.text = n.GetLength().ToString("F2");
-
-        Debug.Log("length");
         
         if (n.GetKind() == 'L')
             lengthObj.SetActive(true);

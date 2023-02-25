@@ -37,12 +37,14 @@ public class CenterDirector : MonoBehaviour
             n.Add(new KeyValuePair<float, char>(p.Key, p.Value.Key));
             if (p.Value.Key == 'L')
                 n.Add(new KeyValuePair<float, char>(p.Key + p.Value.Value, 'E'));
+            Debug.Log($"{p.Key}, {p.Value.Key}, {p.Value.Value}");
         }
 
         var h = n.OrderBy(x => x.Key);
         foreach (var p in h)
         {
             notesTiming.Add(p);
+            Debug.Log($"{p.Key}, {p.Value}");
         }
 
         int longNumber = 0;
@@ -72,11 +74,18 @@ public class CenterDirector : MonoBehaviour
             {
                 playing = false;
                 longNoteMusic.playing = false;
+                longNoteMusic.GetComponent<AudioSource>().Stop();
+                longNoteMusic.longNumber = 0;
             }
 
             if (nextTiming.Key <= gameEvent.time)
             {
-                _play(nextTiming.Value);
+                char val = nextTiming.Value;
+                _play(val);
+                if (val == 'L')
+                    longNoteMusic.longNumber++;
+                else if (val == 'E')
+                    longNoteMusic.longNumber--;
                 preliminaryNum++;
                 
                 // ノーツの種類に応じてLongNoteMusicを再生
@@ -93,7 +102,7 @@ public class CenterDirector : MonoBehaviour
 
     private void _play(char tag)
     {
-        if (tag == 'N')
+        if (tag == 'N' || tag == 'L')
         {
             audioSource.PlayOneShot(normalAudio);
         }

@@ -25,11 +25,6 @@ public class NotesData : MonoBehaviour
         noteFlame = transform.GetChild(1).gameObject;
         noteLength = transform.GetChild(2).gameObject;
         
-        Change();
-        
-        noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
-        transform.gameObject.tag = "Normal";
-
         int leng = centerDirector.NotesData.Count;
         for (int i = 0; i <= leng; i++)
         {
@@ -40,6 +35,11 @@ public class NotesData : MonoBehaviour
                 break;
             }
         }
+        
+        Change();
+        
+        noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
+        transform.gameObject.tag = "Normal";
     }
 
     private void Change()
@@ -64,6 +64,9 @@ public class NotesData : MonoBehaviour
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2 - 0.075f, 0f), 0f);
         GetComponent<BoxCollider2D>().size = 
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() - 0.15f, 0f) + 0.3f, 0.6f * dis);
+
+        centerDirector.NotesData[Number] = new KeyValuePair<float, KeyValuePair<char, float>>(note.GetTime(),
+            new KeyValuePair<char, float>(note.GetKind(), note.GetLength()));
     }
 
     public void ChangeTimeBySpeed()

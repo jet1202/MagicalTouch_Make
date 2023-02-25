@@ -2554,7 +2554,7 @@ GameObject:
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!81 &519420029
 AudioListener:
@@ -3023,7 +3023,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &619394801
 MonoBehaviour:
@@ -7558,7 +7558,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1462984810
 Transform:
@@ -8859,6 +8859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameEvent: {fileID: 1825082431}
+  longNoteMusic: {fileID: 1857815816}
   normalAudio: {fileID: 8300000, guid: 51961dc4e67d32944a3ce7e04c474b42, type: 3}
   holdAudio: {fileID: 8300000, guid: 01e9a5f908e5e9b408f04f83fd9366b1, type: 3}
   flickAudio: {fileID: 8300000, guid: 121b1ed9431349d4285fd37da7f2c1d4, type: 3}
@@ -10068,7 +10069,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1857815816
 MonoBehaviour:
@@ -10082,6 +10083,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e82275eb3342334ba3ee23538469a87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  longNumber: 0
+  playing: 0
 --- !u!82 &1857815817
 AudioSource:
   m_ObjectHideFlags: 0
