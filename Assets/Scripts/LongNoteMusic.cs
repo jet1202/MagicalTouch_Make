@@ -37,6 +37,14 @@ public class LongNoteMusic : MonoBehaviour
                 }
             }
         }
-        Debug.Log(longNumber);
+        else
+        {
+            if (isPlayingMusic)
+            {
+                audioSource.Stop();
+                isPlayingMusic = false;
+                longNumber = 0;
+            }
+        }
     }
 }

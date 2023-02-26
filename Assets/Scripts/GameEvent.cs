@@ -333,6 +333,16 @@ public class GameEvent : MonoBehaviour
         isOpenTab = true;
     }
 
+    public void InfoClick()
+    {
+        string len = audioSource.clip == null ? "Null" : $"{(int)audioSource.clip.length / 60}:{(int)audioSource.clip.length % 60}";
+        string massage = $"Version : {Application.version}\n" +
+                         $"URL : https://github.com/jet1202/MagicalTouch_Make/\n\n" +
+                         $"MusicLength : {len}\n" +
+                         $"The number of notes : {notes.transform.childCount}\n";
+        noticeCanvas.GetComponent<NoticeController>().OpenNotice(2, massage);
+    }
+
     public void MusicImport()
     {
         string address = musicImportField.text.Trim(' ', '"', '\n');
@@ -346,7 +356,7 @@ public class GameEvent : MonoBehaviour
         string basePath = dataImportFieldBase.text.Trim(' ', '"', '\n');
         string sheetPath = dataImportFieldSheet.text.Trim(' ', '"', '\n');
 
-        if (!File.Exists(sheetPath))
+        if (!File.Exists(basePath))
         {
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, "Import: ファイルが見つかりません");
             return;
@@ -489,5 +499,7 @@ public class GameEvent : MonoBehaviour
 
         fileAddress = fileName;
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "AudioLoad Finished.");
+        
+        notesController.MeasureLineSet(bpm, split);
     }
 }
