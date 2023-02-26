@@ -18,6 +18,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private InputField dataImportFieldBase;
     [SerializeField] private InputField dataImportFieldSheet;
     [SerializeField] private InputField dataExportField;
+    [SerializeField] private InputField dataExportNameField;
     [SerializeField] private InputField speedField;
 
     [SerializeField] private Canvas settingCanvas;
@@ -405,6 +406,8 @@ public class GameEvent : MonoBehaviour
     public void DataExport()
     {
         string path = dataExportField.text.Trim(' ', '"', '\n').TrimEnd('\\', '/');
+        string name = dataExportNameField.text.Trim(' ', '"', '\n', '\\', '/');
+        name = name == "" ? file : name;
 
         if (!Directory.Exists(path))
         {
@@ -415,7 +418,7 @@ public class GameEvent : MonoBehaviour
 
         try
         {
-            Export.ExportingSheet(notes, path + $"\\{file}.bin");
+            Export.ExportingSheet(notes, path + $"\\{name}.bin");
             Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bin");
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
@@ -453,12 +456,19 @@ public class GameEvent : MonoBehaviour
         audioSource.clip = null;
         isFileSet = false;
         
-        if (audioSource == null || string.IsNullOrEmpty(fileName))
+        if (audioSource == null)
             yield break;
 
         if (!File.Exists(fileName))
         {
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, "Audio: File not found.");
+            yield break;
+        }
+
+        string Extension = Path.GetExtension(fileName);
+        if (!(Extension == ".ogg" || Extension == ".mp3" || Extension == ".wav"))
+        {
+            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, "Audio: This file format is not supported");
             yield break;
         }
         
@@ -470,25 +480,13 @@ public class GameEvent : MonoBehaviour
 
             if (!string.IsNullOrEmpty(www.error))
             {
-                noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, www.error);
+                noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Audio : {www.error}");
                 yield break;
             }
-
+            
             audioClip = www.GetAudioClip();
             audioClip.name = "Audio";
             
-            //AudioClipの圧縮設定
-            // Debug.Log(AssetDatabase.GetAssetPath(audioClip.GetInstanceID()));
-            // AudioImporter audioImporter = AssetImporter.GetAtPath("File///" + fileName) as AudioImporter;
-            // audioImporter.forceToMono = true;
-            // audioImporter.loadInBackground = true;
-            //
-            // AudioImporterSampleSettings settings = audioImporter.defaultSampleSettings;
-            // settings.loadType = AudioClipLoadType.Streaming;
-            // settings.compressionFormat = AudioCompressionFormat.Vorbis;
-            // settings.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
-            // ここまで
-
             audioSource.clip = audioClip;
             isFileSet = true;
             timeSlider.maxValue = audioSource.clip.length;
