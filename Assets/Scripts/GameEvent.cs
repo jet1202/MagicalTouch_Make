@@ -17,8 +17,10 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private InputField musicImportField;
     [SerializeField] private InputField dataImportFieldBase;
     [SerializeField] private InputField dataImportFieldSheet;
+    [SerializeField] private Toggle dataImportToggle;
     [SerializeField] private InputField dataExportField;
     [SerializeField] private InputField dataExportNameField;
+    [SerializeField] private Toggle dataExportToggle;
     [SerializeField] private InputField speedField;
 
     [SerializeField] private Canvas settingCanvas;
@@ -46,7 +48,8 @@ public class GameEvent : MonoBehaviour
 
     private float beatTime;
     private float mouseVal;
-    public int nowBeat = -1;
+    public int nowBeatTime = -1;
+    public int nowBeatNote = -1;
     public int nowBeatLong = -1;
     public int timeSignature = 4;
 
@@ -92,17 +95,9 @@ public class GameEvent : MonoBehaviour
                 {
                     if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
                     {
-                        beatTime = (60f / bpm * timeSignature) / split;
-                        if (nowBeatLong == -1)
-                        {
-                            nowBeatLong =
-                                (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
-                                       notesDirector.focusNote.GetComponent<NotesData>().note.GetLength() - offset) / beatTime);
-                        }
-                        else
-                        {
-                            nowBeatLong--;
-                        }
+                        nowBeatLong = NextBeat(false,
+                            notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
+                            notesDirector.focusNote.GetComponent<NotesData>().note.GetLength(), nowBeatLong);
 
                         nowBeatLong = Mathf.Max(0, nowBeatLong);
                         float len = nowBeatLong * beatTime + offset -
@@ -110,29 +105,27 @@ public class GameEvent : MonoBehaviour
                         if (len < 0f) nowBeatLong++;
                         notesDirector.NoteLengthSet(len);
                         
-                        nowBeat = -1;
+                        nowBeatTime = -1;
+                        nowBeatNote = -1;
                     }
                 }
                 else
                 {
-                    beatTime = (60f / bpm * timeSignature) / split;
-                    if (nowBeat == -1)
-                    {
-                        if (notesDirector.focusNote == null)
-                            nowBeat = (int)((time - offset) / beatTime);
-                        else
-                            nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime);
-                    }
-                    else
-                    {
-                        nowBeat--;
-                    }
-
-                    nowBeat = Mathf.Max(0, nowBeat);
                     if (notesDirector.focusNote == null)
-                        ChangeTime(nowBeat * beatTime + offset);
+                    {
+                        nowBeatTime = NextBeat(false, time, nowBeatTime);
+                        nowBeatTime = Mathf.Max(0, nowBeatTime);
+                        ChangeTime(nowBeatTime * beatTime + offset);
+                        nowBeatNote = -1;
+                    }
                     else
-                        notesDirector.NoteTimeSet(nowBeat * beatTime + offset);
+                    {
+                        nowBeatNote = NextBeat(false, notesDirector.focusNote.GetComponent<NotesData>().note.GetTime(), nowBeatNote);
+                        nowBeatNote = Mathf.Max(0, nowBeatNote);
+                        notesDirector.NoteTimeSet(nowBeatNote * beatTime + offset);
+                        nowBeatTime = -1;
+                    }
+                        
                     nowBeatLong = -1;
                 }
             }
@@ -144,18 +137,10 @@ public class GameEvent : MonoBehaviour
                 {
                     if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
                     {
-                        beatTime = (60f / bpm * timeSignature) / split;
-                        if (nowBeatLong == -1)
-                        {
-                            nowBeatLong =
-                                (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
-                                    notesDirector.focusNote.GetComponent<NotesData>().note.GetLength() - offset) / beatTime) + 1;
-                        }
-                        else
-                        {
-                            nowBeatLong++;
-                        }
-
+                        nowBeatLong = NextBeat(true,
+                            notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
+                            notesDirector.focusNote.GetComponent<NotesData>().note.GetLength(), nowBeatLong);
+                        
                         float len = nowBeatLong * beatTime + offset -
                                     notesDirector.focusNote.GetComponent<NotesData>().note.GetTime();
                         if (len + notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() >
@@ -163,28 +148,24 @@ public class GameEvent : MonoBehaviour
                             nowBeatLong--;
                         notesDirector.NoteLengthSet(len);
                         
-                        nowBeat = -1;
+                        nowBeatTime = -1;
+                        nowBeatNote = -1;
                     }
                 }
                 else
                 {
-                    beatTime = (60f / bpm * timeSignature) / split;
-                    if (nowBeat == -1)
-                    {
-                        if (notesDirector.focusNote == null)
-                            nowBeat = (int)((time - offset) / beatTime) + 1;
-                        else
-                            nowBeat = (int)((notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() - offset) / beatTime) + 1;
-                    }
-                    else
-                    {
-                        nowBeat++;
-                    }
-
                     if (notesDirector.focusNote == null)
-                        ChangeTime(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+                    {
+                        nowBeatTime = NextBeat(true, time, nowBeatTime);
+                        ChangeTime(Mathf.Min((nowBeatTime * beatTime + offset), audioSource.clip.length));
+                        nowBeatNote = -1;
+                    }
                     else
-                        notesDirector.NoteTimeSet(Mathf.Min((nowBeat * beatTime + offset), audioSource.clip.length));
+                    {
+                        nowBeatNote = NextBeat(true, notesDirector.focusNote.GetComponent<NotesData>().note.GetTime(), nowBeatNote);
+                        notesDirector.NoteTimeSet(Mathf.Min((nowBeatNote * beatTime + offset), audioSource.clip.length));
+                        nowBeatTime = -1;
+                    }
 
                     nowBeatLong = -1;
                 }
@@ -192,16 +173,37 @@ public class GameEvent : MonoBehaviour
             
             // スクロールで時間移動できる機能
             mouseVal = Input.GetAxis("Mouse ScrollWheel");
-            if (mouseVal > 0)
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
-                ChangeTime(time - 5f / speed);
+                // Shiftを押していたらTimeとSpeedで移動
+                if (mouseVal > 0)
+                {
+                    ChangeTime(time - 9f / speed);
+                }
+                else if (mouseVal < 0)
+                {
+                    ChangeTime(time + 9f / speed);
+                }
+
+                nowBeatTime = -1;
             }
-            else if (mouseVal < 0)
+            else
             {
-                ChangeTime(time + 5f / speed);
+                // Shiftを押していなければBpmとSplitで移動
+                if (mouseVal > 0)
+                {
+                    nowBeatTime = NextBeat(false, time, nowBeatTime);
+                    nowBeatTime = Mathf.Max(0, nowBeatTime);
+                    ChangeTime(nowBeatTime * beatTime + offset);
+                }
+                else if (mouseVal < 0)
+                {
+                    nowBeatTime = NextBeat(true, time, nowBeatTime);
+                    ChangeTime(Mathf.Min((nowBeatTime * beatTime + offset), audioSource.clip.length));
+                }
             }
-            
-            
+
+
             // 複製機能の実装
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -225,6 +227,37 @@ public class GameEvent : MonoBehaviour
         {
             Screen.fullScreen = !Screen.fullScreen;
         }
+        
+        Debug.Log($"nowBeatTime = {nowBeatTime}, nowBeatNote = {nowBeatNote}, nowBeatLong = {nowBeatLong}");
+    }
+
+    private int NextBeat(bool arrow, float nowTime, int beat)
+    {
+        beatTime = (60f / bpm * timeSignature) / split;
+        if (arrow)
+        {
+            if (beat == -1)
+            {
+                beat = (int)((nowTime - offset) / beatTime) + 1;
+            }
+            else
+            {
+                beat++;
+            }
+        }
+        else
+        {
+            if (beat == -1)
+            {
+                beat = (int)((nowTime - offset) / beatTime);
+            }
+            else
+            {
+                beat--;
+            }
+        }
+
+        return beat;
     }
     
 
@@ -276,7 +309,8 @@ public class GameEvent : MonoBehaviour
         // SplitFieldの変更
         split = Mathf.Max(1, int.Parse(splitField.text));
         splitField.text = split.ToString();
-        nowBeat = -1;
+        nowBeatTime = -1;
+        nowBeatNote = -1;
         nowBeatLong = -1;
     }
 
@@ -293,7 +327,8 @@ public class GameEvent : MonoBehaviour
                 centerDirector.StartPlayButton();
                 if (audioSource.clip.length > time)
                     audioSource.Play();
-                nowBeat = -1;
+                nowBeatTime = -1;
+                nowBeatNote = -1;
                 nowBeatLong = -1;
             }
             else
@@ -309,7 +344,7 @@ public class GameEvent : MonoBehaviour
     {
         // TimeFieldの変更
         ChangeTime(float.Parse(timeField.text));
-        nowBeat = -1;
+        nowBeatTime = -1;
         nowBeatLong = -1;
     }
 
@@ -368,7 +403,12 @@ public class GameEvent : MonoBehaviour
             if (sheetPath != "")
             {
                 // Sheetの入手
-                List<Note> notesData = Export.ImportingSheet(sheetPath);
+                List<Note> notesData;
+
+                if (dataImportToggle.isOn)
+                    notesData = Export.ImportingSheet(sheetPath);
+                else
+                    notesData = ExportJson.ImportingSheet(sheetPath);
 
                 foreach (Transform t in notes.transform)
                 {
@@ -384,7 +424,13 @@ public class GameEvent : MonoBehaviour
             if (basePath != "")
             {
                 // Baseの入手
-                KeyValuePair<string, KeyValuePair<int, float>> baseData = Export.ImportingBase(basePath);
+                KeyValuePair<string, KeyValuePair<int, float>> baseData =
+                    new KeyValuePair<string, KeyValuePair<int, float>>();
+                
+                if (dataImportToggle.isOn)
+                    baseData = Export.ImportingBase(basePath);
+                else
+                    baseData = ExportJson.ImportingBase(basePath);
                 
                 BpmSet(baseData.Value.Key);
                 OffsetSet(baseData.Value.Value);
@@ -418,8 +464,17 @@ public class GameEvent : MonoBehaviour
 
         try
         {
-            Export.ExportingSheet(notes, path + $"\\{name}.bin");
-            Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bin");
+            if (dataExportToggle.isOn)
+            {
+                Export.ExportingSheet(notes, path + $"\\{name}.bin");
+                Export.ExportingBase(bpm, offset, fileAddress, path + "\\base.bin");
+            }
+            else
+            {
+                ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
+                ExportJson.ExportingBase(bpm, offset, fileAddress, path + "\\base.json");
+            }
+            
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
         }

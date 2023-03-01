@@ -46,7 +46,7 @@ public class NotesDirector : MonoBehaviour
         focusNote = obj;
         focusNote.GetComponent<NotesData>().Choose();
         SetChoose();
-        gameEvent.nowBeat = -1;
+        gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
     }
 
@@ -73,7 +73,7 @@ public class NotesDirector : MonoBehaviour
                     focusNote = hit.collider.gameObject;
                     focusNote.GetComponent<NotesData>().Choose();
                     SetChoose();
-                    gameEvent.nowBeat = -1;
+                    gameEvent.nowBeatNote = -1;
                     gameEvent.nowBeatLong = -1;
                 }
                 else if (hit.collider != null)
@@ -82,7 +82,7 @@ public class NotesDirector : MonoBehaviour
                     {
                         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
                         focusNote = null;
-                        gameEvent.nowBeat = -1;
+                        gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
                     }
                 }
