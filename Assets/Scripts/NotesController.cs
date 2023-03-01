@@ -27,7 +27,7 @@ public class NotesController : MonoBehaviour
         time = audio.clip.length;
         offset = gameEvent.offset * gameEvent.speed;
         // 既存のラインを削除
-        foreach (Transform g in measureLines.gameObject.transform)
+        foreach (Transform g in measureLines.transform)
         {
             Destroy(g.gameObject);
         }
@@ -46,5 +46,10 @@ public class NotesController : MonoBehaviour
         {
             g.GetComponent<NotesData>().ChangeTimeBySpeed();
         }
+    }
+
+    public void BeatLineSet(int beat, int split)
+    {
+        
     }
 }
