@@ -75,6 +75,7 @@ public class NotesDirector : MonoBehaviour
                     SetChoose();
                     gameEvent.nowBeatNote = -1;
                     gameEvent.nowBeatLong = -1;
+                    gameEvent.FocusBeatSet(noteTime);
                 }
                 else if (hit.collider != null)
                 {
@@ -84,6 +85,7 @@ public class NotesDirector : MonoBehaviour
                         focusNote = null;
                         gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(gameEvent.time);
                     }
                 }
             }
@@ -126,6 +128,7 @@ public class NotesDirector : MonoBehaviour
                 {
                     focusNote.GetComponent<NotesData>().ClearNote();
                     focusNote = null;
+                    gameEvent.FocusBeatSet(gameEvent.time);
                 }
             }
         }

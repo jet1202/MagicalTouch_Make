@@ -3595,9 +3595,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameEvent: {fileID: 1825082431}
   measureLines: {fileID: 733452046}
+  subLines: {fileID: 113386395}
   notes: {fileID: 1688289503}
   audio: {fileID: 1825082433}
-  MeasureLinePrefab: {fileID: 6739434388085820929, guid: 2f44b42a076f7c440b14d63a5beaac80, type: 3}
+  measureLinePrefab: {fileID: 6739434388085820929, guid: 2f44b42a076f7c440b14d63a5beaac80, type: 3}
+  subLinePrefab: {fileID: 5751548526591210359, guid: 33fe24805b21a6740a2074a59e78ae0d, type: 3}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -11026,6 +11028,7 @@ MonoBehaviour:
   isFileSet: 0
   isOpenTab: 0
   isEdit: 0
+  focusBeat: 0
   nowBeatTime: -1
   nowBeatNote: -1
   nowBeatLong: -1
