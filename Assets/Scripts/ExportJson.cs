@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -72,6 +73,9 @@ public static class ExportJson
 
     public static List<Note> ImportingSheet(string name)
     {
+        if (Path.GetExtension(name) != ".json")
+            throw new Exception("ファイル形式が正しくありません");
+        
         // データを読み込む
         _notesData = new NoteSaveData();
         
@@ -96,6 +100,9 @@ public static class ExportJson
 
     public static KeyValuePair<string, KeyValuePair<int, float>> ImportingBase(string name)
     {
+        if (Path.GetExtension(name) != ".json")
+            throw new Exception("ファイル形式が正しくありません");
+        
         _baseData = new Base();
 
         // デシリアライズ

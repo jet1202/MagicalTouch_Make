@@ -31,23 +31,6 @@ public static class Export
 
         // シリアライズ
         var formatter = new BinaryFormatter();
-
-        // byte[] data;
-        // // streamでシリアライズしてdata変数にデータをコピー
-        // using (var stream = new MemoryStream())
-        // {
-        //     // クラスをstreamタイプに変換
-        //     formatter.Serialize(stream, _notesData);
-        //     // 変数のサイズを割り当てする
-        //     data = new byte[stream.Length];
-        //     // streamのデータをbyteタイプに変換
-        //     data = stream.GetBuffer();
-        // }
-        // // シリアライズしたデータをファイルに格納する
-        // using (var stream = new FileStream(name, FileMode.Create, FileAccess.Write))
-        // {
-        //     stream.Write(data, 0, data.Length);
-        // }
         
         FileStream fs = new FileStream(name, FileMode.Create);
         formatter.Serialize(fs, _notesData);
@@ -67,24 +50,12 @@ public static class Export
 
     public static List<Note> ImportingSheet(string name)
     {
+        if (Path.GetExtension(name) != ".bin")
+            throw new Exception("ファイル形式が正しくありません");
+        
         // データを読み込む
         _notesData = new List<Note>();
         var formatter = new BinaryFormatter();
-        
-        // var info = new FileInfo(name);
-        // // データを再割り当て
-        // byte[] data = new byte[info.Length];
-        //
-        // // ファイルからデータを読み込む
-        // using (var stream = new MemoryStream())
-        // {
-        //     // byteをstreamに読み込む
-        //     stream.Write(data, 0, data.Length);
-        //     // Stream seekを最初に移動する
-        //     stream.Seek(0, SeekOrigin.Begin);
-        //     // クラスをデシリアライズしてNoteクラスにキャストする
-        //     _notesData = (List<Note>)(formatter.Deserialize(stream));
-        // }
         
         FileStream fs = new FileStream(name, FileMode.Open);
         _notesData = (List<Note>)formatter.Deserialize(fs);
@@ -95,6 +66,9 @@ public static class Export
 
     public static KeyValuePair<string, KeyValuePair<int, float>> ImportingBase(string name)
     {
+        if (Path.GetExtension(name) != ".bin")
+            throw new Exception("ファイル形式が正しくありません");
+        
         _baseData = new KeyValuePair<string, KeyValuePair<int, float>>();
         
         // デシリアライズ
