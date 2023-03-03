@@ -47,7 +47,7 @@ public static class ExportJson
 
         string jsonStr = JsonUtility.ToJson(_notesData);
 
-        writer = new StreamWriter(name, false, Encoding.UTF8);
+        writer = new StreamWriter(name, false);
         writer.Write(jsonStr);
         writer.Flush();
         writer.Close();
@@ -65,7 +65,7 @@ public static class ExportJson
 
         string jsonStr = JsonUtility.ToJson(_baseData);
 
-        writer = new StreamWriter(name, false, Encoding.UTF8);
+        writer = new StreamWriter(name, false);
         writer.Write(jsonStr);
         writer.Flush();
         writer.Close();
