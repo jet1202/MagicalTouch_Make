@@ -71,7 +71,7 @@ public class NotesController : MonoBehaviour
             if (subNum > split - 1)
             {
                 for (int i = 0; i < subNum - split + 1; i++)
-                    Destroy(subLines.transform.GetChild(0));
+                    Destroy(subLines.transform.GetChild(subNum - i - 1).gameObject);
             }
             else if (subLines.transform.childCount < split - 1)
             {

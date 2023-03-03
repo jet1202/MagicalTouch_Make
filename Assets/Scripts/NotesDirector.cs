@@ -75,7 +75,7 @@ public class NotesDirector : MonoBehaviour
                     SetChoose();
                     gameEvent.nowBeatNote = -1;
                     gameEvent.nowBeatLong = -1;
-                    gameEvent.FocusBeatSet(noteTime);
+                    gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime());
                 }
                 else if (hit.collider != null)
                 {
