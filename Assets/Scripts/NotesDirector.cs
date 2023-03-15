@@ -160,9 +160,9 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteTimeSet()
     {
-        noteTime = Mathf.Max(float.Parse(timeField.text), 0f);
-        if (noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
-            noteTime = 0f;
+        float inp = Math.Max(float.Parse(timeField.text), 0f);
+        inp = Math.Min(gameEvent.GetComponent<AudioSource>().clip.length, inp);
+        noteTime = (float)Math.Floor(inp * 100) / 100;
         timeField.text = noteTime.ToString("F2");
         if (focusNote != null)
         {
@@ -172,7 +172,7 @@ public class NotesDirector : MonoBehaviour
     
     public void NoteTimeSet(float cTime)
     {
-        noteTime = cTime;
+        noteTime = (float)Math.Floor(cTime * 100) / 100;
         timeField.text = noteTime.ToString("F2");
         if (focusNote != null)
         {
@@ -185,8 +185,8 @@ public class NotesDirector : MonoBehaviour
         noteLaneF = int.Parse(laneFieldF.text);
         noteLaneL = int.Parse(laneFieldL.text);
 
-        noteLaneF = Mathf.Min(Mathf.Max(0, noteLaneF), 11);
-        noteLaneL = Mathf.Max(Mathf.Min(12, noteLaneL), noteLaneF + 1);
+        noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
+        noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
         
         laneFieldF.text = noteLaneF.ToString();
         laneFieldL.text = noteLaneL.ToString();
@@ -202,8 +202,8 @@ public class NotesDirector : MonoBehaviour
         noteLaneF = start;
         noteLaneL = end;
         
-        noteLaneF = Mathf.Min(Mathf.Max(0, noteLaneF), 11);
-        noteLaneL = Mathf.Max(Mathf.Min(12, noteLaneL), noteLaneF + 1);
+        noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
+        noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
         
         laneFieldF.text = noteLaneF.ToString();
         laneFieldL.text = noteLaneL.ToString();
@@ -230,13 +230,14 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLengthSet()
     {
-        string sLength = float.Parse(lengthField.text).ToString("F2");
-        noteLength = Mathf.Max(float.Parse(sLength), 0f);
+        float inp = Math.Max(float.Parse(lengthField.text), 0f);
+        inp = (float)Math.Floor(inp * 100) / 100;
+        noteLength = inp;
         if (focusNote != null)
         {
             if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
             {
-                noteLength = gameEvent.GetComponent<AudioSource>().clip.length - noteTime;
+                noteLength = (float)Math.Floor((gameEvent.GetComponent<AudioSource>().clip.length - noteTime) * 100) / 100;
             }
             
             lengthField.text = noteLength.ToString();
@@ -246,7 +247,7 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLengthSet(float cLength)
     {
-        noteLength = Mathf.Max(cLength, 0f);
+        noteLength = Math.Max(cLength, 0f);
         if (focusNote != null)
         {
             if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)

@@ -300,7 +300,7 @@ public class GameEvent : MonoBehaviour
         // BPMFieldの変更
         bpm = b;
         if (bpm < 30) bpm = 30;
-        if (bpm > 600) bpm = 600;
+        if (bpm > 1000) bpm = 1000;
         bpmField.text = bpm.ToString();
         notesController.MeasureLineSet(bpm, speed);
     }
@@ -308,7 +308,7 @@ public class GameEvent : MonoBehaviour
     public void OffsetSet()
     {
         // Offsetの変更
-        offset = (float)Math.Round(float.Parse(offsetField.text), 2, MidpointRounding.AwayFromZero);
+        offset = (float)Math.Floor(float.Parse(offsetField.text) * 100) / 100;
         offsetField.text = offset.ToString();
         notesController.MeasureLineSet(bpm, speed);
     }
