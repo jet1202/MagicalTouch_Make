@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 public static class ExportJson
@@ -45,7 +44,7 @@ public static class ExportJson
 
         StreamWriter writer;
 
-        string jsonStr = JsonUtility.ToJson(_notesData);
+        string jsonStr = JsonUtility.ToJson(_notesData, true);
 
         writer = new StreamWriter(name, false);
         writer.Write(jsonStr);
@@ -63,7 +62,7 @@ public static class ExportJson
         
         StreamWriter writer;
 
-        string jsonStr = JsonUtility.ToJson(_baseData);
+        string jsonStr = JsonUtility.ToJson(_baseData, true);
 
         writer = new StreamWriter(name, false);
         writer.Write(jsonStr);
