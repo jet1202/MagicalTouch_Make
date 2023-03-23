@@ -8,7 +8,7 @@ using UnityEngine;
 public static class ExportJson
 {
     private static NoteSaveData _notesData;
-    private static Base _baseData;
+    private static NoteAddition _additionData;
     
     public static void ExportingSheet(GameObject notes, string name)
     {
@@ -22,7 +22,7 @@ public static class ExportJson
             notesDataA.Add(note);
         }
 
-        var notesE = notesDataA.OrderBy(x => x.Time);
+        var notesE = notesDataA.OrderBy(x => x.GetTime100());
         notesDataA = new List<Note>();
         foreach (Note n in notesE)
         {
@@ -35,11 +35,11 @@ public static class ExportJson
         for (int i = 0; i < NoteNumber; i++)
         {
             _notesData.item[i] = new NoteSave();
-            _notesData.item[i].time = notesDataA[i].GetTime();
+            _notesData.item[i].time100 = notesDataA[i].GetTime100();
             _notesData.item[i].startLane = notesDataA[i].GetStartLane();
             _notesData.item[i].endLane = notesDataA[i].GetEndLane();
             _notesData.item[i].kind = notesDataA[i].GetKind();
-            _notesData.item[i].length = notesDataA[i].GetLength();
+            _notesData.item[i].length100 = notesDataA[i].GetLength100();
         }
 
         StreamWriter writer;
@@ -52,17 +52,48 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingBase(int bpm, float offset, string filename, string name)
+    public static void ExportingAddition(string name, List<SpeedItem> speedItems, List<Bpms> bpmItems)
     {
-        // baseDataはListや配列で直接管理できないため、クラスとして使用する。
-        _baseData = new Base();
-        _baseData.filePath = filename;
-        _baseData.bpm = bpm;
-        _baseData.offset = offset;
+        // _additionDataはListや配列で直接管理できないため、クラスとして使用する。
+        _additionData = new NoteAddition();
         
+        // speed
+        List<SpeedItem> speedA = new List<SpeedItem>();
+        var speedE = speedItems.OrderBy(x => x.time100);
+        foreach (var s in speedE)
+        {
+            speedA.Add(s);
+        }
+
+        int speedNumber = speedA.Count;
+        _additionData.speedItem = new SpeedItem[speedNumber];
+        for (int i = 0; i < speedNumber; i++)
+        {
+            _additionData.speedItem[i] = speedA[i];
+        }
+
+        // bpm
+        List<BpmItem> bpmA = new List<BpmItem>();
+        var bpmE = bpmItems.OrderBy(x => x.GetTime100());
+        BpmItem item;
+        foreach (var b in bpmE)
+        {
+            item = new BpmItem();
+            item.time100 = b.GetTime100();
+            item.bpm = b.GetBpm();
+            bpmA.Add(item);
+        }
+
+        int bpmNumber = bpmA.Count;
+        _additionData.bpmItem = new BpmItem[bpmNumber];
+        for (int i = 0; i < bpmNumber; i++)
+        {
+            _additionData.bpmItem[i] = bpmA[i];
+        }
+
         StreamWriter writer;
 
-        string jsonStr = JsonUtility.ToJson(_baseData, true);
+        string jsonStr = JsonUtility.ToJson(_additionData, true);
 
         writer = new StreamWriter(name, false);
         writer.Write(jsonStr);
@@ -90,19 +121,19 @@ public static class ExportJson
         Note note;
         foreach (var n in _notesData.item)
         {
-            note = new Note(n.time, n.startLane, n.endLane, n.kind, n.length);
+            note = new Note(n.time100, n.startLane, n.endLane, n.kind, n.length100);
             notesDataA.Add(note);
         }
 
         return notesDataA;
     }
 
-    public static KeyValuePair<string, KeyValuePair<int, float>> ImportingBase(string name)
+    public static NoteAddition ImportingAddition(string name)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
         
-        _baseData = new Base();
+        _additionData = new NoteAddition();
 
         // デシリアライズ
         string jsonStr = "";
@@ -111,12 +142,8 @@ public static class ExportJson
         jsonStr = reader.ReadToEnd();
         reader.Close();
 
-        _baseData = JsonUtility.FromJson<Base>(jsonStr);
+        _additionData = JsonUtility.FromJson<NoteAddition>(jsonStr);
 
-        KeyValuePair<string, KeyValuePair<int, float>> baseDataA =
-            new KeyValuePair<string, KeyValuePair<int, float>>(_baseData.filePath,
-                new KeyValuePair<int, float>(_baseData.bpm, _baseData.offset));
-
-        return baseDataA;
+        return _additionData;
     }
 }

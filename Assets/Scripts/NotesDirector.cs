@@ -27,7 +27,7 @@ public class NotesDirector : MonoBehaviour
     public void NewNote()
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(gameEvent.time, 5, 7, 'N', 0f);
+        obj.GetComponent<NotesData>().note = new Note((int)(gameEvent.time * 100), 5, 7, 'N', 0);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
@@ -36,10 +36,10 @@ public class NotesDirector : MonoBehaviour
         SetChoose();
     }
     
-    public void NewNote(float time, int start, int end, char kind, float length)
+    public void NewNote(int time100, int start, int end, char kind, int length100)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length);
+        obj.GetComponent<NotesData>().note = new Note(time100, start, end, kind, length100);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
         if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
@@ -75,7 +75,7 @@ public class NotesDirector : MonoBehaviour
                     SetChoose();
                     gameEvent.nowBeatNote = -1;
                     gameEvent.nowBeatLong = -1;
-                    gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime());
+                    gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
                 }
                 else if (hit.collider != null)
                 {
@@ -138,11 +138,11 @@ public class NotesDirector : MonoBehaviour
     {
         // focusNoteのデータを取り出し表示する
         Note n = focusNote.GetComponent<NotesData>().note;
-        timeField.text = n.GetTime().ToString("F2");
+        timeField.text = (n.GetTime100() / 100f).ToString("F2");
         laneFieldF.text = n.GetStartLane().ToString();
         laneFieldL.text = n.GetEndLane().ToString();
         kindDropdown.value = NoteKindToInt(n.GetKind());
-        lengthField.text = n.GetLength().ToString("F2");
+        lengthField.text = (n.GetLength100() / 100f).ToString("F2");
         
         if (n.GetKind() == 'L')
             lengthObj.SetActive(true);

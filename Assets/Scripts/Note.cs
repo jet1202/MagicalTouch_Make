@@ -6,24 +6,24 @@ using UnityEngine;
 [Serializable]
 public class Note
 {
-    public float Time { get; set; }
-    public int StartLane { get; set; }
-    public int EndLane { get; set; }
-    public char Kind { get; set; }
-    public float Length { get; set; }
+    private int Time100 { get; set; }
+    private int StartLane { get; set; }
+    private int EndLane { get; set; }
+    private char Kind { get; set; }
+    private int Length100 { get; set; }
 
-    public Note(float time, int startLane, int endLane, char kind, float length)
+    public Note(int time, int startLane, int endLane, char kind, int length)
     {
-        this.Time = time;
+        this.Time100 = time;
         this.StartLane = startLane;
         this.EndLane = endLane;
         this.Kind = kind;
-        this.Length = length;
+        this.Length100 = length;
     }
 
-    public float GetTime()
+    public int GetTime100()
     {
-        return Time;
+        return Time100;
     }
     
     public int GetStartLane()
@@ -41,14 +41,14 @@ public class Note
         return Kind;
     }
 
-    public float GetLength()
+    public int GetLength100()
     {
-        return Length;
+        return Length100;
     }
 
-    public void SetTime(float time)
+    public void SetTime100(int time)
     {
-        this.Time = time;
+        this.Time100 = time;
     }
 
     public void SetLane(int start, int end)
@@ -62,18 +62,65 @@ public class Note
         this.Kind = kind;
     }
 
-    public void SetLength(float length)
+    public void SetLength100(int length)
     {
-        this.Length = length;
+        this.Length100 = length;
     }
 }
 
 [Serializable]
-public class Base
+public class Bpms
 {
-    public string filePath;
+    private int Time100 { get; set; }
+    private int Bpm { get; set; }
+
+    public Bpms(int time, int bpm)
+    {
+        this.Time100 = time;
+        this.Bpm = bpm;
+    }
+
+    public int GetTime100()
+    {
+        return Time100;
+    }
+
+    public int GetBpm()
+    {
+        return Bpm;
+    }
+
+    public void SetTime100(int time100)
+    {
+        this.Time100 = time100;
+    }
+
+    public void SetBpm(int bpm)
+    {
+        this.Bpm = bpm;
+    }
+}
+
+[Serializable]
+public class NoteAddition
+{
+    public SpeedItem[] speedItem;
+    public BpmItem[] bpmItem;
+}
+
+[Serializable]
+public class SpeedItem
+{
+    public int time100;
+    public int speed100;
+    private bool isVariation;
+}
+
+[Serializable]
+public class BpmItem
+{
+    public int time100;
     public int bpm;
-    public float offset;
 }
 
 [Serializable]
@@ -85,9 +132,9 @@ public class NoteSaveData
 [Serializable]
 public class NoteSave
 {
-    public float time;
+    public int time100;
     public int startLane;
     public int endLane;
     public char kind;
-    public float length;
+    public int length100;
 }
