@@ -17,11 +17,11 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private InputField laneFieldL;
     [SerializeField] private Dropdown kindDropdown;
     [SerializeField] private InputField lengthField;
-    private float noteTime;
+    private int noteTime100;
     private int noteLaneF;
     private int noteLaneL;
     private int noteKind;
-    private float noteLength;
+    private int noteLength100;
     private float rayDistance = 30f;
 
     public void NewNote()
@@ -162,21 +162,21 @@ public class NotesDirector : MonoBehaviour
     {
         float inp = Math.Max(float.Parse(timeField.text), 0f);
         inp = Math.Min(gameEvent.GetComponent<AudioSource>().clip.length, inp);
-        noteTime = (float)Math.Floor(inp * 100) / 100;
-        timeField.text = noteTime.ToString("F2");
+        noteTime100 = (int)(inp * 100);
+        timeField.text = (noteTime100 / 100f).ToString("F2");
         if (focusNote != null)
         {
-            focusNote.GetComponent<NotesData>().ChangeTime(noteTime);
+            focusNote.GetComponent<NotesData>().ChangeTime(noteTime100);
         }
     }
     
     public void NoteTimeSet(float cTime)
     {
-        noteTime = (float)Math.Floor(cTime * 100) / 100;
-        timeField.text = noteTime.ToString("F2");
+        noteTime100 = (int)(cTime * 100);
+        timeField.text = (noteTime100 / 100f).ToString("F2");
         if (focusNote != null)
         {
-            focusNote.GetComponent<NotesData>().ChangeTime(noteTime);
+            focusNote.GetComponent<NotesData>().ChangeTime(noteTime100);
         }
     }
 
@@ -231,32 +231,31 @@ public class NotesDirector : MonoBehaviour
     public void NoteLengthSet()
     {
         float inp = Math.Max(float.Parse(lengthField.text), 0f);
-        inp = (float)Math.Floor(inp * 100) / 100;
-        noteLength = inp;
-        if (focusNote != null)
+        noteLength100 = (int)(inp * 100);
+        if (focusNote != null && focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
         {
-            if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
+            if ((noteLength100 + noteTime100) / 100f > gameEvent.GetComponent<AudioSource>().clip.length)
             {
-                noteLength = (float)Math.Floor((gameEvent.GetComponent<AudioSource>().clip.length - noteTime) * 100) / 100;
+                noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - noteTime100 / 100f) * 100);
             }
             
-            lengthField.text = noteLength.ToString();
-            focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
+            lengthField.text = (noteLength100 / 100f).ToString();
+            focusNote.GetComponent<NotesData>().ChangeLength(noteLength100);
         }
     }
 
     public void NoteLengthSet(float cLength)
     {
-        noteLength = Math.Max(cLength, 0f);
+        noteLength100 = (int)(Math.Max(cLength, 0f) * 100);
         if (focusNote != null)
         {
-            if (noteLength + noteTime > gameEvent.GetComponent<AudioSource>().clip.length)
+            if ((noteLength100 + noteTime100) * 100 > gameEvent.GetComponent<AudioSource>().clip.length)
             {
-                noteLength = gameEvent.GetComponent<AudioSource>().clip.length - noteTime;
+                noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - noteTime100 / 100f) * 100);
             }
             
-            lengthField.text = noteLength.ToString();
-            focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
+            lengthField.text = (noteLength100 / 100f).ToString();
+            focusNote.GetComponent<NotesData>().ChangeLength(noteLength100);
         }
     }
 
