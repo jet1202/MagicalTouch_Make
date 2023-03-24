@@ -9,6 +9,7 @@ TagManager:
   - Flick
   - EditRange
   - Long
+  - Bpm
   layers:
   - Default
   - TransparentFX

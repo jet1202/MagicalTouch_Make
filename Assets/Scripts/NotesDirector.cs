@@ -6,57 +6,36 @@ using UnityEngine.UI;
 public class NotesDirector : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private NotesController notesController;
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
+    [SerializeField] private GameObject bpmParent;
+    [SerializeField] private GameObject bpmPrefab;
 
-    [SerializeField] private GameObject lengthObj;
+    [SerializeField] public GameObject lengthObj;
+    [SerializeField] public GameObject laneAndKindObj;
+    [SerializeField] private GameObject bpmObj;
     public GameObject focusNote = null;
+    public bool noteOrBpm;
 
     [SerializeField] private InputField timeField;
     [SerializeField] private InputField laneFieldF;
     [SerializeField] private InputField laneFieldL;
     [SerializeField] private Dropdown kindDropdown;
     [SerializeField] private InputField lengthField;
-    private int noteTime100;
+    [SerializeField] private InputField bpmField;
+    
+    private int focusTime100;
+    
     private int noteLaneF;
     private int noteLaneL;
     private int noteKind;
     private int noteLength100;
-    private float rayDistance = 30f;
-
-    public void NewNote()
-    {
-        GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note((int)(gameEvent.time * 100), 5, 7, 'N', 0);
-        obj.GetComponent<NotesData>().DefaultSettings();
-        obj.SetActive(true);
-        if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<NotesData>().Choose();
-        SetChoose();
-    }
+    private int bpmBpm;
     
-    public void NewNote(int time100, int start, int end, char kind, int length100)
-    {
-        GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(time100, start, end, kind, length100);
-        obj.GetComponent<NotesData>().DefaultSettings();
-        obj.SetActive(true);
-        if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<NotesData>().Choose();
-        SetChoose();
-        gameEvent.nowBeatNote = -1;
-        gameEvent.nowBeatLong = -1;
-    }
-
-    public void ResetNote()
-    {
-        foreach (Transform t in noteParent.transform)
-        {
-            Destroy(t);
-        }
-    }
+    private float rayDistance = 30f;
+    
+    public Dictionary<GameObject, Bpms> bpms = new Dictionary<GameObject, Bpms>();
 
     private void Update()
     {
@@ -67,21 +46,32 @@ public class NotesDirector : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance);
                 
-                if (hit.collider != null && IsNote(hit.collider.gameObject.tag))
+                if (hit.collider != null)
                 {
-                    if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
-                    focusNote = hit.collider.gameObject;
-                    focusNote.GetComponent<NotesData>().Choose();
-                    SetChoose();
-                    gameEvent.nowBeatNote = -1;
-                    gameEvent.nowBeatLong = -1;
-                    gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
-                }
-                else if (hit.collider != null)
-                {
-                    if (hit.collider.gameObject.CompareTag("EditRange"))
+                    if (IsNote(hit.collider.gameObject.tag))
                     {
-                        if (focusNote != null) focusNote.GetComponent<NotesData>().DisChoose();
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        focusNote.GetComponent<NotesData>().Choose();
+                        noteOrBpm = true;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
+                    }
+                    else if (hit.collider.gameObject.CompareTag("Bpm"))
+                    {
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        focusNote.GetComponent<BpmData>().Choose();
+                        noteOrBpm = false;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                    }
+                    else if (hit.collider.gameObject.CompareTag("EditRange"))
+                    {
+                        SetDisChoose();
                         focusNote = null;
                         gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
@@ -92,7 +82,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (focusNote != null)
+                if (focusNote != null && noteOrBpm)
                 {
                     Note data = focusNote.GetComponent<NotesData>().note;
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -108,7 +98,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (focusNote != null)
+                if (focusNote != null && noteOrBpm)
                 {
                     Note data = focusNote.GetComponent<NotesData>().note;
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -126,30 +116,119 @@ public class NotesDirector : MonoBehaviour
             {
                 if (focusNote != null)
                 {
-                    focusNote.GetComponent<NotesData>().ClearNote();
+                    if (noteOrBpm)
+                    {
+                        focusNote.GetComponent<NotesData>().ClearNote();
+                        gameEvent.FocusBeatSet(gameEvent.time);
+                    }
+                    else
+                    {
+                        focusNote.GetComponent<BpmData>().ClearBpm();
+                        bpms.Remove(focusNote);
+                    }
+
                     focusNote = null;
-                    gameEvent.FocusBeatSet(gameEvent.time);
                 }
             }
         }
     }
-
+    
     private void SetChoose()
     {
-        // focusNoteのデータを取り出し表示する
-        Note n = focusNote.GetComponent<NotesData>().note;
-        timeField.text = (n.GetTime100() / 100f).ToString("F2");
-        laneFieldF.text = n.GetStartLane().ToString();
-        laneFieldL.text = n.GetEndLane().ToString();
-        kindDropdown.value = NoteKindToInt(n.GetKind());
-        lengthField.text = (n.GetLength100() / 100f).ToString("F2");
-        
-        if (n.GetKind() == 'L')
-            lengthObj.SetActive(true);
+        if (noteOrBpm)
+        {
+            // focusNoteのデータを取り出し表示する
+            Note n = focusNote.GetComponent<NotesData>().note;
+            timeField.text = (n.GetTime100() / 100f).ToString("F2");
+            laneFieldF.text = n.GetStartLane().ToString();
+            laneFieldL.text = n.GetEndLane().ToString();
+            kindDropdown.value = NoteKindToInt(n.GetKind());
+            lengthField.text = (n.GetLength100() / 100f).ToString("F2");
+
+            if (n.GetKind() == 'L')
+            {
+                lengthObj.SetActive(true);
+                laneAndKindObj.SetActive(true);
+                bpmObj.SetActive(false);
+            }
+            else
+            {
+                lengthObj.SetActive(false);
+                laneAndKindObj.SetActive(true);
+                bpmObj.SetActive(false);
+            }
+        }
         else
+        {
+            Bpms b = bpms[focusNote];
+            timeField.text = (b.GetTime100() / 100f).ToString("F2");
+            bpmField.text = b.GetBpm().ToString();
+            
             lengthObj.SetActive(false);
+            laneAndKindObj.SetActive(false);
+            bpmObj.SetActive(true);
+        }
     }
 
+    private void SetDisChoose()
+    {
+        if (focusNote == null) return;
+
+        if (noteOrBpm)
+        {
+            focusNote.GetComponent<NotesData>().DisChoose();
+        }
+        else
+        {
+            focusNote.GetComponent<BpmData>().DisChoose();
+        }
+    }
+    
+    public void TimeSet()
+    {
+        TimeSet(float.Parse(timeField.text));
+    }
+    
+    public void TimeSet(float cTime)
+    {
+        cTime = Math.Min(gameEvent.GetComponent<AudioSource>().clip.length, Math.Max(cTime, 0f));
+        focusTime100 = (int)(cTime * 100);
+        timeField.text = (focusTime100 / 100f).ToString("F2");
+        
+        if (focusNote != null)
+        {
+            if (noteOrBpm)
+                focusNote.GetComponent<NotesData>().ChangeTime(focusTime100);
+            else
+            {
+                bpms[focusNote].SetTime100(focusTime100);
+                focusNote.GetComponent<BpmData>().ChangeTime(focusTime100 / 100f);
+            }
+        }
+    }
+    
+    // Note
+    public void NewNote()
+    {
+        NewNote((int)(gameEvent.time * 100), 5, 7, 'N', 0);
+    }
+    
+    public void NewNote(int time100, int start, int end, char kind, int length100)
+    {
+        GameObject obj = Instantiate(notePrefab, noteParent.transform);
+        obj.GetComponent<NotesData>().note = new Note(time100, start, end, kind, length100);
+        obj.GetComponent<NotesData>().DefaultSettings();
+        obj.SetActive(true);
+        
+        SetDisChoose();
+        focusNote = obj;
+        focusNote.GetComponent<NotesData>().Choose();
+        noteOrBpm = true;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+    }
+    
     private bool IsNote(string _tag)
     {
         if (_tag == "Normal" || _tag == "Hold" || _tag == "Flick" || _tag == "Long")
@@ -158,43 +237,9 @@ public class NotesDirector : MonoBehaviour
             return false;
     }
 
-    public void NoteTimeSet()
-    {
-        float inp = Math.Max(float.Parse(timeField.text), 0f);
-        inp = Math.Min(gameEvent.GetComponent<AudioSource>().clip.length, inp);
-        noteTime100 = (int)(inp * 100);
-        timeField.text = (noteTime100 / 100f).ToString("F2");
-        if (focusNote != null)
-        {
-            focusNote.GetComponent<NotesData>().ChangeTime(noteTime100);
-        }
-    }
-    
-    public void NoteTimeSet(float cTime)
-    {
-        noteTime100 = (int)(cTime * 100);
-        timeField.text = (noteTime100 / 100f).ToString("F2");
-        if (focusNote != null)
-        {
-            focusNote.GetComponent<NotesData>().ChangeTime(noteTime100);
-        }
-    }
-
     public void NoteLaneSet()
-    {
-        noteLaneF = int.Parse(laneFieldF.text);
-        noteLaneL = int.Parse(laneFieldL.text);
-
-        noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
-        noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
-        
-        laneFieldF.text = noteLaneF.ToString();
-        laneFieldL.text = noteLaneL.ToString();
-        
-        if (focusNote != null)
-        {
-            focusNote.GetComponent<NotesData>().ChangeLane(noteLaneF, noteLaneL);
-        }
+    { 
+        NoteLaneSet(int.Parse(laneFieldF.text), int.Parse(laneFieldL.text));
     }
     
     public void NoteLaneSet(int start, int end)
@@ -230,28 +275,17 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLengthSet()
     {
-        float inp = Math.Max(float.Parse(lengthField.text), 0f);
-        noteLength100 = (int)(inp * 100);
-        if (focusNote != null && focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
-        {
-            if ((noteLength100 + noteTime100) / 100f > gameEvent.GetComponent<AudioSource>().clip.length)
-            {
-                noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - noteTime100 / 100f) * 100);
-            }
-            
-            lengthField.text = (noteLength100 / 100f).ToString();
-            focusNote.GetComponent<NotesData>().ChangeLength(noteLength100);
-        }
+        NoteLengthSet(float.Parse(lengthField.text));
     }
 
     public void NoteLengthSet(float cLength)
     {
         noteLength100 = (int)(Math.Max(cLength, 0f) * 100);
-        if (focusNote != null)
+        if (focusNote != null && focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
         {
-            if ((noteLength100 + noteTime100) * 100 > gameEvent.GetComponent<AudioSource>().clip.length)
+            if ((noteLength100 + focusTime100) * 100 > gameEvent.GetComponent<AudioSource>().clip.length)
             {
-                noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - noteTime100 / 100f) * 100);
+                noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - focusTime100 / 100f) * 100);
             }
             
             lengthField.text = (noteLength100 / 100f).ToString();
@@ -301,5 +335,48 @@ public class NotesDirector : MonoBehaviour
         }
 
         return result;
+    }
+    
+    // Bpm
+    public void NewBpm()
+    {
+        NewBpm((int)(gameEvent.time), 120);
+    }
+
+    public void NewBpm(float time, int bpm)
+    {
+        GameObject obj = Instantiate(bpmPrefab, bpmParent.transform);
+        obj.GetComponent<BpmData>().DefaultSettings(time, bpm);
+        obj.SetActive(true);
+        bpms.Add(obj, new Bpms((int)(time * 100), bpm));
+        
+        SetDisChoose();
+        focusNote = obj;
+        focusNote.GetComponent<BpmData>().Choose();
+        noteOrBpm = false;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+        
+        notesController.MeasureLineSet(new List<Bpms>(bpms.Values));
+    }
+
+    public void BpmSet()
+    {
+        BpmSet(int.Parse(bpmField.text));
+    }
+
+    public void BpmSet(int bpm)
+    {
+        bpmBpm = Math.Max(0, Math.Min(900, bpm));
+        bpmField.text = bpmBpm.ToString();
+
+        if (focusNote != null)
+        {
+            bpms[focusNote].SetBpm(bpmBpm);
+            focusNote.GetComponent<BpmData>().ChangeBpm(bpmBpm);
+            
+            notesController.MeasureLineSet(new List<Bpms>(bpms.Values));
+        }
     }
 }

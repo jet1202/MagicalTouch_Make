@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UniRx;
-using UnityEditor;
 
 public class NotesController : MonoBehaviour
 {
@@ -14,16 +14,16 @@ public class NotesController : MonoBehaviour
     [SerializeField] private AudioSource audio;
     [SerializeField] private GameObject measureLinePrefab;
     [SerializeField] private GameObject subLinePrefab;
-    private float measureDistance;
     private float time;
-    private float offset;
-    private float length;
+    private int leng;
 
+    public List<float> bpmMeasureLines = new List<float>();
+        
     private void Start()
     {
         gameEvent
             .ObserveEveryValueChanged(x => x.focusBeat)
-            .Subscribe(x => BeatLineSet(x, gameEvent.split, (60f / gameEvent.bpm * gameEvent.timeSignature)));
+            .Subscribe(x => BeatLineSet(x, gameEvent.split));
     }
 
     void Update()
@@ -31,28 +31,44 @@ public class NotesController : MonoBehaviour
         transform.position = new Vector3(gameEvent.time * -gameEvent.speed, 0, 0);
     }
 
-    public void MeasureLineSet(float bpm, float speed)
+    public void MeasureLineSet(List<Bpms> bpms)
     {
         if (audio.clip == null) return;
         
-        measureDistance = 60 / bpm * speed * gameEvent.timeSignature;
-        time = audio.clip.length;
-        offset = gameEvent.offset * gameEvent.speed;
         // 既存のラインを削除
         foreach (Transform g in measureLines.transform)
         {
             Destroy(g.gameObject);
         }
+
+        bpms = new List<Bpms>(bpms.OrderBy(x => x.GetTime100()));
+        
         // ラインを生成
-        length = time * gameEvent.speed;
-        for (float i = offset; i < length; i += measureDistance)
+        time = audio.clip.length;
+        leng = bpms.Count;
+        Bpms bpm, nextBpm;
+        bpmMeasureLines = new List<float>();
+        for (int i = 0; i < leng; i++)
         {
-            // GameObject obj = Instantiate(MeasureLinePrefab, new Vector3(i, 0.5f, 0), Quaternion.identity, measureLines.transform);
+            bpm = bpms[i];
+            if (i == leng - 1)
+                nextBpm = new Bpms((int)(time * 100), 0);
+            else
+                nextBpm = bpms[i + 1];
+
+            for (float j = bpm.GetTime100() / 100f; j < nextBpm.GetTime100() / 100f; j += 60f / bpm.GetBpm() * 4)
+            {
+                bpmMeasureLines.Add(j);
+            }
+        }
+
+        foreach (var t in bpmMeasureLines)
+        {
             GameObject obj = Instantiate(measureLinePrefab, measureLines.transform);
-            obj.transform.localPosition = new Vector3(i, 0.5f, 0);
+            obj.transform.localPosition = new Vector3(t * gameEvent.speed, 0.5f, 0);
             obj.SetActive(true);
         }
-        
+
         // ノーツの位置調整
         foreach (Transform g in notes.gameObject.transform)
         {
@@ -60,7 +76,7 @@ public class NotesController : MonoBehaviour
         }
     }
 
-    public void BeatLineSet(int beat, int split, float measureTime)
+    public void BeatLineSet(int beat, int split)
     {
         if (gameEvent.isFileSet)
         {
@@ -80,7 +96,8 @@ public class NotesController : MonoBehaviour
             }
 
             // サブラインの調整
-            float beatTime = measureTime * beat + gameEvent.offset;
+            float beatTime = bpmMeasureLines[beat / 4];
+            float measureTime = bpmMeasureLines[beat / 4 + 1] - beatTime;
             for (int i = 1; i < split; i++)
             {
                 subLines.transform.GetChild(i - 1).transform.localPosition =
