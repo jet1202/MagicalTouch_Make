@@ -358,7 +358,7 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
         
-        notesController.MeasureLineSet(new List<Bpms>(bpms.Values));
+        notesController.MeasureLineSet(bpms);
     }
 
     public void BpmSet()
@@ -376,7 +376,7 @@ public class NotesDirector : MonoBehaviour
             bpms[focusNote].SetBpm(bpmBpm);
             focusNote.GetComponent<BpmData>().ChangeBpm(bpmBpm);
             
-            notesController.MeasureLineSet(new List<Bpms>(bpms.Values));
+            notesController.MeasureLineSet(bpms);
         }
     }
 }

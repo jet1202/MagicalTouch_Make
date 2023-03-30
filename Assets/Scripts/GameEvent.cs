@@ -374,7 +374,7 @@ public class GameEvent : MonoBehaviour
         if (speed < 1) speed = 1.0f;
         if (speed > 10) speed = 10.0f;
         speedField.text = speed.ToString();
-        notesController.MeasureLineSet(new List<Bpms>(notesDirector.bpms.Values));
+        notesController.MeasureLineSet(notesDirector.bpms);
         
         if (notesDirector.focusNote == null)
             FocusBeatSet(time);
@@ -559,7 +559,8 @@ public class GameEvent : MonoBehaviour
 
         fileAddress = fileName;
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "AudioLoad Finished.");
-
-        notesController.MeasureLineSet(new List<Bpms>(notesDirector.bpms.Values));
+        
+        notesDirector.NewBpm(0f, 120);
+        notesController.MeasureLineSet(notesDirector.bpms);
     }
 }
