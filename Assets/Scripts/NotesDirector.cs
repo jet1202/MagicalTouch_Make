@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -123,8 +124,12 @@ public class NotesDirector : MonoBehaviour
                     }
                     else
                     {
-                        focusNote.GetComponent<BpmData>().ClearBpm();
-                        bpms.Remove(focusNote);
+                        if (bpms.Count != 1)
+                        {
+                            focusNote.GetComponent<BpmData>().ClearBpm();
+                            bpms.Remove(focusNote);
+                            notesController.MeasureLineSet(bpms);
+                        }
                     }
 
                     focusNote = null;
@@ -203,6 +208,8 @@ public class NotesDirector : MonoBehaviour
             {
                 bpms[focusNote].SetTime100(focusTime100);
                 focusNote.GetComponent<BpmData>().ChangeTime(focusTime100 / 100f);
+                
+                notesController.MeasureLineSet(bpms);
             }
         }
     }
