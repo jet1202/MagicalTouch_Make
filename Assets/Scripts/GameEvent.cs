@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Button = UnityEngine.UI.Button;
+using Screen = UnityEngine.Screen;
 
 public class GameEvent : MonoBehaviour
 {
@@ -421,7 +424,7 @@ public class GameEvent : MonoBehaviour
     public void InfoClick()
     {
         string len = audioSource.clip == null ? "Null" : $"{(int)audioSource.clip.length / 60}:{(int)audioSource.clip.length % 60}";
-        string massage = $"Version : {Application.version}\n" +
+        string massage = $"Version : {UnityEngine.Device.Application.version}\n" +
                          $"URL : https://github.com/jet1202/MagicalTouch_Make/\n\n" +
                          $"MusicLength : {len}\n" +
                          $"The number of notes : {notes.transform.childCount}\n";
@@ -597,5 +600,53 @@ public class GameEvent : MonoBehaviour
         
         notesDirector.NewBpm(0, 120);
         notesController.MeasureLineSet(notesDirector.bpms);
+    }
+
+    public void SettingOpenFile()
+    {
+        OpenFileDialog fileDialog = new OpenFileDialog();
+
+        fileDialog.Filter = null;
+
+        if (fileDialog.ShowDialog() == DialogResult.OK)
+        {
+            musicImportField.text = fileDialog.FileName;
+        }
+    }
+    
+    public void ExportOpenFile()
+    {
+        OpenFileDialog fileDialog = new OpenFileDialog();
+
+        fileDialog.Filter = "Folder|.";
+
+        if (fileDialog.ShowDialog() == DialogResult.OK)
+        {
+            dataExportField.text = Path.GetDirectoryName(fileDialog.FileName);
+        }
+    }
+    
+    public void ImportAdditionOpenFile()
+    {
+        OpenFileDialog fileDialog = new OpenFileDialog();
+
+        fileDialog.Filter = "jsonファイル|*.json";
+
+        if (fileDialog.ShowDialog() == DialogResult.OK)
+        {
+            dataImportFieldAddition.text = fileDialog.FileName;
+        }
+    }
+    
+    public void ImportSheetOpenFile()
+    {
+        OpenFileDialog fileDialog = new OpenFileDialog();
+
+        fileDialog.Filter = "jsonファイル|*.json";
+
+        if (fileDialog.ShowDialog() == DialogResult.OK)
+        {
+            dataImportFieldSheet.text = fileDialog.FileName;
+        }
     }
 }
