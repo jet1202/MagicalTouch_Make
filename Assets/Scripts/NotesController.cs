@@ -102,8 +102,8 @@ public class NotesController : MonoBehaviour
             }
 
             // サブラインの調整
-            float beatTime = bpmMeasureLines[beat / 4];
-            float measureTime = bpmMeasureLines[beat / 4 + 1] - beatTime;
+            float beatTime = bpmMeasureLines[beat / split];
+            float measureTime = bpmMeasureLines[beat / split + 1] - beatTime;
             for (int i = 1; i < split; i++)
             {
                 subLines.transform.GetChild(i - 1).transform.localPosition =

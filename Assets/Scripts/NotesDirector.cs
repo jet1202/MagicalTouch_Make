@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class NotesDirector : MonoBehaviour
 {
@@ -19,12 +19,12 @@ public class NotesDirector : MonoBehaviour
     public GameObject focusNote = null;
     public bool noteOrBpm;
 
-    [SerializeField] private InputField timeField;
-    [SerializeField] private InputField laneFieldF;
-    [SerializeField] private InputField laneFieldL;
-    [SerializeField] private Dropdown kindDropdown;
-    [SerializeField] private InputField lengthField;
-    [SerializeField] private InputField bpmField;
+    [SerializeField] private TMP_InputField timeField;
+    [SerializeField] private TMP_InputField laneFieldF;
+    [SerializeField] private TMP_InputField laneFieldL;
+    [SerializeField] private TMP_Dropdown kindDropdown;
+    [SerializeField] private TMP_InputField lengthField;
+    [SerializeField] private TMP_InputField bpmField;
     
     private int focusTime100;
     
@@ -40,7 +40,7 @@ public class NotesDirector : MonoBehaviour
 
     private void Update()
     {
-        if (gameEvent.isEdit)
+        if (gameEvent.isEdit && EventSystem.current.currentSelectedGameObject == null)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -347,15 +347,15 @@ public class NotesDirector : MonoBehaviour
     // Bpm
     public void NewBpm()
     {
-        NewBpm((int)(gameEvent.time), 120);
+        NewBpm((int)(gameEvent.time * 100), 120);
     }
 
-    public void NewBpm(float time, int bpm)
+    public void NewBpm(int time100, int bpm)
     {
         GameObject obj = Instantiate(bpmPrefab, bpmParent.transform);
-        obj.GetComponent<BpmData>().DefaultSettings(time, bpm);
+        obj.GetComponent<BpmData>().DefaultSettings(time100 / 100f, bpm);
         obj.SetActive(true);
-        bpms.Add(obj, new Bpms((int)(time * 100), bpm));
+        bpms.Add(obj, new Bpms(time100, bpm));
         
         SetDisChoose();
         focusNote = obj;
