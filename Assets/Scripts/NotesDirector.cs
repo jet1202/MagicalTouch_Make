@@ -290,7 +290,7 @@ public class NotesDirector : MonoBehaviour
         noteLength100 = (int)(Math.Max(cLength, 0f) * 100);
         if (focusNote != null && focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
         {
-            if ((noteLength100 + focusTime100) * 100 > gameEvent.GetComponent<AudioSource>().clip.length)
+            if ((noteLength100 + focusTime100) / 100f > gameEvent.GetComponent<AudioSource>().clip.length)
             {
                 noteLength100 = (int)((gameEvent.GetComponent<AudioSource>().clip.length - focusTime100 / 100f) * 100);
             }

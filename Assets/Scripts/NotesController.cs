@@ -86,8 +86,6 @@ public class NotesController : MonoBehaviour
     {
         if (gameEvent.isFileSet)
         {
-            Debug.Log($":{beat}");
-
             // サブラインの数の調整
             int subNum = subLines.transform.childCount;
             if (subNum > split - 1)
@@ -102,8 +100,14 @@ public class NotesController : MonoBehaviour
             }
 
             // サブラインの調整
-            float beatTime = bpmMeasureLines[beat / split];
-            float measureTime = bpmMeasureLines[beat / split + 1] - beatTime;
+            float beatTime = 0f;
+            float measureTime = 0f;
+            if (beat / split >= 0 && beat / split < bpmMeasureLines.Count - 1)
+            {
+                beatTime = bpmMeasureLines[beat / split];
+                measureTime = bpmMeasureLines[beat / split + 1] - beatTime;
+            }
+
             for (int i = 1; i < split; i++)
             {
                 subLines.transform.GetChild(i - 1).transform.localPosition =
