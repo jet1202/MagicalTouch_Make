@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class NotesDirector : MonoBehaviour
 {
@@ -42,6 +43,10 @@ public class NotesDirector : MonoBehaviour
     {
         if (gameEvent.isEdit && EventSystem.current.currentSelectedGameObject == null)
         {
+            // キーボード入力
+            if (Input.GetKeyDown(KeyCode.N)) NewNote();
+            if (Input.GetKeyDown(KeyCode.B)) NewBpm();
+            
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

@@ -79,12 +79,14 @@ public class GameEvent : MonoBehaviour
             FocusBeatSet(time);
         }
         
-        // キーボード入力
-        if (Input.GetKeyDown(KeyCode.Space)) PlayClick();
         isEdit = !isPlaying && isFileSet && !isOpenTab;
 
         if (isEdit && EventSystem.current.currentSelectedGameObject == null)
         {
+            
+            // キーボード入力
+            if (Input.GetKeyDown(KeyCode.Space)) PlayClick();
+
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
