@@ -35,6 +35,7 @@ public static class ExportJson
         for (int i = 0; i < NoteNumber; i++)
         {
             _notesData.item[i] = new NoteSave();
+            _notesData.item[i].number = i;
             _notesData.item[i].time100 = notesDataA[i].GetTime100();
             _notesData.item[i].startLane = notesDataA[i].GetStartLane();
             _notesData.item[i].endLane = notesDataA[i].GetEndLane();

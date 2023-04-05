@@ -132,6 +132,7 @@ public class NoteSaveData
 [Serializable]
 public class NoteSave
 {
+    public int number;
     public int time100;
     public int startLane;
     public int endLane;
