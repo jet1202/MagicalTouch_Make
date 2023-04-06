@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -606,49 +606,34 @@ public class GameEvent : MonoBehaviour
 
     public void SettingOpenFile()
     {
-        OpenFileDialog fileDialog = new OpenFileDialog();
-
-        fileDialog.Filter = null;
-
-        if (fileDialog.ShowDialog() == DialogResult.OK)
+        string path = EditorUtility.OpenFilePanelWithFilters("Choose file", "C:", new []
         {
-            musicImportField.text = fileDialog.FileName;
-        }
+            "Voice files", "ogg,mp3,wav"
+        });
+        musicImportField.text = path;
     }
     
     public void ExportOpenFile()
     {
-        OpenFileDialog fileDialog = new OpenFileDialog();
-
-        fileDialog.Filter = "Folder|.";
-
-        if (fileDialog.ShowDialog() == DialogResult.OK)
-        {
-            dataExportField.text = Path.GetDirectoryName(fileDialog.FileName);
-        }
+        string path = EditorUtility.OpenFolderPanel("Choose folder", "C:", "");
+        dataExportField.text = path;
     }
     
     public void ImportAdditionOpenFile()
     {
-        OpenFileDialog fileDialog = new OpenFileDialog();
-
-        fileDialog.Filter = "jsonファイル|*.json";
-
-        if (fileDialog.ShowDialog() == DialogResult.OK)
+        string path = EditorUtility.OpenFilePanelWithFilters("Title", "C:", new []
         {
-            dataImportFieldAddition.text = fileDialog.FileName;
-        }
+            "json files", "json"
+        });
+        dataImportFieldAddition.text = path;
     }
     
     public void ImportSheetOpenFile()
     {
-        OpenFileDialog fileDialog = new OpenFileDialog();
-
-        fileDialog.Filter = "jsonファイル|*.json";
-
-        if (fileDialog.ShowDialog() == DialogResult.OK)
+        string path = EditorUtility.OpenFilePanelWithFilters("Title", "C:", new []
         {
-            dataImportFieldSheet.text = fileDialog.FileName;
-        }
+            "json files", "json"
+        });
+        dataImportFieldSheet.text = path;
     }
 }
