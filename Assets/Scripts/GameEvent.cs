@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using SFB;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -606,34 +608,25 @@ public class GameEvent : MonoBehaviour
 
     public void SettingOpenFile()
     {
-        string path = EditorUtility.OpenFilePanelWithFilters("Choose file", "C:", new []
-        {
-            "Voice files", "ogg,mp3,wav"
-        });
-        musicImportField.text = path;
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("Sound file", "wav", "ogg", "mp3")}, false);
+        musicImportField.text = paths.First();
     }
     
     public void ExportOpenFile()
     {
-        string path = EditorUtility.OpenFolderPanel("Choose folder", "C:", "");
-        dataExportField.text = path;
+        var paths = StandaloneFileBrowser.OpenFolderPanel("Open Folder", "", false);
+        dataExportField.text = paths.First();
     }
     
     public void ImportAdditionOpenFile()
     {
-        string path = EditorUtility.OpenFilePanelWithFilters("Title", "C:", new []
-        {
-            "json files", "json"
-        });
-        dataImportFieldAddition.text = path;
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("json file", "json")}, false);
+        dataImportFieldAddition.text = paths.First();
     }
     
     public void ImportSheetOpenFile()
     {
-        string path = EditorUtility.OpenFilePanelWithFilters("Title", "C:", new []
-        {
-            "json files", "json"
-        });
-        dataImportFieldSheet.text = path;
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("json file", "json")}, false);
+        dataImportFieldSheet.text = paths.First();
     }
 }
