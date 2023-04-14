@@ -127,6 +127,7 @@ public class BpmItem
 public class NoteSaveData
 {
     public NoteSave[] item;
+    public SlideSave[] slideItem;
 }
 
 [Serializable]
@@ -138,4 +139,20 @@ public class NoteSave
     public int endLane;
     public char kind;
     public int length100;
+}
+
+[Serializable]
+public class SlideSave
+{
+    public int number;
+    public SlideMaintain[] item;
+}
+
+[Serializable]
+public class SlideMaintain
+{
+    public int time100;
+    public int startLine;
+    public int endLine;
+    public bool isVariation;
 }

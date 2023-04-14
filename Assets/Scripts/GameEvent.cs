@@ -92,7 +92,7 @@ public class GameEvent : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
-                    notesDirector.focusNote != null && notesDirector.noteOrBpm)
+                    notesDirector.focusNote != null && notesDirector.objectKind == 0)
                 {
                     if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
                     {
@@ -125,10 +125,13 @@ public class GameEvent : MonoBehaviour
                     else
                     {
                         float time;
-                        if (notesDirector.noteOrBpm)
+                        if (notesDirector.objectKind == 0)
                             time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f;
-                        else
+                        else if (notesDirector.objectKind == 1)
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f;
+                        else //(notesDirector.objectKind == 2)
+                            time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
+
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
                         notesDirector.TimeSet(beatToTime(nowBeatNote));
@@ -143,7 +146,7 @@ public class GameEvent : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
-                    notesDirector.focusNote != null && notesDirector.noteOrBpm)
+                    notesDirector.focusNote != null && notesDirector.objectKind == 0)
                 {
                     if (notesDirector.focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
                     {
@@ -176,10 +179,12 @@ public class GameEvent : MonoBehaviour
                     else
                     {
                         float time;
-                        if (notesDirector.noteOrBpm)
+                        if (notesDirector.objectKind == 0)
                             time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f;
-                        else
+                        else if (notesDirector.objectKind == 1)
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f;
+                        else // (notesDirector.objectKind == 2)
+                            time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         notesDirector.TimeSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
                         nowBeatTime = -1;
@@ -230,19 +235,38 @@ public class GameEvent : MonoBehaviour
             // 複製機能の実装
             if (Input.GetKeyDown(KeyCode.C))
             {
-                if (notesDirector.focusNote != null && notesDirector.noteOrBpm)
+                if (notesDirector.focusNote != null)
                 {
-                    Note data = notesDirector.focusNote.GetComponent<NotesData>().note;
-                    
-                    float time;
-                    time = data.GetTime100() / 100f;
-                    nowBeatNote = NextBeat(true, time, nowBeatNote);
-                    int n = nowBeatNote;
-                    notesDirector.NewNote((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 100), data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength100());
-                    nowBeatNote = n;
-                    nowBeatTime = -1;
-                    FocusBeatSet(beatToTime(nowBeatNote));
-                    nowBeatLong = -1;
+                    if (notesDirector.objectKind == 0)
+                    {
+                        Note data = notesDirector.focusNote.GetComponent<NotesData>().note;
+
+                        float time;
+                        time = data.GetTime100() / 100f;
+                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        int n = nowBeatNote;
+                        notesDirector.NewNote((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 100),
+                            data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength100());
+                        nowBeatNote = n;
+                        nowBeatTime = -1;
+                        FocusBeatSet(beatToTime(nowBeatNote));
+                        nowBeatLong = -1;
+                    }
+                    else if (notesDirector.objectKind == 2)
+                    {
+                        Note data = notesDirector.focusNote.GetComponent<SlideData>().note;
+
+                        float time;
+                        time = data.GetTime100() / 100f;
+                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        int n = nowBeatNote;
+                        notesDirector.NewSlide((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 100),
+                            data.GetStartLane(), data.GetEndLane(), notesDirector.focusNote.GetComponent<SlideData>().slideMaintain);
+                        nowBeatNote = n;
+                        nowBeatTime = -1;
+                        FocusBeatSet(beatToTime(nowBeatNote));
+                        nowBeatLong = -1;
+                    }
                 }
             }
         }
@@ -352,10 +376,18 @@ public class GameEvent : MonoBehaviour
             FocusBeatSet(time);
         else
         {
-            if (notesDirector.noteOrBpm)
-                FocusBeatSet(notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
-            else
-                FocusBeatSet(notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f);
+            switch (notesDirector.objectKind)
+            {
+                case 0:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
+                    break;
+                case 1:
+                    FocusBeatSet(notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f);
+                    break;
+                case 2:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f);
+                    break;
+            }
         }
     }
 
@@ -406,10 +438,18 @@ public class GameEvent : MonoBehaviour
             FocusBeatSet(time);
         else
         {
-            if (notesDirector.noteOrBpm)
-                FocusBeatSet(notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
-            else
-                FocusBeatSet(notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f);
+            switch (notesDirector.objectKind)
+            {
+                case 0:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f);
+                    break;
+                case 1:
+                    FocusBeatSet(notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f);
+                    break;
+                case 2:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f);
+                    break;
+            }
         }
     }
 

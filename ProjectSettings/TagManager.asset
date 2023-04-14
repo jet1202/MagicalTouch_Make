@@ -10,6 +10,8 @@ TagManager:
   - EditRange
   - Long
   - Bpm
+  - Slide
+  - SlideMaintain
   layers:
   - Default
   - TransparentFX

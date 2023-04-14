@@ -11,14 +11,16 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private NotesController notesController;
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
+    [SerializeField] private GameObject slidePrefab;
     [SerializeField] private GameObject bpmParent;
     [SerializeField] private GameObject bpmPrefab;
 
     [SerializeField] public GameObject lengthObj;
-    [SerializeField] public GameObject laneAndKindObj;
+    [SerializeField] public GameObject laneObj;
+    [SerializeField] private GameObject kindObj;
     [SerializeField] private GameObject bpmObj;
     public GameObject focusNote = null;
-    public bool noteOrBpm;
+    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain
 
     [SerializeField] private TMP_InputField timeField;
     [SerializeField] private TMP_InputField laneFieldF;
@@ -59,7 +61,7 @@ public class NotesDirector : MonoBehaviour
                         SetDisChoose();
                         focusNote = hit.collider.gameObject;
                         focusNote.GetComponent<NotesData>().Choose();
-                        noteOrBpm = true;
+                        objectKind = 0;
                         SetChoose();
                         gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
@@ -70,10 +72,21 @@ public class NotesDirector : MonoBehaviour
                         SetDisChoose();
                         focusNote = hit.collider.gameObject;
                         focusNote.GetComponent<BpmData>().Choose();
-                        noteOrBpm = false;
+                        objectKind = 1;
                         SetChoose();
                         gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
+                    }
+                    else if (hit.collider.gameObject.CompareTag("Slide"))
+                    {
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        focusNote.GetComponent<SlideData>().Choose();
+                        objectKind = 2;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(focusNote.GetComponent<SlideData>().note.GetTime100() / 100f);
                     }
                     else if (hit.collider.gameObject.CompareTag("EditRange"))
                     {
@@ -88,9 +101,14 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (focusNote != null && noteOrBpm)
+                if (focusNote != null && objectKind != 1)
                 {
-                    Note data = focusNote.GetComponent<NotesData>().note;
+                    Note data;
+                    if (objectKind == 0)
+                        data = focusNote.GetComponent<NotesData>().note;
+                    else
+                        data = focusNote.GetComponent<SlideData>().note;
+                    
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     {
                         NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane());
@@ -104,9 +122,14 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (focusNote != null && noteOrBpm)
+                if (focusNote != null && objectKind != 1)
                 {
-                    Note data = focusNote.GetComponent<NotesData>().note;
+                    Note data;
+                    if (objectKind == 0)
+                        data = focusNote.GetComponent<NotesData>().note;
+                    else
+                        data = focusNote.GetComponent<SlideData>().note;
+                    
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     {
                         NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane());
@@ -122,9 +145,14 @@ public class NotesDirector : MonoBehaviour
             {
                 if (focusNote != null)
                 {
-                    if (noteOrBpm)
+                    if (objectKind == 0)
                     {
                         focusNote.GetComponent<NotesData>().ClearNote();
+                        gameEvent.FocusBeatSet(gameEvent.time);
+                    }
+                    else if (objectKind == 2)
+                    {
+                        focusNote.GetComponent<SlideData>().ClearNote();
                         gameEvent.FocusBeatSet(gameEvent.time);
                     }
                     else
@@ -134,6 +162,7 @@ public class NotesDirector : MonoBehaviour
                             focusNote.GetComponent<BpmData>().ClearBpm();
                             bpms.Remove(focusNote);
                             notesController.MeasureLineSet(bpms);
+                            gameEvent.FocusBeatSet(gameEvent.time);
                         }
                     }
 
@@ -145,7 +174,7 @@ public class NotesDirector : MonoBehaviour
     
     private void SetChoose()
     {
-        if (noteOrBpm)
+        if (objectKind == 0)
         {
             // focusNoteのデータを取り出し表示する
             Note n = focusNote.GetComponent<NotesData>().note;
@@ -158,15 +187,29 @@ public class NotesDirector : MonoBehaviour
             if (n.GetKind() == 'L')
             {
                 lengthObj.SetActive(true);
-                laneAndKindObj.SetActive(true);
+                laneObj.SetActive(true);
+                kindObj.SetActive(true);
                 bpmObj.SetActive(false);
             }
             else
             {
                 lengthObj.SetActive(false);
-                laneAndKindObj.SetActive(true);
+                laneObj.SetActive(true);
+                kindObj.SetActive(true);
                 bpmObj.SetActive(false);
             }
+        }
+        else if (objectKind == 2)
+        {
+            Note n = focusNote.GetComponent<SlideData>().note;
+            timeField.text = (n.GetTime100() / 100f).ToString("F2");
+            laneFieldF.text = n.GetStartLane().ToString();
+            laneFieldL.text = n.GetEndLane().ToString();
+            
+            lengthObj.SetActive(false);
+            laneObj.SetActive(true);
+            kindObj.SetActive(false);
+            bpmObj.SetActive(false);
         }
         else
         {
@@ -175,7 +218,8 @@ public class NotesDirector : MonoBehaviour
             bpmField.text = b.GetBpm().ToString();
             
             lengthObj.SetActive(false);
-            laneAndKindObj.SetActive(false);
+            laneObj.SetActive(false);
+            kindObj.SetActive(false);
             bpmObj.SetActive(true);
         }
     }
@@ -184,13 +228,17 @@ public class NotesDirector : MonoBehaviour
     {
         if (focusNote == null) return;
 
-        if (noteOrBpm)
+        if (objectKind == 0)
         {
             focusNote.GetComponent<NotesData>().DisChoose();
         }
-        else
+        else if (objectKind == 1)
         {
             focusNote.GetComponent<BpmData>().DisChoose();
+        }
+        else if (objectKind == 2)
+        {
+            focusNote.GetComponent<SlideData>().DisChoose();
         }
     }
     
@@ -207,14 +255,20 @@ public class NotesDirector : MonoBehaviour
         
         if (focusNote != null)
         {
-            if (noteOrBpm)
+            if (objectKind == 0)
+            {
                 focusNote.GetComponent<NotesData>().ChangeTime(focusTime100);
-            else
+            }
+            else if (objectKind == 1)
             {
                 bpms[focusNote].SetTime100(focusTime100);
                 focusNote.GetComponent<BpmData>().ChangeTime(focusTime100 / 100f);
                 
                 notesController.MeasureLineSet(bpms);
+            }
+            else if (objectKind == 2)
+            {
+                focusNote.GetComponent<SlideData>().ChangeTime(focusTime100);
             }
         }
     }
@@ -235,7 +289,7 @@ public class NotesDirector : MonoBehaviour
         SetDisChoose();
         focusNote = obj;
         focusNote.GetComponent<NotesData>().Choose();
-        noteOrBpm = true;
+        objectKind = 0;
         SetChoose();
         gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
@@ -267,7 +321,10 @@ public class NotesDirector : MonoBehaviour
         
         if (focusNote != null)
         {
-            focusNote.GetComponent<NotesData>().ChangeLane(noteLaneF, noteLaneL);
+            if (objectKind == 0)
+                focusNote.GetComponent<NotesData>().ChangeLane(noteLaneF, noteLaneL);
+            else if (objectKind == 2)
+                focusNote.GetComponent<SlideData>().ChangeLane(noteLaneF, noteLaneL);
         }
     }
 
@@ -365,7 +422,7 @@ public class NotesDirector : MonoBehaviour
         SetDisChoose();
         focusNote = obj;
         focusNote.GetComponent<BpmData>().Choose();
-        noteOrBpm = false;
+        objectKind = 1;
         SetChoose();
         gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
@@ -390,5 +447,32 @@ public class NotesDirector : MonoBehaviour
             
             notesController.MeasureLineSet(bpms);
         }
+    }
+
+    public void NewSlide()
+    {
+        if (focusNote == null || objectKind != 2)
+            NewSlide((int)(gameEvent.time * 100), 5, 7, new Dictionary<GameObject, SlideMaintain>());
+        else
+        {
+            // have
+        }
+    }
+
+    public void NewSlide(int time100, int start, int end, Dictionary<GameObject, SlideMaintain> maintain)
+    {
+        GameObject obj = Instantiate(slidePrefab, noteParent.transform);
+        obj.GetComponent<SlideData>().note = new Note(time100, start, end, 'S', 0);
+        obj.GetComponent<SlideData>().slideMaintain = maintain;
+        obj.GetComponent<SlideData>().DefaultSettings();
+        obj.SetActive(true);
+        
+        SetDisChoose();
+        focusNote = obj;
+        focusNote.GetComponent<SlideData>().Choose();
+        objectKind = 2;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
     }
 }

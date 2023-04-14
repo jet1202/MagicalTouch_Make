@@ -107,11 +107,11 @@ public class CenterDirector : MonoBehaviour
 
     private void _play(char tag)
     {
-        if (tag == 'N' || tag == 'L')
+        if (tag == 'N' || tag == 'L' || tag == 'S')
         {
             audioSource.PlayOneShot(normalAudio);
         }
-        else if (tag == 'H') 
+        else if (tag == 'H' || tag == 'M') 
         {
             audioSource.PlayOneShot(holdAudio);
         }
