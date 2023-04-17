@@ -129,8 +129,13 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f;
                         else if (notesDirector.objectKind == 1)
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f;
-                        else //(notesDirector.objectKind == 2)
+                        else if (notesDirector.objectKind == 2)
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
+                        else
+                        {
+                            // have
+                            time = 0;
+                        }
 
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
@@ -183,8 +188,14 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime100() / 100f;
                         else if (notesDirector.objectKind == 1)
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime100() / 100f;
-                        else // (notesDirector.objectKind == 2)
+                        else if (notesDirector.objectKind == 2)
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
+                        else
+                        {
+                            // have
+                            time = 0;
+                        }
+                        
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         notesDirector.TimeSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
                         nowBeatTime = -1;
@@ -387,6 +398,9 @@ public class GameEvent : MonoBehaviour
                 case 2:
                     FocusBeatSet(notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f);
                     break;
+                case 3:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[notesDirector.focusNote].time100 / 100f);
+                    break;
             }
         }
     }
@@ -448,6 +462,9 @@ public class GameEvent : MonoBehaviour
                     break;
                 case 2:
                     FocusBeatSet(notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f);
+                    break;
+                case 3:
+                    FocusBeatSet(notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[notesDirector.focusNote].time100 / 100f);
                     break;
             }
         }

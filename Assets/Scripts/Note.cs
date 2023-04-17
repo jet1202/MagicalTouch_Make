@@ -154,5 +154,6 @@ public class SlideMaintain
     public int time100;
     public int startLine;
     public int endLine;
+    public bool isJudge;
     public bool isVariation;
 }

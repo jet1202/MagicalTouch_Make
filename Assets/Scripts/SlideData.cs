@@ -95,4 +95,10 @@ public class SlideData : MonoBehaviour
         centerDirector.NotesData.Remove(Number);
         Destroy(this.gameObject);
     }
+
+    public void NewMaintain(GameObject obj, SlideMaintain data)
+    {
+        slideMaintain.Add(obj, data);
+        obj.GetComponent<SlideMaintainData>().DefaultSettings();
+    }
 }
