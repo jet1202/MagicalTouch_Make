@@ -20,6 +20,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] public GameObject laneObj;
     [SerializeField] private GameObject kindObj;
     [SerializeField] private GameObject bpmObj;
+    [SerializeField] private GameObject maintainObj;
     public GameObject focusNote = null;
     public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain
 
@@ -29,6 +30,8 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private TMP_Dropdown kindDropdown;
     [SerializeField] private TMP_InputField lengthField;
     [SerializeField] private TMP_InputField bpmField;
+    [SerializeField] private Toggle isJudgeToggle;
+    [SerializeField] private Toggle isVariationToggle;
     
     private int focusTime100;
     
@@ -240,6 +243,7 @@ public class NotesDirector : MonoBehaviour
                 laneObj.SetActive(true);
                 kindObj.SetActive(true);
                 bpmObj.SetActive(false);
+                maintainObj.SetActive(false);
             }
             else
             {
@@ -247,6 +251,7 @@ public class NotesDirector : MonoBehaviour
                 laneObj.SetActive(true);
                 kindObj.SetActive(true);
                 bpmObj.SetActive(false);
+                maintainObj.SetActive(false);
             }
         }
         else if (objectKind == 2)
@@ -260,10 +265,15 @@ public class NotesDirector : MonoBehaviour
             laneObj.SetActive(true);
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
+            maintainObj.SetActive(false);
         }
         else if (objectKind == 3)
         {
-            // have
+            lengthObj.SetActive(false);
+            laneObj.SetActive(false);
+            kindObj.SetActive(false);
+            bpmObj.SetActive(false);
+            maintainObj.SetActive(true);
         }
         else
         {
@@ -275,6 +285,7 @@ public class NotesDirector : MonoBehaviour
             laneObj.SetActive(false);
             kindObj.SetActive(false);
             bpmObj.SetActive(true);
+            maintainObj.SetActive(false);
         }
     }
 
@@ -539,6 +550,7 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatLong = -1;
     }
     
+    // SlideMaintain
     public void NewSlideMaintain(int time100, int start, int end, bool isJudge, bool isVariation)
     {
         Transform pare;
@@ -566,5 +578,31 @@ public class NotesDirector : MonoBehaviour
         SetChoose();
         gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
+    }
+
+    public void SetJudge()
+    {
+        SetJudge(isJudgeToggle.isOn);
+    }
+
+    public void SetJudge(bool judge)
+    {
+        if (objectKind != 3 || focusNote == null)
+            return;
+
+        focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isJudge = judge;
+    }
+
+    public void SetVariation()
+    {
+        SetVariation(isVariationToggle.isOn);
+    }
+
+    public void SetVariation(bool variation)
+    {
+        if (objectKind != 3 || focusNote == null)
+            return;
+
+        focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isVariation = variation;
     }
 }
