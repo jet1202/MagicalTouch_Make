@@ -4,43 +4,78 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 
 public static class ExportJson
 {
     private static NoteSaveData _notesData;
     private static NoteAddition _additionData;
     
+    private static SlideSave[] _slideData;
+    
     public static void ExportingSheet(GameObject notes, string name)
     {
         // データの整理, シリアライズしたいデータを順番に_notesDataに格納
         _notesData = new NoteSaveData();
-        List<Note> notesDataA = new List<Note>();
+        Dictionary<int, Note> notesDataA = new Dictionary<int, Note>();
+        Dictionary<int, SlideMaintain[]> slideDataA = new Dictionary<int, SlideMaintain[]>();
         Note note;
+        int num = 0;
         foreach (Transform n in notes.transform)
         {
-            note = n.GetComponent<NotesData>().note;
-            notesDataA.Add(note);
+            if (n.CompareTag("SlideMaintain")) continue;
+
+            if (n.CompareTag("Slide"))
+                note = n.GetComponent<SlideData>().note;
+            else
+                note = n.GetComponent<NotesData>().note;
+            notesDataA.Add(num, note);
+
+            if (note.GetKind() == 'S')
+            {
+                List<SlideMaintain> data = new List<SlideMaintain>(n.GetComponent<SlideData>().slideMaintain.Values);
+                data = new List<SlideMaintain>(data.OrderBy(x => x.time100));
+                slideDataA.Add(num, data.ToArray());
+            }
+
+            num++;
         }
 
-        var notesE = notesDataA.OrderBy(x => x.GetTime100());
-        notesDataA = new List<Note>();
-        foreach (Note n in notesE)
+        var notesE = notesDataA.OrderBy(x => x.Value.GetTime100());
+        notesDataA = new Dictionary<int, Note>();
+        foreach (var n in notesE)
         {
-            notesDataA.Add(n);
+            notesDataA.Add(n.Key, n.Value);
         }
 
         // 順番に整理したノーツデータ[notesDataA]を[_notesData]に格納
         int NoteNumber = notesDataA.Count;
+        int slideNumber = slideDataA.Count;
         _notesData.item = new NoteSave[NoteNumber];
-        for (int i = 0; i < NoteNumber; i++)
+        _notesData.slideItem = new SlideSave[slideNumber];
+        num = 0;
+        int s = 0;
+        foreach (var di in notesDataA)
         {
-            _notesData.item[i] = new NoteSave();
-            _notesData.item[i].number = i;
-            _notesData.item[i].time100 = notesDataA[i].GetTime100();
-            _notesData.item[i].startLane = notesDataA[i].GetStartLane();
-            _notesData.item[i].endLane = notesDataA[i].GetEndLane();
-            _notesData.item[i].kind = notesDataA[i].GetKind();
-            _notesData.item[i].length100 = notesDataA[i].GetLength100();
+            _notesData.item[num] = new NoteSave();
+            _notesData.item[num].number = num;
+            _notesData.item[num].time100 = di.Value.GetTime100();
+            _notesData.item[num].startLane = di.Value.GetStartLane();
+            _notesData.item[num].endLane = di.Value.GetEndLane();
+            _notesData.item[num].kind = di.Value.GetKind();
+            _notesData.item[num].length100 = di.Value.GetLength100();
+
+            if (di.Value.GetKind() == 'S')
+            {
+                var sl = new SlideSave();
+                sl.number = num;
+                sl.item = slideDataA[di.Key];
+                _notesData.slideItem[s] = sl;
+
+                s++;
+            }
+
+            num++;
         }
 
         StreamWriter writer;
@@ -102,7 +137,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static List<Note> ImportingSheet(string name)
+    public static Dictionary<int, Note> ImportingSheet(string name)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
@@ -117,16 +152,28 @@ public static class ExportJson
         reader.Close();
 
         _notesData = JsonUtility.FromJson<NoteSaveData>(jsonStr);
+        _slideData = _notesData.slideItem;
 
-        List<Note> notesDataA = new List<Note>();
+        Dictionary<int, Note> notesDataA = new Dictionary<int, Note>();
         Note note;
         foreach (var n in _notesData.item)
         {
             note = new Note(n.time100, n.startLane, n.endLane, n.kind, n.length100);
-            notesDataA.Add(note);
+            notesDataA.Add(n.number, note);
         }
 
         return notesDataA;
+    }
+
+    public static Dictionary<int, SlideMaintain[]> ImportingSlide()
+    {
+        var a = new Dictionary<int, SlideMaintain[]>();
+        foreach (var s in _slideData)
+        {
+            a.Add(s.number, s.item);
+        }
+        
+        return a;
     }
 
     public static NoteAddition ImportingAddition(string name)

@@ -513,8 +513,8 @@ public class GameEvent : MonoBehaviour
             return;
         }
 
-        try
-        {
+        // try
+        // {
             if (additionPath != "")
             {
                 // Additionの入手
@@ -539,27 +539,32 @@ public class GameEvent : MonoBehaviour
             if (sheetPath != "")
             {
                 // Sheetの入手
-                List<Note> notesData;
+                Dictionary<int, Note> notesData;
+                Dictionary<int, SlideMaintain[]> slidesData;
                 
                 notesData = ExportJson.ImportingSheet(sheetPath);
+                slidesData = ExportJson.ImportingSlide();
 
                 foreach (Transform t in notes.transform)
                 {
                     t.GetComponent<NotesData>().ClearNote();
                 }
 
-                foreach (Note n in notesData)
+                foreach (var n in notesData)
                 {
-                    notesDirector.NewNote(n.GetTime100(), n.GetStartLane(), n.GetEndLane(), n.GetKind(), n.GetLength100());
+                    if (n.Value.GetKind() == 'S')
+                        notesDirector.NewSlide(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), slidesData[n.Key].ToDictionary(_ => new GameObject(), n => n));
+                    else
+                        notesDirector.NewNote(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetKind(), n.Value.GetLength100());
                 }
             }
-        }
-        catch (Exception e)
-        {
-            TabClose();
-            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
-            return;
-        }
+        // }
+        // catch (Exception e)
+        // {
+        //      TabClose();
+        //      noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
+        //      return;
+        // }
         
         TabClose();
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
@@ -578,19 +583,19 @@ public class GameEvent : MonoBehaviour
             return;
         }
 
-        try
-        {
+        // try
+        // {
             ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
             ExportJson.ExportingAddition(path + $"\\{name}Addition.json", new List<SpeedItem>(), new List<Bpms>(notesDirector.bpms.Values));
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
-        }
-        catch (Exception e)
-        {
-            TabClose();
-            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Export: {e}");
-        }
+        // }
+        // catch (Exception e)
+        // {
+        //     TabClose();
+        //     noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Export: {e}");
+        // }
     }
 
     public void TabClose()

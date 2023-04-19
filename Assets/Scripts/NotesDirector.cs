@@ -558,6 +558,7 @@ public class NotesDirector : MonoBehaviour
         
         SetDisChoose();
         focusNote = obj;
+        objectKind = 2;
         foreach (var data in maintain)
         {
             SlideMaintain a = data.Value;
