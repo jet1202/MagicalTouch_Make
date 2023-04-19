@@ -133,8 +133,9 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
                         else
                         {
-                            // have
-                            time = 0;
+                            time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
+                                .slideMaintain[notesDirector.focusNote].time100 + notesDirector.focusNote
+                                .GetComponent<SlideMaintainData>().parentSc.note.GetTime100()) / 100f;
                         }
 
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
@@ -192,8 +193,9 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime100() / 100f;
                         else
                         {
-                            // have
-                            time = 0;
+                            time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
+                                .slideMaintain[notesDirector.focusNote].time100 + notesDirector.focusNote
+                                .GetComponent<SlideMaintainData>().parentSc.note.GetTime100()) / 100f;
                         }
                         
                         nowBeatNote = NextBeat(true, time, nowBeatNote);

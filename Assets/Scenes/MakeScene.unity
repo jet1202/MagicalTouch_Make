@@ -18140,13 +18140,14 @@ MonoBehaviour:
   noteParent: {fileID: 1688289503}
   notePrefab: {fileID: 659290937}
   slidePrefab: {fileID: 433875084}
-  slideMaintainPrefab: {fileID: 0}
+  slideMaintainPrefab: {fileID: 8062020513805263394}
   bpmParent: {fileID: 649374827}
   bpmPrefab: {fileID: 1652761217}
   lengthObj: {fileID: 1338268376}
   laneObj: {fileID: 187779307}
   kindObj: {fileID: 122304191}
   bpmObj: {fileID: 11339982}
+  maintainObj: {fileID: 596712160}
   focusNote: {fileID: 0}
   objectKind: 0
   timeField: {fileID: 349766314}
@@ -18155,8 +18156,8 @@ MonoBehaviour:
   kindDropdown: {fileID: 172581806}
   lengthField: {fileID: 937189312}
   bpmField: {fileID: 440174147}
-  isJudgeToggle: {fileID: 0}
-  isVariationToggle: {fileID: 0}
+  isJudgeToggle: {fileID: 609419350}
+  isVariationToggle: {fileID: 1335283049}
 --- !u!4 &2040143209
 Transform:
   m_ObjectHideFlags: 0
@@ -18857,7 +18858,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -18913,10 +18914,27 @@ GameObject:
   m_Component:
   - component: {fileID: 2449063343567793117}
   - component: {fileID: 4873523271398636031}
+  - component: {fileID: 8062020513805263395}
   m_Layer: 0
   m_Name: SlideMaintain
-  m_TagString: Untagged
+  m_TagString: SlideMaintain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
+--- !u!114 &8062020513805263395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8062020513805263394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 478a22ce684a566439a69ad955ed8736, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 1825082431}
+  centerDirector: {fileID: 1673888454}
+  parent: {fileID: 0}
+  parentSc: {fileID: 0}

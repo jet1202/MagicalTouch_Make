@@ -15,11 +15,11 @@ public class SlideMaintainData : MonoBehaviour
     public GameObject parent;
     public SlideData parentSc;
 
-    public void DefaultSettings()
+    public void DefaultSettings(GameObject paren)
     {
         body = this.transform.GetChild(0).gameObject;
         flame = this.transform.GetChild(1).gameObject;
-        parent = this.transform.parent.gameObject;
+        parent = paren.gameObject;
         parentSc = parent.GetComponent<SlideData>();
     }
 
@@ -35,9 +35,10 @@ public class SlideMaintainData : MonoBehaviour
 
     public void SetTime(int time100)
     {
-        transform.localPosition = new Vector3(time100 / 100f * gameEvent.speed, transform.localPosition.y, 0f);
-
+        transform.localPosition = new Vector3((time100 + parentSc.note.GetTime100()) / 100f * gameEvent.speed, transform.localPosition.y, 0f);
         parentSc.slideMaintain[this.gameObject].time100 = time100;
+        
+        parentSc.LineChange();
     }
 
     public void SetLane(int startLane, int endLane)
@@ -46,11 +47,14 @@ public class SlideMaintainData : MonoBehaviour
         float end = startLanePosy - (laneDif * endLane);
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
         int dis = endLane - startLane;
-        body.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.5f, 1f);
+        body.GetComponent<SpriteRenderer>().size = new Vector2(dis, 0.1f);
+        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis + 0.2f, 0.2f);
         this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, laneDif * dis);
 
         parentSc.slideMaintain[this.gameObject].startLine = startLane;
         parentSc.slideMaintain[this.gameObject].endLine = endLane;
+        
+        parentSc.LineChange();
     }
 
     public void Clear()

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SlideData : MonoBehaviour
@@ -7,7 +8,8 @@ public class SlideData : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private CenterDirector centerDirector;
     
-    public Dictionary<GameObject, SlideMaintain> slideMaintain;
+    public Dictionary<GameObject, SlideMaintain> slideMaintain = new Dictionary<GameObject, SlideMaintain>();
+    private LineRenderer lineRenderer;
     private GameObject noteBody;
     private GameObject noteFlame;
     private GameObject noteLine;
@@ -22,6 +24,7 @@ public class SlideData : MonoBehaviour
         noteBody = transform.GetChild(0).gameObject;
         noteFlame = transform.GetChild(1).gameObject;
         noteLine = transform.GetChild(2).gameObject;
+        lineRenderer = noteLine.GetComponent<LineRenderer>();
         
         int leng = centerDirector.NotesData.Count;
         for (int i = 0; i <= leng; i++)
@@ -33,7 +36,7 @@ public class SlideData : MonoBehaviour
                 break;
             }
         }
-        
+
         Change();
     }
     
@@ -57,6 +60,33 @@ public class SlideData : MonoBehaviour
 
         centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime100(),
             new KeyValuePair<char, int>(note.GetKind(), note.GetLength100()));
+        LineChange();
+    }
+
+    public void LineChange()
+    {
+        var d = slideMaintain.OrderBy(x => x.Value.time100);
+        slideMaintain = new Dictionary<GameObject, SlideMaintain>();
+        foreach (var data in d)
+        {
+            slideMaintain.Add(data.Key, data.Value);
+        }
+
+        Vector3[] positions = new Vector3[slideMaintain.Count + 1];
+        positions[0] = new Vector3(0, 0, 0);
+        int i = 0;
+        foreach (var data in slideMaintain)
+        {
+            float t = data.Value.time100 / 100f;
+            float l = (data.Value.endLine + data.Value.startLine - note.GetStartLane() - note.GetEndLane()) / -2f;
+
+            positions[i + 1] = new Vector3(t * gameEvent.speed, (laneDif * l), 0f);
+
+            i++;
+        }
+
+        lineRenderer.positionCount = positions.Length;
+        lineRenderer.SetPositions(positions);
     }
     
     private void CenterNotesDataUpdate()
@@ -79,6 +109,7 @@ public class SlideData : MonoBehaviour
         note.SetTime100(time100);
         transform.localPosition = new Vector3(time100 / 100f * gameEvent.speed, transform.localPosition.y, 0f);
         CenterNotesDataUpdate();
+        LineChange();
     }
 
     public void ChangeLane(int startLane, int endLane)
@@ -88,6 +119,7 @@ public class SlideData : MonoBehaviour
         float end = startLanePosy - (laneDif * endLane);
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
         Change();
+        LineChange();
     }
     
     public void ClearNote()
@@ -99,6 +131,9 @@ public class SlideData : MonoBehaviour
     public void NewMaintain(GameObject obj, SlideMaintain data)
     {
         slideMaintain.Add(obj, data);
-        obj.GetComponent<SlideMaintainData>().DefaultSettings();
+        obj.GetComponent<SlideMaintainData>().DefaultSettings(this.gameObject);
+        obj.GetComponent<SlideMaintainData>().SetTime(data.time100);
+        obj.GetComponent<SlideMaintainData>().SetLane(data.startLine, data.endLine);
+        LineChange();
     }
 }
