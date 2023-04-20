@@ -168,6 +168,9 @@ public static class ExportJson
     public static Dictionary<int, SlideMaintain[]> ImportingSlide()
     {
         var a = new Dictionary<int, SlideMaintain[]>();
+
+        if (_slideData == null) return new Dictionary<int, SlideMaintain[]>();
+        
         foreach (var s in _slideData)
         {
             a.Add(s.number, s.item);
