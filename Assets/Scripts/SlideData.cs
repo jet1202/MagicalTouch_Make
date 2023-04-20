@@ -41,7 +41,7 @@ public class SlideData : MonoBehaviour
         Change();
     }
     
-    private void Change()
+    public void Change()
     {
         int dis = note.GetEndLane() - note.GetStartLane();
         Vector3 pos = new Vector3(note.GetTime100() / 100f * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
@@ -111,6 +111,11 @@ public class SlideData : MonoBehaviour
         transform.localPosition = new Vector3(time100 / 100f * gameEvent.speed, transform.localPosition.y, 0f);
         CenterNotesDataUpdate();
         LineChange();
+
+        foreach (var s in slideMaintain)
+        {
+            s.Key.GetComponent<SlideMaintainData>().Change();
+        }
     }
 
     public void ChangeLane(int startLane, int endLane)
@@ -121,6 +126,11 @@ public class SlideData : MonoBehaviour
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
         Change();
         LineChange();
+        
+        foreach (var s in slideMaintain)
+        {
+            s.Key.GetComponent<SlideMaintainData>().Change();
+        }
     }
     
     public void ClearNote()

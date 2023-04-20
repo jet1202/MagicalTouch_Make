@@ -33,6 +33,19 @@ public class SlideMaintainData : MonoBehaviour
         this.flame.SetActive(false);
     }
 
+    public void Change()
+    {
+        transform.localPosition = new Vector3((parentSc.slideMaintain[this.gameObject].time100 + parentSc.note.GetTime100()) / 100f * gameEvent.speed, transform.localPosition.y, 0f);
+        
+        float start = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].startLine);
+        float end = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].endLine);
+        transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
+        int dis = parentSc.slideMaintain[gameObject].endLine - parentSc.slideMaintain[gameObject].startLine;
+        body.GetComponent<SpriteRenderer>().size = new Vector2(dis, 0.1f);
+        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis + 0.2f, 0.2f);
+        this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, laneDif * dis);
+    }
+
     public void SetTime(int time100)
     {
         transform.localPosition = new Vector3((time100 + parentSc.note.GetTime100()) / 100f * gameEvent.speed, transform.localPosition.y, 0f);

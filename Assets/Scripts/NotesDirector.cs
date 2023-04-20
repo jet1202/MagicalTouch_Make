@@ -564,6 +564,7 @@ public class NotesDirector : MonoBehaviour
             SlideMaintain a = data.Value;
             NewSlideMaintain(a.time100, a.startLine, a.endLine, a.isJudge, a.isVariation);
         }
+        SetDisChoose();
         focusNote = obj;
         focusNote.GetComponent<SlideData>().Choose();
         objectKind = 2;

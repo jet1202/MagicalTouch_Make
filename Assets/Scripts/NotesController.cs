@@ -72,7 +72,12 @@ public class NotesController : MonoBehaviour
         // ノーツの位置調整
         foreach (Transform g in notes.gameObject.transform)
         {
-            g.GetComponent<NotesData>().ChangeTimeBySpeed();
+            if (g.CompareTag("Slide"))
+                g.GetComponent<SlideData>().Change();
+            else if (g.CompareTag("SlideMaintain"))
+                g.GetComponent<SlideMaintainData>().Change();
+            else
+                g.GetComponent<NotesData>().ChangeTimeBySpeed();
         }
         
         // Bpmの位置調整
