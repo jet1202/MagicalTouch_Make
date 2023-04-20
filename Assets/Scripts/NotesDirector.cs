@@ -584,7 +584,7 @@ public class NotesDirector : MonoBehaviour
         GameObject obj = Instantiate(slideMaintainPrefab, noteParent.transform);
 
         SlideMaintain mt = new SlideMaintain();
-        mt.time100 = time100;
+        mt.time100 = Math.Max(0, time100);
         mt.startLine = start;
         mt.endLine = end;
         mt.isJudge = isJudge;

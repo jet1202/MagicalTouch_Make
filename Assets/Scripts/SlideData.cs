@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class SlideData : MonoBehaviour
@@ -125,6 +126,12 @@ public class SlideData : MonoBehaviour
     public void ClearNote()
     {
         centerDirector.NotesData.Remove(Number);
+
+        foreach (var s in slideMaintain)
+        {
+            Destroy(s.Key);
+            // s.Key.GetComponent<SlideMaintainData>().Clear();
+        }
         Destroy(this.gameObject);
     }
 
