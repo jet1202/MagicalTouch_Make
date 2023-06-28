@@ -13,12 +13,14 @@ public static class ExportJson
     
     private static SlideSave[] _slideData;
     
-    public static void ExportingSheet(GameObject notes, string name)
+    public static void ExportingSheet(GameObject notes, string name, string subName)
     {
         // データの整理, シリアライズしたいデータを順番に_notesDataに格納
         _notesData = new NoteSaveData();
         Dictionary<int, Note> notesDataA = new Dictionary<int, Note>();
         Dictionary<int, SlideMaintain[]> slideDataA = new Dictionary<int, SlideMaintain[]>();
+        List<int> subNumber = new List<int>();
+
         Note note;
         int num = 0;
         foreach (Transform n in notes.transform)
@@ -64,6 +66,9 @@ public static class ExportJson
             _notesData.item[num].endLane = di.Value.GetEndLane();
             _notesData.item[num].kind = di.Value.GetKind();
             _notesData.item[num].length100 = di.Value.GetLength100();
+            
+            if (di.Value.GetSub() == 1)
+                subNumber.Add(num);
 
             if (di.Value.GetKind() == 'S')
             {
@@ -86,6 +91,16 @@ public static class ExportJson
         writer.Write(jsonStr);
         writer.Flush();
         writer.Close();
+
+        SubLaneSave sub = new SubLaneSave();
+        sub.number = subNumber.ToArray();
+
+        StreamWriter subWriter;
+        string subStr = JsonUtility.ToJson(sub, true);
+        subWriter = new StreamWriter(subName, false);
+        subWriter.Write(subStr);
+        subWriter.Flush();
+        subWriter.Close();
     }
 
     public static void ExportingAddition(string name, List<SpeedItem> speedItems, List<Bpms> bpmItems)
@@ -137,11 +152,11 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static Dictionary<int, Note> ImportingSheet(string name)
+    public static Dictionary<int, Note> ImportingSheet(string name, string subName)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
-        
+
         // データを読み込む
         _notesData = new NoteSaveData();
         
@@ -151,6 +166,22 @@ public static class ExportJson
         jsonStr = reader.ReadToEnd();
         reader.Close();
 
+        int[] subNumber = Array.Empty<int>();
+        if (subName != "")
+        {
+            if (Path.GetExtension(subName) != ".json")
+                throw new Exception("ファイル形式が正しくありません");
+
+            string subStr = "";
+            StreamReader subReader;
+            subReader = new StreamReader(subName);
+            subStr = subReader.ReadToEnd();
+            subReader.Close();
+
+            var data = JsonUtility.FromJson<SubLaneSave>(subStr);
+            subNumber = data.number;
+        }
+
         _notesData = JsonUtility.FromJson<NoteSaveData>(jsonStr);
         _slideData = _notesData.slideItem;
 
@@ -158,7 +189,8 @@ public static class ExportJson
         Note note;
         foreach (var n in _notesData.item)
         {
-            note = new Note(n.time100, n.startLane, n.endLane, n.kind, n.length100);
+            var nu = subNumber.Contains(n.number) ? 1 : 0;
+            note = new Note(n.time100, n.startLane, n.endLane, n.kind, n.length100, nu);
             notesDataA.Add(n.number, note);
         }
 

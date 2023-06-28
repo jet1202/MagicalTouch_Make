@@ -131,6 +131,11 @@ public class NotesData : MonoBehaviour
         Change();
     }
 
+    public void ChangeSub(int sub)
+    {
+        note.SetSub(sub);
+    }
+
     private void CenterNotesDataUpdate()
     {
         centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime100(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength100()));

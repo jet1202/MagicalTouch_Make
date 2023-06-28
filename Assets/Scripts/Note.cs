@@ -11,14 +11,16 @@ public class Note
     private int EndLane { get; set; }
     private char Kind { get; set; }
     private int Length100 { get; set; }
+    private int Lane { get; set; }
 
-    public Note(int time, int startLane, int endLane, char kind, int length)
+    public Note(int time, int startLane, int endLane, char kind, int length, int lane)
     {
         this.Time100 = time;
         this.StartLane = startLane;
         this.EndLane = endLane;
         this.Kind = kind;
         this.Length100 = length;
+        this.Lane = lane;
     }
 
     public int GetTime100()
@@ -46,6 +48,11 @@ public class Note
         return Length100;
     }
 
+    public int GetSub()
+    {
+        return Lane;
+    }
+
     public void SetTime100(int time)
     {
         this.Time100 = time;
@@ -65,6 +72,11 @@ public class Note
     public void SetLength100(int length)
     {
         this.Length100 = length;
+    }
+
+    public void SetSub(int lane)
+    {
+        this.Lane = lane;
     }
 }
 
@@ -156,4 +168,20 @@ public class SlideMaintain
     public int endLine;
     public bool isJudge;
     public bool isVariation;
+}
+
+[Serializable]
+public class SubLaneSave
+{
+    public int[] number;
+    public SpeedItem[] speedItem;
+    public CameraWork[] cameraWork;
+    public int[] activeTime100;
+}
+
+[Serializable]
+public class CameraWork
+{
+    public int time100;
+    public int angle;
 }

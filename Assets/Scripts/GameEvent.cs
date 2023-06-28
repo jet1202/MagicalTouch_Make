@@ -22,11 +22,14 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private TMP_InputField musicImportField;
     [SerializeField] private TMP_InputField dataImportFieldSheet;
     [SerializeField] private TMP_InputField dataImportFieldAddition;
+    [SerializeField] private TMP_InputField dataImportFieldSub;
     [SerializeField] private TMP_InputField dataExportField;
     [SerializeField] private TMP_InputField dataExportNameField;
     [SerializeField] private TMP_InputField speedField;
+    [SerializeField] private TMP_InputField musicSpeedField;
 
     [SerializeField] private Canvas settingCanvas;
+    [SerializeField] private Canvas musicImportCanvas;
     [SerializeField] private Canvas dataImportCanvas;
     [SerializeField] private Canvas dataExportCanvas;
     [SerializeField] private Canvas noticeCanvas;
@@ -259,7 +262,7 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         int n = nowBeatNote;
                         notesDirector.NewNote((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 100),
-                            data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength100());
+                            data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength100(), data.GetSub());
                         nowBeatNote = n;
                         nowBeatTime = -1;
                         FocusBeatSet(beatToTime(nowBeatNote));
@@ -274,7 +277,7 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         int n = nowBeatNote;
                         notesDirector.NewSlide((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 100),
-                            data.GetStartLane(), data.GetEndLane(), notesDirector.focusNote.GetComponent<SlideData>().slideMaintain);
+                            data.GetStartLane(), data.GetEndLane(), data.GetSub(), notesDirector.focusNote.GetComponent<SlideData>().slideMaintain.Values.ToArray());
                         nowBeatNote = n;
                         nowBeatTime = -1;
                         FocusBeatSet(beatToTime(nowBeatNote));
@@ -444,7 +447,7 @@ public class GameEvent : MonoBehaviour
 
     public void SpeedSet()
     {
-        speed = (float)Math.Round(float.Parse(speedField.text), 1, MidpointRounding.AwayFromZero);
+        speed = float.Parse(speedField.text);
         if (speed < 1) speed = 1.0f;
         if (speed > 10) speed = 10.0f;
         speedField.text = speed.ToString();
@@ -470,6 +473,22 @@ public class GameEvent : MonoBehaviour
                     break;
             }
         }
+    }
+    
+    public void MusicSpeedSet()
+    {
+        float musicSpeed = float.Parse(musicSpeedField.text);
+        Debug.Log($"musicspeed = {musicSpeed}");
+        if (musicSpeed < 0.1f) musicSpeed = 0.1f;
+        if (musicSpeed > 1.5f) musicSpeed = 1.5f;
+        musicSpeedField.text = musicSpeed.ToString();
+        audioSource.pitch = musicSpeed;
+    }
+
+    public void ImportMusicClick()
+    {
+        musicImportCanvas.gameObject.SetActive(true);
+        isOpenTab = true;
     }
 
     public void ExportClick()
@@ -506,6 +525,7 @@ public class GameEvent : MonoBehaviour
     {
         string additionPath = dataImportFieldAddition.text.Trim(' ', '"', '\n');
         string sheetPath = dataImportFieldSheet.text.Trim(' ', '"', '\n');
+        string subPath = dataImportFieldSub.text.Trim(' ', '"', '\n');
 
         if (!File.Exists(additionPath))
         {
@@ -542,7 +562,7 @@ public class GameEvent : MonoBehaviour
                 Dictionary<int, Note> notesData;
                 Dictionary<int, SlideMaintain[]> slidesData;
                 
-                notesData = ExportJson.ImportingSheet(sheetPath);
+                notesData = ExportJson.ImportingSheet(sheetPath, subPath);
                 slidesData = ExportJson.ImportingSlide();
 
                 foreach (Transform t in notes.transform)
@@ -553,9 +573,9 @@ public class GameEvent : MonoBehaviour
                 foreach (var n in notesData)
                 {
                     if (n.Value.GetKind() == 'S')
-                        notesDirector.NewSlide(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), slidesData[n.Key].ToDictionary(_ => new GameObject(), n => n));
+                        notesDirector.NewSlide(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetSub(), slidesData[n.Key]);
                     else
-                        notesDirector.NewNote(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetKind(), n.Value.GetLength100());
+                        notesDirector.NewNote(n.Value.GetTime100(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetKind(), n.Value.GetLength100(), n.Value.GetSub());
                 }
             }
         // }
@@ -585,7 +605,7 @@ public class GameEvent : MonoBehaviour
 
         // try
         // {
-            ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
+            ExportJson.ExportingSheet(notes, path + $"\\{name}.json", path + $"\\{name}Sub.json");
             ExportJson.ExportingAddition(path + $"\\{name}Addition.json", new List<SpeedItem>(), new List<Bpms>(notesDirector.bpms.Values));
             
             TabClose();
@@ -601,6 +621,7 @@ public class GameEvent : MonoBehaviour
     public void TabClose()
     {
         settingCanvas.gameObject.SetActive(false);
+        musicImportCanvas.gameObject.SetActive(false);
         dataExportCanvas.gameObject.SetActive(false);
         dataImportCanvas.gameObject.SetActive(false);
         isOpenTab = false;
@@ -668,6 +689,9 @@ public class GameEvent : MonoBehaviour
         
         notesDirector.NewBpm(0, 120);
         notesController.MeasureLineSet(notesDirector.bpms);
+
+        audioSource.pitch = 1.0f;
+        musicImportField.text = "1.0";
     }
 
     public void SettingOpenFile()
@@ -684,13 +708,22 @@ public class GameEvent : MonoBehaviour
     
     public void ImportAdditionOpenFile()
     {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("json file", "json")}, false);
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
+            new[] { new ExtensionFilter("json file", "json") }, false);
         dataImportFieldAddition.text = paths.First();
     }
     
     public void ImportSheetOpenFile()
     {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("json file", "json")}, false);
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
+            new[] { new ExtensionFilter("json file", "json") }, false);
         dataImportFieldSheet.text = paths.First();
+    }
+
+    public void ImportSubOpenFile()
+    {
+        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
+            new[] { new ExtensionFilter("json file", "json") }, false);
+        dataImportFieldSub.text = paths.First();
     }
 }

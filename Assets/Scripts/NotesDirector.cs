@@ -21,6 +21,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameObject kindObj;
     [SerializeField] private GameObject bpmObj;
     [SerializeField] private GameObject maintainObj;
+    [SerializeField] private GameObject subObj;
     public GameObject focusNote = null;
     public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain
 
@@ -32,6 +33,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private TMP_InputField bpmField;
     [SerializeField] private Toggle isJudgeToggle;
     [SerializeField] private Toggle isVariationToggle;
+    [SerializeField] private Toggle isSubToggle;
     
     private int focusTime100;
     
@@ -236,6 +238,7 @@ public class NotesDirector : MonoBehaviour
             laneFieldL.text = n.GetEndLane().ToString();
             kindDropdown.value = NoteKindToInt(n.GetKind());
             lengthField.text = (n.GetLength100() / 100f).ToString("F2");
+            isSubToggle.isOn = n.GetSub() == 1;
 
             if (n.GetKind() == 'L')
             {
@@ -253,6 +256,8 @@ public class NotesDirector : MonoBehaviour
                 bpmObj.SetActive(false);
                 maintainObj.SetActive(false);
             }
+            
+            subObj.SetActive(true);
         }
         else if (objectKind == 2)
         {
@@ -260,12 +265,14 @@ public class NotesDirector : MonoBehaviour
             timeField.text = (n.GetTime100() / 100f).ToString("F2");
             laneFieldF.text = n.GetStartLane().ToString();
             laneFieldL.text = n.GetEndLane().ToString();
+            isSubToggle.isOn = n.GetSub() == 1;
             
             lengthObj.SetActive(false);
             laneObj.SetActive(true);
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
             maintainObj.SetActive(false);
+            subObj.SetActive(true);
         }
         else if (objectKind == 3)
         {
@@ -281,6 +288,7 @@ public class NotesDirector : MonoBehaviour
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
             maintainObj.SetActive(true);
+            subObj.SetActive(false);
         }
         else
         {
@@ -293,6 +301,7 @@ public class NotesDirector : MonoBehaviour
             kindObj.SetActive(false);
             bpmObj.SetActive(true);
             maintainObj.SetActive(false);
+            subObj.SetActive(false);
         }
     }
 
@@ -364,13 +373,13 @@ public class NotesDirector : MonoBehaviour
     // Note
     public void NewNote()
     {
-        NewNote((int)(gameEvent.time * 100), 5, 7, 'N', 0);
+        NewNote((int)(gameEvent.time * 100), 5, 7, 'N', 0, 0);
     }
     
-    public void NewNote(int time100, int start, int end, char kind, int length100)
+    public void NewNote(int time100, int start, int end, char kind, int length100, int lane)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(time100, start, end, kind, length100);
+        obj.GetComponent<NotesData>().note = new Note(time100, start, end, kind, length100, lane);
         obj.GetComponent<NotesData>().DefaultSettings();
         obj.SetActive(true);
         
@@ -450,6 +459,14 @@ public class NotesDirector : MonoBehaviour
             lengthField.text = (noteLength100 / 100f).ToString();
             focusNote.GetComponent<NotesData>().ChangeLength(noteLength100);
         }
+    }
+
+    public void NoteSubSet()
+    {
+        if (objectKind == 0)
+            focusNote.GetComponent<NotesData>().ChangeSub(isSubToggle.isOn ? 1 : 0);
+        else if (objectKind == 2)
+            focusNote.GetComponent<SlideData>().ChangeSub(isSubToggle.isOn ? 1 : 0);
     }
 
     private char NoteKindToChar(int kind)
@@ -542,17 +559,17 @@ public class NotesDirector : MonoBehaviour
     public void NewSlide()
     {
         if (focusNote == null || objectKind != 2 && objectKind != 3)
-            NewSlide((int)(gameEvent.time * 100), 5, 7, new Dictionary<GameObject, SlideMaintain>());
+            NewSlide((int)(gameEvent.time * 100), 5, 7, 0, Array.Empty<SlideMaintain>());
         else if (objectKind == 2)
             NewSlideMaintain((int)(gameEvent.time * 100) - focusNote.GetComponent<SlideData>().note.GetTime100(), 5, 7, true, true);
         else
             NewSlideMaintain((int)(gameEvent.time * 100) - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime100(), 5, 7, true, true);
     }
 
-    public void NewSlide(int time100, int start, int end, Dictionary<GameObject, SlideMaintain> maintain)
+    public void NewSlide(int time100, int start, int end, int sub, SlideMaintain[] maintain)
     {
         GameObject obj = Instantiate(slidePrefab, noteParent.transform);
-        obj.GetComponent<SlideData>().note = new Note(time100, start, end, 'S', 0);
+        obj.GetComponent<SlideData>().note = new Note(time100, start, end, 'S', 0, sub);
         obj.GetComponent<SlideData>().DefaultSettings();
         obj.SetActive(true);
         
@@ -561,7 +578,7 @@ public class NotesDirector : MonoBehaviour
         objectKind = 2;
         foreach (var data in maintain)
         {
-            SlideMaintain a = data.Value;
+            SlideMaintain a = data;
             NewSlideMaintain(a.time100, a.startLine, a.endLine, a.isJudge, a.isVariation);
         }
         SetDisChoose();
