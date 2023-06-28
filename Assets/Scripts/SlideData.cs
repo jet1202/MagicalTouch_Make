@@ -132,6 +132,11 @@ public class SlideData : MonoBehaviour
             s.Key.GetComponent<SlideMaintainData>().Change();
         }
     }
+
+    public void ChangeSub(int sub)
+    {
+        note.SetSub(sub);
+    }
     
     public void ClearNote()
     {
