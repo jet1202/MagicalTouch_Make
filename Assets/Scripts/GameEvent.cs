@@ -477,6 +477,7 @@ public class GameEvent : MonoBehaviour
     
     public void MusicSpeedSet()
     {
+        // 曲の速度変更
         float musicSpeed = float.Parse(musicSpeedField.text);
         Debug.Log($"musicspeed = {musicSpeed}");
         if (musicSpeed < 0.1f) musicSpeed = 0.1f;
