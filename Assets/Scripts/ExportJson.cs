@@ -9,9 +9,11 @@ using UnityEngine.Windows.Speech;
 public static class ExportJson
 {
     private static NoteSaveData _notesData;
-    private static NoteAddition _additionData;
-    
     private static SlideSave[] _slideData;
+    
+    private static BpmSave _bpmData;
+    
+    private static FieldSave _fieldData;
     
     public static void ExportingSheet(GameObject notes, string name, string subName)
     {
@@ -19,7 +21,6 @@ public static class ExportJson
         _notesData = new NoteSaveData();
         Dictionary<int, Note> notesDataA = new Dictionary<int, Note>();
         Dictionary<int, SlideMaintain[]> slideDataA = new Dictionary<int, SlideMaintain[]>();
-        List<int> subNumber = new List<int>();
 
         Note note;
         int num = 0;
@@ -36,14 +37,14 @@ public static class ExportJson
             if (note.GetKind() == 'S')
             {
                 List<SlideMaintain> data = new List<SlideMaintain>(n.GetComponent<SlideData>().slideMaintain.Values);
-                data = new List<SlideMaintain>(data.OrderBy(x => x.time100));
+                data = new List<SlideMaintain>(data.OrderBy(x => x.time));
                 slideDataA.Add(num, data.ToArray());
             }
 
             num++;
         }
 
-        var notesE = notesDataA.OrderBy(x => x.Value.GetTime100());
+        var notesE = notesDataA.OrderBy(x => x.Value.GetTime());
         notesDataA = new Dictionary<int, Note>();
         foreach (var n in notesE)
         {
@@ -51,9 +52,9 @@ public static class ExportJson
         }
 
         // 順番に整理したノーツデータ[notesDataA]を[_notesData]に格納
-        int NoteNumber = notesDataA.Count;
+        int noteNumber = notesDataA.Count;
         int slideNumber = slideDataA.Count;
-        _notesData.item = new NoteSave[NoteNumber];
+        _notesData.item = new NoteSave[noteNumber];
         _notesData.slideItem = new SlideSave[slideNumber];
         num = 0;
         int s = 0;
@@ -61,14 +62,12 @@ public static class ExportJson
         {
             _notesData.item[num] = new NoteSave();
             _notesData.item[num].number = num;
-            _notesData.item[num].time100 = di.Value.GetTime100();
+            _notesData.item[num].time = di.Value.GetTime();
             _notesData.item[num].startLane = di.Value.GetStartLane();
             _notesData.item[num].endLane = di.Value.GetEndLane();
             _notesData.item[num].kind = di.Value.GetKind();
-            _notesData.item[num].length100 = di.Value.GetLength100();
-            
-            if (di.Value.GetSub() == 1)
-                subNumber.Add(num);
+            _notesData.item[num].length = di.Value.GetLength();
+            _notesData.item[num].field = di.Value.GetField();
 
             if (di.Value.GetKind() == 'S')
             {
@@ -91,60 +90,77 @@ public static class ExportJson
         writer.Write(jsonStr);
         writer.Flush();
         writer.Close();
-
-        SubLaneSave sub = new SubLaneSave();
-        sub.number = subNumber.ToArray();
-
-        StreamWriter subWriter;
-        string subStr = JsonUtility.ToJson(sub, true);
-        subWriter = new StreamWriter(subName, false);
-        subWriter.Write(subStr);
-        subWriter.Flush();
-        subWriter.Close();
     }
 
-    public static void ExportingAddition(string name, List<SpeedItem> speedItems, List<Bpms> bpmItems)
+    public static void ExportingBpm(string name, List<SpeedItem> speedItems, List<Bpm> bpmItems)
     {
-        // _additionDataはListや配列で直接管理できないため、クラスとして使用する。
-        _additionData = new NoteAddition();
-        
-        // speed
-        List<SpeedItem> speedA = new List<SpeedItem>();
-        var speedE = speedItems.OrderBy(x => x.time100);
-        foreach (var s in speedE)
-        {
-            speedA.Add(s);
-        }
-
-        int speedNumber = speedA.Count;
-        _additionData.speedItem = new SpeedItem[speedNumber];
-        for (int i = 0; i < speedNumber; i++)
-        {
-            _additionData.speedItem[i] = speedA[i];
-        }
+        _bpmData = new BpmSave();
 
         // bpm
         List<BpmItem> bpmA = new List<BpmItem>();
-        var bpmE = bpmItems.OrderBy(x => x.GetTime100());
+        var bpmE = bpmItems.OrderBy(x => x.GetTime());
         BpmItem item;
         foreach (var b in bpmE)
         {
             item = new BpmItem();
-            item.time100 = b.GetTime100();
+            item.time = b.GetTime();
             item.bpm = b.GetBpm();
             bpmA.Add(item);
         }
 
         int bpmNumber = bpmA.Count;
-        _additionData.bpmItem = new BpmItem[bpmNumber];
+        _bpmData.bpmItem = new BpmItem[bpmNumber];
         for (int i = 0; i < bpmNumber; i++)
         {
-            _additionData.bpmItem[i] = bpmA[i];
+            _bpmData.bpmItem[i] = bpmA[i];
         }
 
         StreamWriter writer;
 
-        string jsonStr = JsonUtility.ToJson(_additionData, true);
+        string jsonStr = JsonUtility.ToJson(_bpmData, true);
+
+        writer = new StreamWriter(name, false);
+        writer.Write(jsonStr);
+        writer.Flush();
+        writer.Close();
+    }
+
+    public static void ExportingField(string name)
+    {
+        _fieldData = new FieldSave();
+
+        _fieldData = new FieldSave()
+        {
+            item = new Field[]
+            {
+                new Field()
+                {
+                    field = 1,
+                    speedItem = new SpeedItem[]
+                    {
+                        new SpeedItem()
+                        {
+                            time = 0,
+                            speed = 100
+                        }
+                    },
+                    angleWork = new AngleWork[]
+                    {
+                        new AngleWork()
+                        {
+                            time = 0,
+                            angle = 0,
+                            variation = 0
+                        }
+                    },
+                    activeTime = Array.Empty<int>()
+                }
+            }
+        };
+        
+        StreamWriter writer;
+
+        string jsonStr = JsonUtility.ToJson(_fieldData, true);
 
         writer = new StreamWriter(name, false);
         writer.Write(jsonStr);

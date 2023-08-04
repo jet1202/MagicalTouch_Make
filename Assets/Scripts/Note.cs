@@ -6,26 +6,26 @@ using UnityEngine;
 [Serializable]
 public class Note
 {
-    private int Time100 { get; set; }
+    private int Time { get; set; }
     private int StartLane { get; set; }
     private int EndLane { get; set; }
     private char Kind { get; set; }
-    private int Length100 { get; set; }
-    private int Lane { get; set; }
+    private int Length { get; set; }
+    private int Field { get; set; }
 
-    public Note(int time, int startLane, int endLane, char kind, int length, int lane)
+    public Note(int time, int startLane, int endLane, char kind, int length, int field)
     {
-        this.Time100 = time;
+        this.Time = time;
         this.StartLane = startLane;
         this.EndLane = endLane;
         this.Kind = kind;
-        this.Length100 = length;
-        this.Lane = lane;
+        this.Length = length;
+        this.Field = field;
     }
 
-    public int GetTime100()
+    public int GetTime()
     {
-        return Time100;
+        return Time;
     }
     
     public int GetStartLane()
@@ -43,19 +43,19 @@ public class Note
         return Kind;
     }
 
-    public int GetLength100()
+    public int GetLength()
     {
-        return Length100;
+        return Length;
     }
 
-    public int GetSub()
+    public int GetField()
     {
-        return Lane;
+        return Field;
     }
 
-    public void SetTime100(int time)
+    public void SetTime(int time)
     {
-        this.Time100 = time;
+        this.Time = time;
     }
 
     public void SetLane(int start, int end)
@@ -69,74 +69,65 @@ public class Note
         this.Kind = kind;
     }
 
-    public void SetLength100(int length)
+    public void SetLength(int length)
     {
-        this.Length100 = length;
+        this.Length = length;
     }
 
-    public void SetSub(int lane)
+    public void SetField(int field)
     {
-        this.Lane = lane;
+        this.Field = field;
     }
 }
 
 [Serializable]
-public class Bpms
+public class Bpm
 {
-    private int Time100 { get; set; }
-    private int Bpm { get; set; }
+    private int Time { get; set; }
+    private int Num { get; set; }
 
-    public Bpms(int time, int bpm)
+    public Bpm(int time, int bpm)
     {
-        this.Time100 = time;
-        this.Bpm = bpm;
+        this.Time = time;
+        this.Num = bpm;
     }
 
-    public int GetTime100()
+    public int GetTime()
     {
-        return Time100;
+        return Time;
     }
 
     public int GetBpm()
     {
-        return Bpm;
+        return Num;
     }
 
-    public void SetTime100(int time100)
+    public void SetTime(int time)
     {
-        this.Time100 = time100;
+        this.Time = time;
     }
 
     public void SetBpm(int bpm)
     {
-        this.Bpm = bpm;
+        this.Num = bpm;
     }
 }
 
 [Serializable]
-public class NoteAddition
+public class BpmSave // save
 {
-    public SpeedItem[] speedItem;
     public BpmItem[] bpmItem;
-}
-
-[Serializable]
-public class SpeedItem
-{
-    public int time100;
-    public int speed100;
-    private bool isVariation;
 }
 
 [Serializable]
 public class BpmItem
 {
-    public int time100;
+    public int time;
     public int bpm;
 }
 
 [Serializable]
-public class NoteSaveData
+public class NoteSaveData // save
 {
     public NoteSave[] item;
     public SlideSave[] slideItem;
@@ -146,11 +137,12 @@ public class NoteSaveData
 public class NoteSave
 {
     public int number;
-    public int time100;
+    public int time;
     public int startLane;
     public int endLane;
     public char kind;
-    public int length100;
+    public int length;
+    public int field;
 }
 
 [Serializable]
@@ -163,7 +155,7 @@ public class SlideSave
 [Serializable]
 public class SlideMaintain
 {
-    public int time100;
+    public int time;
     public int startLine;
     public int endLine;
     public bool isJudge;
@@ -171,17 +163,33 @@ public class SlideMaintain
 }
 
 [Serializable]
-public class SubLaneSave
+public class FieldSave
 {
-    public int[] number;
-    public SpeedItem[] speedItem;
-    public CameraWork[] cameraWork;
-    public int[] activeTime100;
+    public Field[] item;
 }
 
 [Serializable]
-public class CameraWork
+public class Field
 {
-    public int time100;
+    public int field;
+    public SpeedItem[] speedItem;
+    public AngleWork[] angleWork;
+    public int[] activeTime;
+}
+
+
+[Serializable]
+public class SpeedItem
+{
+    public int time;
+    public int speed;
+    private bool isVariation;
+}
+
+[Serializable]
+public class AngleWork
+{
+    public int time;
     public int angle;
+    public int variation;
 }
