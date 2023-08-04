@@ -31,7 +31,7 @@ public class NotesController : MonoBehaviour
         transform.position = new Vector3(gameEvent.time * -gameEvent.speed, 0, 0);
     }
 
-    public void MeasureLineSet(Dictionary<GameObject, Bpms> bpmData)
+    public void MeasureLineSet(Dictionary<GameObject, Bpm> bpmData)
     {
         if (audio.clip == null) return;
         
@@ -41,22 +41,22 @@ public class NotesController : MonoBehaviour
             Destroy(g.gameObject);
         }
 
-        List<Bpms> bpms = new List<Bpms>(new List<Bpms>(bpmData.Values).OrderBy(x => x.GetTime100()));
+        List<Bpm> bpms = new List<Bpm>(new List<Bpm>(bpmData.Values).OrderBy(x => x.GetTime()));
         
         // ラインを生成
         time = audio.clip.length;
         leng = bpms.Count;
-        Bpms bpm, nextBpm;
+        Bpm bpm, nextBpm;
         bpmMeasureLines = new List<float>();
         for (int i = 0; i < leng; i++)
         {
             bpm = bpms[i];
             if (i == leng - 1)
-                nextBpm = new Bpms((int)(time * 100), 0);
+                nextBpm = new Bpm((int)(time * 1000), 0);
             else
                 nextBpm = bpms[i + 1];
 
-            for (float j = bpm.GetTime100() / 100f; j < nextBpm.GetTime100() / 100f; j += 60f / bpm.GetBpm() * 4)
+            for (float j = bpm.GetTime() / 1000f; j < nextBpm.GetTime() / 1000f; j += 60f / bpm.GetBpm() * 4)
             {
                 bpmMeasureLines.Add(j);
             }
@@ -83,7 +83,7 @@ public class NotesController : MonoBehaviour
         // Bpmの位置調整
         foreach (var g in bpmData)
         {
-            g.Key.GetComponent<BpmData>().ChangeTime(g.Value.GetTime100() / 100f);
+            g.Key.GetComponent<BpmData>().ChangeTime(g.Value.GetTime() / 1000f);
         }
     }
 

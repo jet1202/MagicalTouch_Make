@@ -18001,7 +18001,6 @@ MonoBehaviour:
   nowBeatNote: -1
   nowBeatLong: -1
   timeSignature: 4
-  speedItems: []
 --- !u!4 &1825082432
 Transform:
   m_ObjectHideFlags: 0
@@ -20143,7 +20142,7 @@ MonoBehaviour:
   bpmField: {fileID: 440174147}
   isJudgeToggle: {fileID: 609419350}
   isVariationToggle: {fileID: 1335283049}
-  isSubToggle: {fileID: 1613249171}
+  fieldDropdown: {fileID: 0}
 --- !u!4 &2040143209
 Transform:
   m_ObjectHideFlags: 0

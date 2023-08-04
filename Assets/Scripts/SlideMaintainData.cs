@@ -35,7 +35,7 @@ public class SlideMaintainData : MonoBehaviour
 
     public void Change()
     {
-        transform.localPosition = new Vector3((parentSc.slideMaintain[this.gameObject].time100 + parentSc.note.GetTime100()) / 100f * gameEvent.speed, transform.localPosition.y, 0f);
+        transform.localPosition = new Vector3((parentSc.slideMaintain[this.gameObject].time + parentSc.note.GetTime()) / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
         
         float start = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].startLine);
         float end = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].endLine);
@@ -46,10 +46,10 @@ public class SlideMaintainData : MonoBehaviour
         this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, laneDif * dis);
     }
 
-    public void SetTime(int time100)
+    public void SetTime(int time)
     {
-        transform.localPosition = new Vector3((time100 + parentSc.note.GetTime100()) / 100f * gameEvent.speed, transform.localPosition.y, 0f);
-        parentSc.slideMaintain[this.gameObject].time100 = time100;
+        transform.localPosition = new Vector3((time + parentSc.note.GetTime()) / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
+        parentSc.slideMaintain[this.gameObject].time = time;
         
         parentSc.LineChange();
     }

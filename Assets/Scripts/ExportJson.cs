@@ -92,7 +92,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingBpm(string name, List<SpeedItem> speedItems, List<Bpm> bpmItems)
+    public static void ExportingBpm(string name, List<Bpm> bpmItems)
     {
         _bpmData = new BpmSave();
 
@@ -168,7 +168,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static Dictionary<int, Note> ImportingSheet(string name, string subName)
+    public static Dictionary<int, Note> ImportingSheet(string name)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
@@ -182,22 +182,6 @@ public static class ExportJson
         jsonStr = reader.ReadToEnd();
         reader.Close();
 
-        int[] subNumber = Array.Empty<int>();
-        if (subName != "")
-        {
-            if (Path.GetExtension(subName) != ".json")
-                throw new Exception("ファイル形式が正しくありません");
-
-            string subStr = "";
-            StreamReader subReader;
-            subReader = new StreamReader(subName);
-            subStr = subReader.ReadToEnd();
-            subReader.Close();
-
-            var data = JsonUtility.FromJson<SubLaneSave>(subStr);
-            subNumber = data.number;
-        }
-
         _notesData = JsonUtility.FromJson<NoteSaveData>(jsonStr);
         _slideData = _notesData.slideItem;
 
@@ -205,8 +189,7 @@ public static class ExportJson
         Note note;
         foreach (var n in _notesData.item)
         {
-            var nu = subNumber.Contains(n.number) ? 1 : 0;
-            note = new Note(n.time100, n.startLane, n.endLane, n.kind, n.length100, nu);
+            note = new Note(n.time, n.startLane, n.endLane, n.kind, n.length, n.field);
             notesDataA.Add(n.number, note);
         }
 
@@ -227,12 +210,12 @@ public static class ExportJson
         return a;
     }
 
-    public static NoteAddition ImportingAddition(string name)
+    public static BpmSave ImportingBpm(string name)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
         
-        _additionData = new NoteAddition();
+        _bpmData = new BpmSave();
 
         // デシリアライズ
         string jsonStr = "";
@@ -241,8 +224,27 @@ public static class ExportJson
         jsonStr = reader.ReadToEnd();
         reader.Close();
 
-        _additionData = JsonUtility.FromJson<NoteAddition>(jsonStr);
+        _bpmData = JsonUtility.FromJson<BpmSave>(jsonStr);
 
-        return _additionData;
+        return _bpmData;
+    }
+
+    public static FieldSave ImportingField(string name)
+    {
+        if (Path.GetExtension(name) != ".json")
+            throw new Exception("ファイル形式が正しくありません");
+        
+        _fieldData = new FieldSave();
+
+        // デシリアライズ
+        string jsonStr = "";
+        StreamReader reader;
+        reader = new StreamReader(name);
+        jsonStr = reader.ReadToEnd();
+        reader.Close();
+
+        _fieldData = JsonUtility.FromJson<FieldSave>(jsonStr);
+
+        return _fieldData;
     }
 }

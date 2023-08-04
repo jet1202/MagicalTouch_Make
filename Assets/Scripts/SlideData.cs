@@ -33,7 +33,7 @@ public class SlideData : MonoBehaviour
             if (!centerDirector.NotesData.ContainsKey(i))
             {
                 Number = i;
-                centerDirector.NotesData.Add(Number, new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime100(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength100())));
+                centerDirector.NotesData.Add(Number, new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength())));
                 break;
             }
         }
@@ -44,29 +44,29 @@ public class SlideData : MonoBehaviour
     public void Change()
     {
         int dis = note.GetEndLane() - note.GetStartLane();
-        Vector3 pos = new Vector3(note.GetTime100() / 100f * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
+        Vector3 pos = new Vector3(note.GetTime() / 1000f * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
         // noteBody
         transform.localPosition = pos;
         noteBody.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.5f, 1f);
         // noteFlame
         noteFlame.transform.localPosition =
-            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength100() / 200 - 0.075f, 0f), 0f, pos.z);
+            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f, pos.z);
         noteFlame.transform.localScale = 
-            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength100() / 100f - 0.15f, 0f) + 0.4f, dis * 0.6f + 0.1f, 1f);
+            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.4f, dis * 0.6f + 0.1f, 1f);
         // collider2D
         GetComponent<BoxCollider2D>().offset =
-            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength100() / 200 - 0.075f, 0f), 0f);
+            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f);
         GetComponent<BoxCollider2D>().size = 
-            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength100() / 100f - 0.15f, 0f) + 0.3f, 0.6f * dis);
+            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.3f, 0.6f * dis);
 
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime100(),
-            new KeyValuePair<char, int>(note.GetKind(), note.GetLength100()));
+        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
+            new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
         LineChange();
     }
 
     public void LineChange()
     {
-        var d = slideMaintain.OrderBy(x => x.Value.time100);
+        var d = slideMaintain.OrderBy(x => x.Value.time);
         slideMaintain = new Dictionary<GameObject, SlideMaintain>();
         foreach (var data in d)
         {
@@ -78,7 +78,7 @@ public class SlideData : MonoBehaviour
         int i = 0;
         foreach (var data in slideMaintain)
         {
-            float t = data.Value.time100 / 100f;
+            float t = data.Value.time / 1000f;
             float l = (data.Value.endLine + data.Value.startLine - note.GetStartLane() - note.GetEndLane()) / -2f;
 
             positions[i + 1] = new Vector3(t * gameEvent.speed, (laneDif * l), 0f);
@@ -92,7 +92,7 @@ public class SlideData : MonoBehaviour
     
     private void CenterNotesDataUpdate()
     {
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime100(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength100()));
+        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
     }
     
     public void Choose()
@@ -105,10 +105,10 @@ public class SlideData : MonoBehaviour
         noteFlame.SetActive(false);
     }
 
-    public void ChangeTime(int time100)
+    public void ChangeTime(int time)
     {
-        note.SetTime100(time100);
-        transform.localPosition = new Vector3(time100 / 100f * gameEvent.speed, transform.localPosition.y, 0f);
+        note.SetTime(time);
+        transform.localPosition = new Vector3(time / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
         CenterNotesDataUpdate();
         LineChange();
 
@@ -133,9 +133,9 @@ public class SlideData : MonoBehaviour
         }
     }
 
-    public void ChangeSub(int sub)
+    public void ChangeField(int field)
     {
-        note.SetSub(sub);
+        note.SetField(field);
     }
     
     public void ClearNote()
@@ -154,7 +154,7 @@ public class SlideData : MonoBehaviour
     {
         slideMaintain.Add(obj, data);
         obj.GetComponent<SlideMaintainData>().DefaultSettings(this.gameObject);
-        obj.GetComponent<SlideMaintainData>().SetTime(data.time100);
+        obj.GetComponent<SlideMaintainData>().SetTime(data.time);
         obj.GetComponent<SlideMaintainData>().SetLane(data.startLine, data.endLine);
         LineChange();
     }

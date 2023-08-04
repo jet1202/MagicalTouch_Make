@@ -49,7 +49,7 @@ public class CenterDirector : MonoBehaviour
         preliminaryNum = 0;
         foreach (var pair in notesTiming)
         {
-            if (pair.Key / 100f < gameEvent.time)
+            if (pair.Key / 1000f < gameEvent.time)
             {
                 preliminaryNum++;
                 if (pair.Value == 'L')
@@ -83,7 +83,7 @@ public class CenterDirector : MonoBehaviour
                 longNoteMusic.playing = false;
             }
 
-            if (nextTiming.Key / 100f <= gameEvent.time)
+            if (nextTiming.Key / 1000f <= gameEvent.time)
             {
                 char val = nextTiming.Value;
                 _play(val);
