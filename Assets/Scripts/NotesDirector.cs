@@ -21,7 +21,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameObject kindObj;
     [SerializeField] private GameObject bpmObj;
     [SerializeField] private GameObject maintainObj;
-    [SerializeField] private GameObject subObj;
+    [SerializeField] private GameObject fieldObj;
     public GameObject focusNote = null;
     public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain
 
@@ -238,7 +238,7 @@ public class NotesDirector : MonoBehaviour
             laneFieldL.text = n.GetEndLane().ToString();
             kindDropdown.value = NoteKindToInt(n.GetKind());
             lengthField.text = (n.GetLength() / 1000f).ToString("F3");
-            // TODO: isSubToggle.isOn = n.GetSub() == 1;
+            fieldDropdown.value = n.GetField();
 
             if (n.GetKind() == 'L')
             {
@@ -257,7 +257,7 @@ public class NotesDirector : MonoBehaviour
                 maintainObj.SetActive(false);
             }
             
-            subObj.SetActive(true);
+            fieldObj.SetActive(true);
         }
         else if (objectKind == 2)
         {
@@ -265,14 +265,14 @@ public class NotesDirector : MonoBehaviour
             timeField.text = (n.GetTime() / 1000f).ToString("F3");
             laneFieldF.text = n.GetStartLane().ToString();
             laneFieldL.text = n.GetEndLane().ToString();
-            // TODO: isSubToggle.isOn = n.GetSub() == 1;
+            fieldDropdown.value = n.GetField();
             
             lengthObj.SetActive(false);
             laneObj.SetActive(true);
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
             maintainObj.SetActive(false);
-            subObj.SetActive(true);
+            fieldObj.SetActive(true);
         }
         else if (objectKind == 3)
         {
@@ -288,7 +288,7 @@ public class NotesDirector : MonoBehaviour
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
             maintainObj.SetActive(true);
-            subObj.SetActive(false);
+            fieldObj.SetActive(false);
         }
         else
         {
@@ -301,7 +301,7 @@ public class NotesDirector : MonoBehaviour
             kindObj.SetActive(false);
             bpmObj.SetActive(true);
             maintainObj.SetActive(false);
-            subObj.SetActive(false);
+            fieldObj.SetActive(false);
         }
     }
 
@@ -326,6 +326,15 @@ public class NotesDirector : MonoBehaviour
             focusNote.GetComponent<SlideMaintainData>().DisChoose();
         }
             
+    }
+
+    public void Deselect()
+    {
+        SetDisChoose();
+        focusNote = null;
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+        gameEvent.FocusBeatSet(gameEvent.time);
     }
     
     public void TimeSet()

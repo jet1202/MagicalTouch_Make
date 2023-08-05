@@ -28,6 +28,11 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private TMP_InputField speedField;
     [SerializeField] private TMP_InputField musicSpeedField;
 
+    [SerializeField] private GameObject noteButton;
+    [SerializeField] private GameObject speedButton;
+    [SerializeField] private GameObject noteTab;
+    [SerializeField] private GameObject speedTab;
+
     [SerializeField] private Canvas settingCanvas;
     [SerializeField] private Canvas musicImportCanvas;
     [SerializeField] private Canvas dataImportCanvas;
@@ -36,6 +41,7 @@ public class GameEvent : MonoBehaviour
 
     [SerializeField] private GameObject notes;
     [SerializeField] private GameObject bpms;
+    [SerializeField] private GameObject speeds;
     
     [SerializeField] private CenterDirector centerDirector;
     [SerializeField] private NotesController notesController;
@@ -70,6 +76,8 @@ public class GameEvent : MonoBehaviour
         musicSpeedField.text = "1.0";
         split = 1;
         splitField.text = split.ToString();
+        
+        NoteTabSet();
     }
     
     private void Update()
@@ -77,7 +85,7 @@ public class GameEvent : MonoBehaviour
         if (isPlaying)
         {
             time = audioSource.time;
-            timeField.text = time.ToString("F2");
+            timeField.text = time.ToString("F3");
             timeSlider.value = time;
             
             FocusBeatSet(time);
@@ -292,6 +300,7 @@ public class GameEvent : MonoBehaviour
             if (timeSlider.value.ToString("F2") != time.ToString("F2"))
             {
                 ChangeTime(timeSlider.value);
+                FocusBeatSet(time);
             }
         }
         
@@ -442,6 +451,28 @@ public class GameEvent : MonoBehaviour
         ChangeTime(float.Parse(timeField.text));
         nowBeatTime = -1;
         nowBeatLong = -1;
+    }
+
+    public void NoteTabSet()
+    {
+        notes.SetActive(true);
+        speeds.SetActive(false);
+        noteTab.SetActive(true);
+        speedTab.SetActive(false);
+        noteButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
+        speedButton.GetComponent<Image>().color = Color.white;
+        notesDirector.Deselect();
+    }
+
+    public void SpeedTabSet()
+    {
+        notes.SetActive(false);
+        speeds.SetActive(true);
+        noteTab.SetActive(false);
+        speedTab.SetActive(true);
+        noteButton.GetComponent<Image>().color = Color.white;
+        speedButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
+        notesDirector.Deselect();
     }
 
     public void SpeedSet()
