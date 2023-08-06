@@ -12,6 +12,7 @@ TagManager:
   - Bpm
   - Slide
   - SlideMaintain
+  - SpeedPoint
   layers:
   - Default
   - TransparentFX

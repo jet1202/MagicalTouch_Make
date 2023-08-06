@@ -46,6 +46,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private CenterDirector centerDirector;
     [SerializeField] private NotesController notesController;
     [SerializeField] private NotesDirector notesDirector;
+    [SerializeField] private Speeds speedsDirector;
     
     public float time;
     public bool isPlaying;
@@ -57,6 +58,7 @@ public class GameEvent : MonoBehaviour
     public bool isFileSet = false;
     public bool isOpenTab = false;
     public bool isEdit;
+    public int tabMode = 0; // 0 Note 1 Speed
 
     private float beatTime;
     private float mouseVal;
@@ -316,6 +318,8 @@ public class GameEvent : MonoBehaviour
         List<float> lines = notesController.bpmMeasureLines;
         lines.Sort();
 
+        if (lines.Count < 3) return 0;
+
         int measure = 0;
         int b;
         for (int i = 1; i < lines.Count; i++)
@@ -327,7 +331,7 @@ public class GameEvent : MonoBehaviour
                 break;
             }
         }
-
+        
         float beatTime = (lines[measure + 1] - lines[measure]) / split;
         b = (int)((nowTime - lines[measure]) / beatTime);
 
@@ -462,6 +466,8 @@ public class GameEvent : MonoBehaviour
         noteButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
         speedButton.GetComponent<Image>().color = Color.white;
         notesDirector.Deselect();
+
+        tabMode = 0;
     }
 
     public void SpeedTabSet()
@@ -473,6 +479,10 @@ public class GameEvent : MonoBehaviour
         noteButton.GetComponent<Image>().color = Color.white;
         speedButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
         notesDirector.Deselect();
+
+        tabMode = 1;
+        
+        speedsDirector.RenewalSpeed();
     }
 
     public void SpeedSet()

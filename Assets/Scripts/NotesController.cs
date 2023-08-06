@@ -8,6 +8,8 @@ using UniRx;
 public class NotesController : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private Speeds speeds;
+    
     [SerializeField] private GameObject measureLines;
     [SerializeField] private GameObject subLines;
     [SerializeField] private GameObject notes;
@@ -85,6 +87,9 @@ public class NotesController : MonoBehaviour
         {
             g.Key.GetComponent<BpmData>().ChangeTime(g.Value.GetTime() / 1000f);
         }
+        
+        // Speedの位置調整
+        speeds.RenewalSpeed();
     }
 
     public void BeatLineSet(int beat, int split)

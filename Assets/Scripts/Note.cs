@@ -114,6 +114,51 @@ public class Bpm
 }
 
 [Serializable]
+public class Speed
+{
+    private int Time { get; set; }
+    private int Speed100 { get; set; }
+    private bool IsVariation { get; set; }
+
+    public Speed(int time, int speed100, bool isVariation)
+    {
+        this.Time = time;
+        this.Speed100 = speed100;
+        this.IsVariation = isVariation;
+    }
+
+    public int GetTime()
+    {
+        return Time;
+    }
+
+    public int GetSpeed100()
+    {
+        return Speed100;
+    }
+
+    public bool GetIsVariation()
+    {
+        return IsVariation;
+    }
+
+    public void SetTime(int time)
+    {
+        Time = time;
+    }
+
+    public void SetSpeed100(int speed100)
+    {
+        Speed100 = speed100;
+    }
+
+    public void SetIsVariation(bool isVariation)
+    {
+        IsVariation = isVariation;
+    }
+}
+
+[Serializable]
 public class BpmSave // save
 {
     public BpmItem[] bpmItem;

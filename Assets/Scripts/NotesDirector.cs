@@ -9,6 +9,7 @@ public class NotesDirector : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesController notesController;
+    [SerializeField] private Speeds speedsDirector;
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
     [SerializeField] private GameObject slidePrefab;
@@ -23,7 +24,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameObject maintainObj;
     [SerializeField] private GameObject fieldObj;
     public GameObject focusNote = null;
-    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain
+    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds
 
     [SerializeField] private TMP_InputField timeField;
     [SerializeField] private TMP_InputField laneFieldF;
@@ -34,6 +35,11 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private Toggle isJudgeToggle;
     [SerializeField] private Toggle isVariationToggle;
     [SerializeField] private TMP_Dropdown fieldDropdown;
+
+    [SerializeField] private TMP_InputField speedTimeField;
+    [SerializeField] private TMP_InputField speedSpeedField;
+    [SerializeField] private Toggle speedIsVariationToggle;
+    [SerializeField] private TMP_Dropdown speedFieldDropdown;
     
     private int focusTime;
     
@@ -52,9 +58,12 @@ public class NotesDirector : MonoBehaviour
         if (gameEvent.isEdit && EventSystem.current.currentSelectedGameObject == null)
         {
             // キーボード入力
-            if (Input.GetKeyDown(KeyCode.N)) NewNote();
-            if (Input.GetKeyDown(KeyCode.B)) NewBpm();
-            
+            if (gameEvent.tabMode == 0)
+            {
+                if (Input.GetKeyDown(KeyCode.N)) NewNote();
+                if (Input.GetKeyDown(KeyCode.B)) NewBpm();
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -105,6 +114,17 @@ public class NotesDirector : MonoBehaviour
                         gameEvent.nowBeatLong = -1;
                         gameEvent.FocusBeatSet(focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].time / 1000f);
                     }
+                    else if (hit.collider.gameObject.CompareTag("SpeedPoint"))
+                    {
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        speedsDirector.SetChoose(focusNote);
+                        objectKind = 4;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime() / 1000f);
+                    }
                     else if (hit.collider.gameObject.CompareTag("EditRange"))
                     {
                         SetDisChoose();
@@ -118,7 +138,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (focusNote != null && objectKind != 1)
+                if (focusNote != null && objectKind != 1 && objectKind != 4)
                 {
                     if (objectKind == 3)
                     {
@@ -156,7 +176,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (focusNote != null && objectKind != 1)
+                if (focusNote != null && objectKind != 1 && objectKind != 4)
                 {
                     if (objectKind == 3)
                     {
@@ -210,7 +230,7 @@ public class NotesDirector : MonoBehaviour
                     {
                         focusNote.GetComponent<SlideMaintainData>().Clear();
                     }
-                    else
+                    else if (objectKind == 1)
                     {
                         if (bpms.Count != 1)
                         {
@@ -219,6 +239,10 @@ public class NotesDirector : MonoBehaviour
                             notesController.MeasureLineSet(bpms);
                             gameEvent.FocusBeatSet(gameEvent.time);
                         }
+                    }
+                    else if (objectKind == 4)
+                    {
+                        speedsDirector.DeleteSpeeds(focusNote);
                     }
 
                     focusNote = null;
@@ -290,7 +314,7 @@ public class NotesDirector : MonoBehaviour
             maintainObj.SetActive(true);
             fieldObj.SetActive(false);
         }
-        else
+        else if (objectKind == 1)
         {
             Bpm b = bpms[focusNote];
             timeField.text = (b.GetTime() / 1000f).ToString("F3");
@@ -302,6 +326,13 @@ public class NotesDirector : MonoBehaviour
             bpmObj.SetActive(true);
             maintainObj.SetActive(false);
             fieldObj.SetActive(false);
+        }
+        else if (objectKind == 4)
+        {
+            Speed s = speedsDirector.fieldSpeeds[focusNote];
+            speedTimeField.text = (s.GetTime() / 1000f).ToString("F3");
+            speedSpeedField.text = (s.GetSpeed100() / 100f).ToString("F2");
+            speedIsVariationToggle.isOn = s.GetIsVariation();
         }
     }
 
@@ -321,9 +352,13 @@ public class NotesDirector : MonoBehaviour
         {
             focusNote.GetComponent<SlideData>().DisChoose();
         }
-        else
+        else if (objectKind == 3)
         {
             focusNote.GetComponent<SlideMaintainData>().DisChoose();
+        }
+        else
+        {
+            speedsDirector.SetDisChoose(focusNote);
         }
             
     }
@@ -653,5 +688,44 @@ public class NotesDirector : MonoBehaviour
             return;
 
         focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isVariation = variation;
+    }
+
+    public void NewSpeed()
+    {
+        GameObject o = speedsDirector.NewSpeeds((int)(gameEvent.time * 1000), 100, false);
+        
+        SetDisChoose();
+        focusNote = o;
+        speedsDirector.SetChoose(focusNote);
+        objectKind = 4;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+        gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime() / 1000f);
+    }
+
+    public void SetSpeedTime(string timeS)
+    {
+        float time = float.Parse(timeS);
+        float cTime = Math.Clamp(time, 0f, gameEvent.GetComponent<AudioSource>().clip.length);
+        focusTime = (int)(cTime * 1000);
+        speedTimeField.text = (focusTime / 1000f).ToString("F3");
+        
+        speedsDirector.SetTime(focusNote, focusTime);
+    }
+
+    public void SetSpeedSpeed(string speedS)
+    {
+        float speed = float.Parse(speedS);
+        float cSpeed = Math.Clamp(speed, -6f, 6f);
+        int speed100 = (int)(cSpeed * 100);
+        speedSpeedField.text = (speed100 / 100f).ToString("F2");
+        
+        speedsDirector.SetSpeed(focusNote, speed100);
+    }
+
+    public void SetSpeedIsVariation(bool isVariation)
+    {
+        speedsDirector.SetIsVariation(focusNote, isVariation);
     }
 }
