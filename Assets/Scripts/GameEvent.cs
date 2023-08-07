@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using SFB;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -97,7 +96,6 @@ public class GameEvent : MonoBehaviour
 
         if (isEdit && EventSystem.current.currentSelectedGameObject == null)
         {
-            
             // キーボード入力
             if (Input.GetKeyDown(KeyCode.Space)) PlayClick();
 
@@ -143,16 +141,26 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime() / 1000f;
                         else if (notesDirector.objectKind == 2)
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime() / 1000f;
-                        else
+                        else if (notesDirector.objectKind == 3)
                         {
                             time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
                                 .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
                                 .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
                         }
+                        else
+                        {
+                            // Speeds
+                            time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
+                            Debug.Log($"time = {time}");
+                        }
 
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
-                        notesDirector.TimeSet(beatToTime(nowBeatNote));
+                        Debug.Log($"nowBeatNote = {nowBeatNote}");
+                        if (notesDirector.objectKind == 4)
+                            notesDirector.SetSpeedTime(beatToTime(nowBeatNote).ToString());
+                        else
+                            notesDirector.TimeSet(beatToTime(nowBeatNote));
                         nowBeatTime = -1;
                         FocusBeatSet(beatToTime(nowBeatNote));
                     }
@@ -203,15 +211,24 @@ public class GameEvent : MonoBehaviour
                             time = notesDirector.bpms[notesDirector.focusNote].GetTime() / 1000f;
                         else if (notesDirector.objectKind == 2)
                             time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime() / 1000f;
-                        else
+                        else if (notesDirector.objectKind == 3)
                         {
                             time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
                                 .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
                                 .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
                         }
+                        else
+                        {
+                            // Speeds
+                            time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
+                        }
                         
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
-                        notesDirector.TimeSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
+                        if (notesDirector.objectKind == 4)
+                            notesDirector.SetSpeedTime(
+                                Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length).ToString());
+                        else
+                            notesDirector.TimeSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
                         nowBeatTime = -1;
                         FocusBeatSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
                     }
@@ -345,6 +362,7 @@ public class GameEvent : MonoBehaviour
         int measure = beat / split;
         int b = beat % split;
 
+        Debug.Log($"beat:{beat}, measure:{measure}, b:{b}");
         float beatTime = (lines[measure + 1] - lines[measure]) / split;
 
         return lines[measure] + beatTime * b;
