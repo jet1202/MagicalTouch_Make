@@ -13,6 +13,7 @@ TagManager:
   - Slide
   - SlideMaintain
   - SpeedPoint
+  - FieldElement
   layers:
   - Default
   - TransparentFX

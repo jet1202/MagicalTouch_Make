@@ -46,6 +46,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private NotesController notesController;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private FieldSettingController fieldSettingController;
     
     public float time;
     public bool isPlaying;
@@ -151,12 +152,10 @@ public class GameEvent : MonoBehaviour
                         {
                             // Speeds
                             time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
-                            Debug.Log($"time = {time}");
                         }
 
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
-                        Debug.Log($"nowBeatNote = {nowBeatNote}");
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(beatToTime(nowBeatNote).ToString());
                         else
@@ -312,6 +311,15 @@ public class GameEvent : MonoBehaviour
                 }
             }
         }
+        else if (EventSystem.current.currentSelectedGameObject != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Delete) && EventSystem.current.currentSelectedGameObject.CompareTag("FieldElement"))
+            {
+                int n = int.Parse(EventSystem.current.currentSelectedGameObject.name);
+                if (n != 0)
+                    fieldSettingController.DeleteField(n);
+            }
+        }
 
         if (isEdit)
         {
@@ -327,6 +335,8 @@ public class GameEvent : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F11))
         {
             Screen.fullScreen = !Screen.fullScreen;
+            if (Screen.fullScreen)
+                Screen.SetResolution(1920, 1080, true);
         }
     }
 
@@ -361,8 +371,7 @@ public class GameEvent : MonoBehaviour
 
         int measure = beat / split;
         int b = beat % split;
-
-        Debug.Log($"beat:{beat}, measure:{measure}, b:{b}");
+        
         float beatTime = (lines[measure + 1] - lines[measure]) / split;
 
         return lines[measure] + beatTime * b;

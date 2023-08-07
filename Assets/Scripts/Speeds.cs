@@ -30,6 +30,13 @@ public class Speeds : MonoBehaviour
         speedsData.RemoveAt(index);
     }
 
+    public void ChangeField(int value)
+    {
+        speedsData[nowField] = new List<Speed>(fieldSpeeds.Values);
+        nowField = value;
+        RenewalSpeed();
+    }
+
     public GameObject NewSpeeds(int time, int speed100, bool isVariation)
     {
         GameObject obj = Instantiate(speedPrefab, transform);

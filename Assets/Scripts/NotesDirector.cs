@@ -728,4 +728,74 @@ public class NotesDirector : MonoBehaviour
     {
         speedsDirector.SetIsVariation(focusNote, isVariation);
     }
+
+    public void SetSpeedFieldDropDown(int value)
+    {
+        speedsDirector.ChangeField(value);
+    }
+
+    public void DeleteFieldNoteChange(int number)
+    {
+        foreach (Transform t in noteParent.transform)
+        {
+            if (t.CompareTag("SlideMaintain")) continue;
+            
+            Note note;
+            if (t.CompareTag("Slide"))
+                note = t.GetComponent<SlideData>().note;
+            else
+                note = t.GetComponent<NotesData>().note;
+
+            int n;
+            if (note.GetField() == number)
+                n = 0;
+            else if (note.GetField() > number)
+                n = note.GetField() - 1;
+            else
+                n = note.GetField();
+
+            if (t.CompareTag("Slide"))
+                t.GetComponent<SlideData>().note.SetField(n);
+            else
+                t.GetComponent<NotesData>().note.SetField(n);
+        }
+    }
+
+    public Color FieldColor(int number)
+    {
+        if (number == 0)
+            return Color.white;
+
+        float c;
+        int spl = 2;
+        int f = 3;
+        if (number <= 3)
+            c = number;
+        else
+        {
+            number -= 3;
+            while (true)
+            {
+                if (number <= f)
+                {
+                    c = (float)(number * 2 - 1) / spl;
+                    break;
+                }
+                else
+                {
+                    number -= spl;
+                    spl *= 2;
+                    f *= 2;
+                }
+            }
+        }
+        
+        float r = (55f + (Math.Abs(c - 2) > 1 ? 0 : 1 - Math.Abs(c - 2)) * 200f) / 255f;
+        float g = (55f + (Math.Abs(c) > 1 ? (Math.Abs(c - 3) > 1 ? 0 : 1 - Math.Abs(c - 3)) : 1 - Math.Abs(c)) * 200f) /
+                  255f;
+        float b = (55f + (Math.Abs(c - 1) > 1 ? 0 : 1 - Math.Abs(c - 1)) * 200f) / 255f;
+
+        Color color = new Color(r, g, b);
+        return color;
+    }
 }
