@@ -7,6 +7,7 @@ using UnityEngine;
 public class Speeds : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private NotesDirector notesDirector;
     
     [SerializeField] private GameObject speedPrefab;
     
@@ -42,6 +43,7 @@ public class Speeds : MonoBehaviour
         GameObject obj = Instantiate(speedPrefab, transform);
         fieldSpeeds.Add(obj, new Speed(time, speed100, isVariation));
         obj.transform.localPosition = new Vector3(time / 1000f * gameEvent.speed, SpeedY(speed100), 0f);
+        obj.transform.GetChild(1).GetComponent<SpriteRenderer>().color = notesDirector.FieldColor(nowField);
         obj.SetActive(true);
         
         RenewalSpeedLine();
@@ -70,6 +72,7 @@ public class Speeds : MonoBehaviour
         {
             GameObject obj = Instantiate(speedPrefab, transform);
             obj.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, SpeedY(s.GetSpeed100()), 0f);
+            obj.transform.GetChild(1).GetComponent<SpriteRenderer>().color = notesDirector.FieldColor(nowField);
             obj.SetActive(true);
             fieldSpeeds.Add(obj, s);
         }
@@ -148,5 +151,16 @@ public class Speeds : MonoBehaviour
         if (multiple100 > 500) multiple100 = 500;
         float re = -3.2f + (multiple100 / 100f) * 1.2f;
         return re;
+    }
+
+    public void SetColor(Color color)
+    {
+        transform.GetComponent<LineRenderer>().startColor = color;
+        transform.GetComponent<LineRenderer>().endColor = color;
+
+        foreach (var g in fieldSpeeds.Keys)
+        {
+            g.transform.GetChild(1).GetComponent<SpriteRenderer>().color = color;
+        }
     }
 }

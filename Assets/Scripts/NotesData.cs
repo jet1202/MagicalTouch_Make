@@ -19,11 +19,14 @@ public class NotesData : MonoBehaviour
     public Note note;
     public int Number;
 
-    public void DefaultSettings()
+    public void DefaultSettings(Color color, bool isColor)
     {
         noteBody = transform.GetChild(0).gameObject;
         noteFlame = transform.GetChild(1).gameObject;
         noteLength = transform.GetChild(2).gameObject;
+        
+        transform.GetChild(3).GetComponent<SpriteRenderer>().color = color;
+        transform.GetChild(3).gameObject.SetActive(isColor);
         
         int leng = centerDirector.NotesData.Count;
         for (int i = 0; i <= leng; i++)

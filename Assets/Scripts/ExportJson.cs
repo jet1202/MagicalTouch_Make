@@ -128,11 +128,12 @@ public static class ExportJson
     public static void ExportingField(string name, int fields, List<List<Speed>> speeds)
     {
         _fieldData = new Field[fields];
+        
 
-        List<SpeedItem> s;
+        List<SpeedItem> s = new List<SpeedItem>();
         SpeedItem s_item;
 
-        List<AngleWork> a;
+        List<AngleWork> a = new List<AngleWork>();
         
         for (int i = 0; i < fields; i++)
         {
@@ -146,8 +147,14 @@ public static class ExportJson
                 
                 s.Add(s_item);
             }
+            
+            // TODO: angleWork, activeTime
 
+            _fieldData[i] = new Field();
+            _fieldData[i].field = i;
             _fieldData[i].speedItem = s.ToArray();
+            _fieldData[i].angleWork = a.ToArray();
+            _fieldData[i].activeTime = Array.Empty<int>();
         }
 
         // _fieldData = new FieldSave()
@@ -178,10 +185,13 @@ public static class ExportJson
         //         }
         //     }
         // };
+
+        var data = new FieldSave();
+        data.item = _fieldData;
         
         StreamWriter writer;
 
-        string jsonStr = JsonUtility.ToJson(_fieldData, true);
+        string jsonStr = JsonUtility.ToJson(data, true);
 
         writer = new StreamWriter(name, false);
         writer.Write(jsonStr);

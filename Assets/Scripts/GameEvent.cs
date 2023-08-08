@@ -58,6 +58,7 @@ public class GameEvent : MonoBehaviour
     public bool isFileSet = false;
     public bool isOpenTab = false;
     public bool isEdit;
+    public bool isNoteColor = false;
     public int tabMode = 0; // 0 Note 1 Speed
 
     private float beatTime;
@@ -552,6 +553,12 @@ public class GameEvent : MonoBehaviour
         audioSource.pitch = musicSpeed;
     }
 
+    public void FieldColorSet(bool isColor)
+    {
+        notesDirector.NoteFieldColorOn(isColor);
+        isNoteColor = isColor;
+    }
+
     public void ImportMusicClick()
     {
         musicImportCanvas.gameObject.SetActive(true);
@@ -647,7 +654,27 @@ public class GameEvent : MonoBehaviour
             if (fieldPath != "")
             {
                 // fieldの入手
-                // TODO: field対応
+                Field[] fieldData = ExportJson.ImportingField(fieldPath);
+
+                List<List<Speed>> speedData = new List<List<Speed>>();
+
+                int i = 0;
+                foreach (var f in fieldData)
+                {
+                    speedData.Add(new List<Speed>());
+                    foreach (var s in f.speedItem)
+                    {
+                        speedData[i].Add(new Speed(s.time, s.speed, s.isVariation));
+                    }
+                    
+                    //TODO: angleWork
+
+                    i++;
+                }
+
+                speedsDirector.speedsData = speedData;
+                speedsDirector.ChangeField(0);
+                speedsDirector.RenewalSpeed();
             }
         // }
         // catch (Exception e)
@@ -678,7 +705,7 @@ public class GameEvent : MonoBehaviour
         // {
             ExportJson.ExportingSheet(notes, path + $"\\{name}.json", path + $"\\{name}Sub.json");
             ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
-            ExportJson.ExportingField(path + $"\\{name}Field.json", speedsDirector.nowField, speedsDirector.speedsData);
+            ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount, speedsDirector.speedsData);
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");

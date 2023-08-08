@@ -420,11 +420,11 @@ public class NotesDirector : MonoBehaviour
         NewNote((int)(gameEvent.time * 1000), 5, 7, 'N', 0, 0);
     }
     
-    public void NewNote(int time, int start, int end, char kind, int length, int lane)
+    public void NewNote(int time, int start, int end, char kind, int length, int field)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
-        obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length, lane);
-        obj.GetComponent<NotesData>().DefaultSettings();
+        obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length, field);
+        obj.GetComponent<NotesData>().DefaultSettings(FieldColor(field), gameEvent.isNoteColor);
         obj.SetActive(true);
         
         SetDisChoose();
@@ -507,10 +507,17 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteFieldSet()
     {
+        int v = fieldDropdown.value;
         if (objectKind == 0)
-            focusNote.GetComponent<NotesData>().ChangeField(fieldDropdown.value);
+        {
+            focusNote.GetComponent<NotesData>().ChangeField(v);
+            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(v);
+        }
         else if (objectKind == 2)
+        {
             focusNote.GetComponent<SlideData>().ChangeField(fieldDropdown.value);
+            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(v);
+        }
     }
 
     private char NoteKindToChar(int kind)
@@ -614,7 +621,7 @@ public class NotesDirector : MonoBehaviour
     {
         GameObject obj = Instantiate(slidePrefab, noteParent.transform);
         obj.GetComponent<SlideData>().note = new Note(time, start, end, 'S', 0, sub);
-        obj.GetComponent<SlideData>().DefaultSettings();
+        obj.GetComponent<SlideData>().DefaultSettings(FieldColor(sub), gameEvent.isNoteColor);
         obj.SetActive(true);
         
         SetDisChoose();
@@ -732,6 +739,7 @@ public class NotesDirector : MonoBehaviour
     public void SetSpeedFieldDropDown(int value)
     {
         speedsDirector.ChangeField(value);
+        speedsDirector.SetColor(FieldColor(value));
     }
 
     public void DeleteFieldNoteChange(int number)
@@ -758,6 +766,18 @@ public class NotesDirector : MonoBehaviour
                 t.GetComponent<SlideData>().note.SetField(n);
             else
                 t.GetComponent<NotesData>().note.SetField(n);
+
+            t.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(n);
+        }
+    }
+
+    public void NoteFieldColorOn(bool isColor)
+    {
+        foreach (Transform t in noteParent.transform)
+        {
+            if (t.CompareTag("SlideMaintain")) continue;
+
+            t.GetChild(3).gameObject.SetActive(isColor);
         }
     }
 
