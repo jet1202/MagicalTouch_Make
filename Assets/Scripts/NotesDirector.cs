@@ -717,7 +717,7 @@ public class NotesDirector : MonoBehaviour
     public void SetSpeedSpeed(string speedS)
     {
         float speed = float.Parse(speedS);
-        float cSpeed = Math.Clamp(speed, -6f, 6f);
+        float cSpeed = Math.Clamp(speed, 0f, 12f);
         int speed100 = (int)(cSpeed * 100);
         speedSpeedField.text = (speed100 / 100f).ToString("F2");
         

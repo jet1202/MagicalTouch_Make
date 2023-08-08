@@ -228,7 +228,7 @@ public class SpeedItem
 {
     public int time;
     public int speed;
-    private bool isVariation;
+    public bool isVariation;
 }
 
 [Serializable]

@@ -678,7 +678,7 @@ public class GameEvent : MonoBehaviour
         // {
             ExportJson.ExportingSheet(notes, path + $"\\{name}.json", path + $"\\{name}Sub.json");
             ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
-            ExportJson.ExportingField(path + $"\\{name}Field.json");
+            ExportJson.ExportingField(path + $"\\{name}Field.json", speedsDirector.nowField, speedsDirector.speedsData);
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");

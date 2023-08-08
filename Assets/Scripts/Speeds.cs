@@ -41,7 +41,7 @@ public class Speeds : MonoBehaviour
     {
         GameObject obj = Instantiate(speedPrefab, transform);
         fieldSpeeds.Add(obj, new Speed(time, speed100, isVariation));
-        obj.transform.localPosition = new Vector3(time / 1000f * gameEvent.speed, 0.4f + (speed100 / 100f) * 0.6f, 0f);
+        obj.transform.localPosition = new Vector3(time / 1000f * gameEvent.speed, SpeedY(speed100), 0f);
         obj.SetActive(true);
         
         RenewalSpeedLine();
@@ -69,7 +69,7 @@ public class Speeds : MonoBehaviour
         foreach (var s in speedsData[nowField])
         {
             GameObject obj = Instantiate(speedPrefab, transform);
-            obj.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, 0.4f + (s.GetSpeed100() / 100f) * 0.6f, 0f);
+            obj.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, SpeedY(s.GetSpeed100()), 0f);
             obj.SetActive(true);
             fieldSpeeds.Add(obj, s);
         }
@@ -93,15 +93,15 @@ public class Speeds : MonoBehaviour
         for (int i = 0; i < leng; i++)
         {
             positions.Add(new Vector3(ss[i].GetTime() / 1000f * gameEvent.speed,
-                0.4f + (ss[i].GetSpeed100() / 100f) * 0.6f, 0f));
+                SpeedY(ss[i].GetSpeed100()), 0f));
             
             if (!ss[i].GetIsVariation() && i != leng - 1)
                 positions.Add(new Vector3(ss[i + 1].GetTime() / 1000f * gameEvent.speed,
-                    0.4f + (ss[i].GetSpeed100() / 100f) * 0.6f, 0f));
+                    SpeedY(ss[i].GetSpeed100()), 0f));
         }
 
         positions.Add(new Vector3(gameEvent.GetComponent<AudioSource>().clip.length * gameEvent.speed,
-            0.4f + (ss[leng - 1].GetSpeed100() / 100f) * 0.6f, 0f));
+            SpeedY(ss[leng - 1].GetSpeed100()), 0f));
 
         transform.GetComponent<LineRenderer>().positionCount = positions.Count;
         transform.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
@@ -124,7 +124,7 @@ public class Speeds : MonoBehaviour
     {
         Speed s = fieldSpeeds[speeds];
         s.SetTime(time);
-        speeds.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, 0.4f + (s.GetSpeed100() / 100f) * 0.6f, 0f);
+        speeds.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, SpeedY(s.GetSpeed100()), 0f);
         RenewalSpeedLine();
     }
 
@@ -132,7 +132,7 @@ public class Speeds : MonoBehaviour
     {
         Speed s = fieldSpeeds[speeds];
         s.SetSpeed100(speed100);
-        speeds.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, 0.4f + (s.GetSpeed100() / 100f) * 0.6f, 0f);
+        speeds.transform.localPosition = new Vector3(s.GetTime() / 1000f * gameEvent.speed, SpeedY(s.GetSpeed100()), 0f);
         RenewalSpeedLine();
     }
 
@@ -141,5 +141,12 @@ public class Speeds : MonoBehaviour
         Speed s = fieldSpeeds[speeds];
         s.SetIsVariation(isVariation);
         RenewalSpeedLine();
+    }
+
+    public float SpeedY(int multiple100)
+    {
+        if (multiple100 > 500) multiple100 = 500;
+        float re = -3.2f + (multiple100 / 100f) * 1.2f;
+        return re;
     }
 }

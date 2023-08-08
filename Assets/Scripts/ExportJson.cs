@@ -13,7 +13,7 @@ public static class ExportJson
     
     private static BpmSave _bpmData;
     
-    private static FieldSave _fieldData;
+    private static Field[] _fieldData;
     
     public static void ExportingSheet(GameObject notes, string name, string subName)
     {
@@ -125,38 +125,59 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingField(string name)
+    public static void ExportingField(string name, int fields, List<List<Speed>> speeds)
     {
-        _fieldData = new FieldSave();
+        _fieldData = new Field[fields];
 
-        _fieldData = new FieldSave()
+        List<SpeedItem> s;
+        SpeedItem s_item;
+
+        List<AngleWork> a;
+        
+        for (int i = 0; i < fields; i++)
         {
-            item = new Field[]
+            s = new List<SpeedItem>();
+            foreach (var sp in speeds[i])
             {
-                new Field()
-                {
-                    field = 1,
-                    speedItem = new SpeedItem[]
-                    {
-                        new SpeedItem()
-                        {
-                            time = 0,
-                            speed = 100
-                        }
-                    },
-                    angleWork = new AngleWork[]
-                    {
-                        new AngleWork()
-                        {
-                            time = 0,
-                            angle = 0,
-                            variation = 0
-                        }
-                    },
-                    activeTime = Array.Empty<int>()
-                }
+                s_item = new SpeedItem();
+                s_item.time = sp.GetTime();
+                s_item.speed = sp.GetSpeed100();
+                s_item.isVariation = sp.GetIsVariation();
+                
+                s.Add(s_item);
             }
-        };
+
+            _fieldData[i].speedItem = s.ToArray();
+        }
+
+        // _fieldData = new FieldSave()
+        // {
+        //     item = new Field[]
+        //     {
+        //         new Field()
+        //         {
+        //             field = 1,
+        //             speedItem = new SpeedItem[]
+        //             {
+        //                 new SpeedItem()
+        //                 {
+        //                     time = 0,
+        //                     speed = 100
+        //                 }
+        //             },
+        //             angleWork = new AngleWork[]
+        //             {
+        //                 new AngleWork()
+        //                 {
+        //                     time = 0,
+        //                     angle = 0,
+        //                     variation = 0
+        //                 }
+        //             },
+        //             activeTime = Array.Empty<int>()
+        //         }
+        //     }
+        // };
         
         StreamWriter writer;
 
@@ -229,12 +250,10 @@ public static class ExportJson
         return _bpmData;
     }
 
-    public static FieldSave ImportingField(string name)
+    public static Field[] ImportingField(string name)
     {
         if (Path.GetExtension(name) != ".json")
             throw new Exception("ファイル形式が正しくありません");
-        
-        _fieldData = new FieldSave();
 
         // デシリアライズ
         string jsonStr = "";
@@ -243,7 +262,8 @@ public static class ExportJson
         jsonStr = reader.ReadToEnd();
         reader.Close();
 
-        _fieldData = JsonUtility.FromJson<FieldSave>(jsonStr);
+        FieldSave _Data = JsonUtility.FromJson<FieldSave>(jsonStr);
+        _fieldData = _Data.item;
 
         return _fieldData;
     }
