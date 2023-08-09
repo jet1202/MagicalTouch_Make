@@ -53,6 +53,8 @@ public class NotesDirector : MonoBehaviour
     
     public Dictionary<GameObject, Bpm> bpms = new Dictionary<GameObject, Bpm>();
 
+    public bool isImporting = false;
+
     private void Update()
     {
         if (gameEvent.isEdit && EventSystem.current.currentSelectedGameObject == null)
@@ -423,9 +425,9 @@ public class NotesDirector : MonoBehaviour
     public void NewNote(int time, int start, int end, char kind, int length, int field)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
+        obj.SetActive(true);
         obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length, field);
         obj.GetComponent<NotesData>().DefaultSettings(FieldColor(field), gameEvent.isNoteColor);
-        obj.SetActive(true);
         
         SetDisChoose();
         focusNote = obj;
@@ -445,7 +447,8 @@ public class NotesDirector : MonoBehaviour
     }
 
     public void NoteLaneSet()
-    { 
+    {
+        if (isImporting) return;
         NoteLaneSet(int.Parse(laneFieldF.text), int.Parse(laneFieldL.text));
     }
     
@@ -473,6 +476,8 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteKindSet()
     {
+        if (isImporting) return;
+
         noteKind = kindDropdown.value;
         if (focusNote != null)
         {
@@ -487,6 +492,8 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLengthSet()
     {
+        if (isImporting) return;
+
         NoteLengthSet(float.Parse(lengthField.text));
     }
 
@@ -507,6 +514,8 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteFieldSet()
     {
+        if (isImporting) return;
+
         int v = fieldDropdown.value;
         if (objectKind == 0)
         {

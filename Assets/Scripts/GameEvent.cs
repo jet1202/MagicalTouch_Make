@@ -642,6 +642,7 @@ public class GameEvent : MonoBehaviour
                     t.GetComponent<NotesData>().ClearNote();
                 }
 
+                notesDirector.isImporting = true;
                 foreach (var n in notesData)
                 {
                     if (n.Value.GetKind() == 'S')
@@ -649,6 +650,8 @@ public class GameEvent : MonoBehaviour
                     else
                         notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
                 }
+
+                notesDirector.isImporting = false;
             }
 
             if (fieldPath != "")
@@ -665,6 +668,7 @@ public class GameEvent : MonoBehaviour
                     foreach (var s in f.speedItem)
                     {
                         speedData[i].Add(new Speed(s.time, s.speed, s.isVariation));
+                        Debug.Log($"speeddata[{i}], time = {speedData[i].Last().GetTime()}");
                     }
                     
                     //TODO: angleWork
@@ -673,8 +677,11 @@ public class GameEvent : MonoBehaviour
                 }
 
                 speedsDirector.speedsData = speedData;
-                speedsDirector.ChangeField(0);
+                speedsDirector.nowField = 0;
                 speedsDirector.RenewalSpeed();
+
+                fieldSettingController.fieldsCount = i;
+                fieldSettingController.RenewalField();
             }
         // }
         // catch (Exception e)
@@ -790,7 +797,7 @@ public class GameEvent : MonoBehaviour
         notesController.MeasureLineSet(notesDirector.bpms);
 
         audioSource.pitch = 1.0f;
-        musicImportField.text = "1.0";
+        musicSpeedField.text = "1.0";
     }
 
     public void SettingOpenFile()

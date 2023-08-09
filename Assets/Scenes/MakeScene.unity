@@ -26213,6 +26213,7 @@ MonoBehaviour:
   speedSpeedField: {fileID: 2146900634}
   speedIsVariationToggle: {fileID: 1870433250}
   speedFieldDropdown: {fileID: 996866199}
+  isImporting: 0
 --- !u!4 &2040143209
 Transform:
   m_ObjectHideFlags: 0
