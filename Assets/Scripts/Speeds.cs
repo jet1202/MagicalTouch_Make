@@ -8,11 +8,13 @@ public class Speeds : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
+    [SerializeField] private Angles anglesDirector;
     
     [SerializeField] private GameObject speedPrefab;
     
     public List<List<Speed>> speedsData = new List<List<Speed>>();
     public Dictionary<GameObject, Speed> fieldSpeeds;
+
     public int nowField;
 
     private void Start()
@@ -24,11 +26,13 @@ public class Speeds : MonoBehaviour
     public void NewField()
     {
         speedsData.Add(new List<Speed>() { new Speed(0, 100, false) });
+        anglesDirector.NewField();
     }
 
     public void DeleteField(int index)
     {
         speedsData.RemoveAt(index);
+        anglesDirector.DeleteField(index);
     }
 
     public void ChangeField(int value)
@@ -36,8 +40,11 @@ public class Speeds : MonoBehaviour
         speedsData[nowField] = new List<Speed>(fieldSpeeds.Values);
         nowField = value;
         RenewalSpeed();
+        
+        anglesDirector.ChangeField();
     }
 
+    // Speeds
     public GameObject NewSpeeds(int time, int speed100, bool isVariation)
     {
         GameObject obj = Instantiate(speedPrefab, transform);
@@ -155,8 +162,8 @@ public class Speeds : MonoBehaviour
 
     public void SetColor(Color color)
     {
-        transform.GetComponent<LineRenderer>().startColor = color;
-        transform.GetComponent<LineRenderer>().endColor = color;
+        // transform.GetComponent<LineRenderer>().startColor = color;
+        // transform.GetComponent<LineRenderer>().endColor = color;
 
         foreach (var g in fieldSpeeds.Keys)
         {

@@ -48,7 +48,6 @@ public class FieldSettingController : MonoBehaviour
         for (int i = 0; i < fieldsCount; i++)
             list.Add(i.ToString());
         
-        Debug.Log("変更");
         noteDropdown.ClearOptions();
         speedDropdown.ClearOptions();
         noteDropdown.AddOptions(list);

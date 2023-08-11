@@ -14,6 +14,7 @@ TagManager:
   - SlideMaintain
   - SpeedPoint
   - FieldElement
+  - AnglePoint
   layers:
   - Default
   - TransparentFX

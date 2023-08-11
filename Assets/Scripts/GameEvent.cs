@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using SFB;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -46,6 +47,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private NotesController notesController;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private Angles anglesDirector;
     [SerializeField] private FieldSettingController fieldSettingController;
     
     public float time;
@@ -149,10 +151,15 @@ public class GameEvent : MonoBehaviour
                                 .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
                                 .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
                         }
-                        else
+                        else if (notesDirector.objectKind == 4)
                         {
                             // Speeds
                             time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
+                        }
+                        else
+                        {
+                            // angles
+                            time = anglesDirector.fieldAngles[notesDirector.focusNote].GetTime() / 1000f;
                         }
 
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
@@ -217,12 +224,17 @@ public class GameEvent : MonoBehaviour
                                 .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
                                 .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
                         }
-                        else
+                        else if (notesDirector.objectKind == 4)
                         {
                             // Speeds
                             time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
                         }
-                        
+                        else
+                        {
+                            // angles
+                            time = anglesDirector.fieldAngles[notesDirector.focusNote].GetTime() / 1000f;
+                        }
+
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(
@@ -511,6 +523,7 @@ public class GameEvent : MonoBehaviour
         tabMode = 1;
         
         speedsDirector.RenewalSpeed();
+        anglesDirector.RenewalAngle();
     }
 
     public void SpeedSet()
@@ -660,6 +673,7 @@ public class GameEvent : MonoBehaviour
                 Field[] fieldData = ExportJson.ImportingField(fieldPath);
 
                 List<List<Speed>> speedData = new List<List<Speed>>();
+                List<List<Angle>> angleData = new List<List<Angle>>();
 
                 int i = 0;
                 foreach (var f in fieldData)
@@ -668,17 +682,23 @@ public class GameEvent : MonoBehaviour
                     foreach (var s in f.speedItem)
                     {
                         speedData[i].Add(new Speed(s.time, s.speed, s.isVariation));
-                        Debug.Log($"speeddata[{i}], time = {speedData[i].Last().GetTime()}");
                     }
                     
-                    //TODO: angleWork
-
+                    angleData.Add(new List<Angle>());
+                    foreach (var a in f.angleWork)
+                    {
+                        angleData[i].Add(new Angle(a.time, a.angle, a.variation));
+                    }
+                    
                     i++;
                 }
 
                 speedsDirector.speedsData = speedData;
                 speedsDirector.nowField = 0;
                 speedsDirector.RenewalSpeed();
+
+                anglesDirector.anglesData = angleData; 
+                anglesDirector.RenewalAngle();
 
                 fieldSettingController.fieldsCount = i;
                 fieldSettingController.RenewalField();
@@ -712,7 +732,8 @@ public class GameEvent : MonoBehaviour
         // {
             ExportJson.ExportingSheet(notes, path + $"\\{name}.json", path + $"\\{name}Sub.json");
             ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
-            ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount, speedsDirector.speedsData);
+            ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount,
+                speedsDirector.speedsData, anglesDirector.anglesData);
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");

@@ -159,6 +159,51 @@ public class Speed
 }
 
 [Serializable]
+public class Angle
+{
+    private int Time { get; set; }
+    private int Degree { get; set; }
+    private int Variation { get; set; }
+
+    public Angle(int time, int degree, int variation)
+    {
+        this.Time = time;
+        this.Degree = degree;
+        this.Variation = variation;
+    }
+
+    public int GetTime()
+    {
+        return Time;
+    }
+
+    public int GetDegree()
+    {
+        return Degree;
+    }
+
+    public int GetVariation()
+    {
+        return Variation;
+    }
+
+    public void SetTime(int time)
+    {
+        Time = time;
+    }
+
+    public void SetDegree(int degree)
+    {
+        Degree = degree;
+    }
+
+    public void SetVariation(int variation)
+    {
+        Variation = variation;
+    }
+}
+
+[Serializable]
 public class BpmSave // save
 {
     public BpmItem[] bpmItem;

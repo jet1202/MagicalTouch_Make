@@ -125,7 +125,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingField(string name, int fields, List<List<Speed>> speeds)
+    public static void ExportingField(string name, int fields, List<List<Speed>> speeds, List<List<Angle>> angles)
     {
         _fieldData = new Field[fields];
         
@@ -134,6 +134,7 @@ public static class ExportJson
         SpeedItem s_item;
 
         List<AngleWork> a = new List<AngleWork>();
+        AngleWork a_item;
         
         for (int i = 0; i < fields; i++)
         {
@@ -148,7 +149,15 @@ public static class ExportJson
                 s.Add(s_item);
             }
             
-            // TODO: angleWork, activeTime
+            foreach (var ap in angles[i])
+            {
+                a_item = new AngleWork();
+                a_item.time = ap.GetTime();
+                a_item.angle = ap.GetDegree();
+                a_item.variation = ap.GetVariation();
+                
+                a.Add(a_item);
+            }
 
             _fieldData[i] = new Field();
             _fieldData[i].field = i;
@@ -156,35 +165,6 @@ public static class ExportJson
             _fieldData[i].angleWork = a.ToArray();
             _fieldData[i].activeTime = Array.Empty<int>();
         }
-
-        // _fieldData = new FieldSave()
-        // {
-        //     item = new Field[]
-        //     {
-        //         new Field()
-        //         {
-        //             field = 1,
-        //             speedItem = new SpeedItem[]
-        //             {
-        //                 new SpeedItem()
-        //                 {
-        //                     time = 0,
-        //                     speed = 100
-        //                 }
-        //             },
-        //             angleWork = new AngleWork[]
-        //             {
-        //                 new AngleWork()
-        //                 {
-        //                     time = 0,
-        //                     angle = 0,
-        //                     variation = 0
-        //                 }
-        //             },
-        //             activeTime = Array.Empty<int>()
-        //         }
-        //     }
-        // };
 
         var data = new FieldSave();
         data.item = _fieldData;

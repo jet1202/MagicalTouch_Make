@@ -10,6 +10,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesController notesController;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private Angles anglesDirector;
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
     [SerializeField] private GameObject slidePrefab;
@@ -23,8 +24,12 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameObject bpmObj;
     [SerializeField] private GameObject maintainObj;
     [SerializeField] private GameObject fieldObj;
+
+    [SerializeField] private GameObject speedObj;
+    [SerializeField] private GameObject angleObj;
+    
     public GameObject focusNote = null;
-    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds
+    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles
 
     [SerializeField] private TMP_InputField timeField;
     [SerializeField] private TMP_InputField laneFieldF;
@@ -39,7 +44,8 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private TMP_InputField speedTimeField;
     [SerializeField] private TMP_InputField speedSpeedField;
     [SerializeField] private Toggle speedIsVariationToggle;
-    [SerializeField] private TMP_Dropdown speedFieldDropdown;
+    [SerializeField] private TMP_InputField angleDegreeField;
+    [SerializeField] private TMP_InputField angleVariationField;
     
     private int focusTime;
     
@@ -127,6 +133,17 @@ public class NotesDirector : MonoBehaviour
                         gameEvent.nowBeatLong = -1;
                         gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime() / 1000f);
                     }
+                    else if (hit.collider.gameObject.CompareTag("AnglePoint"))
+                    {
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        anglesDirector.SetChoose(focusNote);
+                        objectKind = 5;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
+                    }
                     else if (hit.collider.gameObject.CompareTag("EditRange"))
                     {
                         SetDisChoose();
@@ -140,7 +157,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (focusNote != null && objectKind != 1 && objectKind != 4)
+                if (focusNote != null && objectKind != 1 && objectKind != 4 && objectKind != 5)
                 {
                     if (objectKind == 3)
                     {
@@ -178,7 +195,7 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (focusNote != null && objectKind != 1 && objectKind != 4)
+                if (focusNote != null && objectKind != 1 && objectKind != 4 && objectKind != 5)
                 {
                     if (objectKind == 3)
                     {
@@ -245,6 +262,10 @@ public class NotesDirector : MonoBehaviour
                     else if (objectKind == 4)
                     {
                         speedsDirector.DeleteSpeeds(focusNote);
+                    }
+                    else if (objectKind == 5)
+                    {
+                        anglesDirector.DeleteAngles(focusNote);
                     }
 
                     focusNote = null;
@@ -335,6 +356,19 @@ public class NotesDirector : MonoBehaviour
             speedTimeField.text = (s.GetTime() / 1000f).ToString("F3");
             speedSpeedField.text = (s.GetSpeed100() / 100f).ToString("F2");
             speedIsVariationToggle.isOn = s.GetIsVariation();
+            
+            speedObj.SetActive(true);
+            angleObj.SetActive(false);
+        }
+        else if (objectKind == 5)
+        {
+            Angle a = anglesDirector.fieldAngles[focusNote];
+            speedTimeField.text = (a.GetTime() / 1000f).ToString("F3");
+            angleDegreeField.text = a.GetDegree().ToString();
+            angleVariationField.text = a.GetVariation().ToString();
+            
+            speedObj.SetActive(false);
+            angleObj.SetActive(true);
         }
     }
 
@@ -358,11 +392,14 @@ public class NotesDirector : MonoBehaviour
         {
             focusNote.GetComponent<SlideMaintainData>().DisChoose();
         }
-        else
+        else if (objectKind == 4)
         {
             speedsDirector.SetDisChoose(focusNote);
         }
-            
+        else if (objectKind == 5)
+        {
+            anglesDirector.SetDisChoose(focusNote);
+        }
     }
 
     public void Deselect()
@@ -720,6 +757,20 @@ public class NotesDirector : MonoBehaviour
         gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime() / 1000f);
     }
 
+    public void NewAngle()
+    {
+        GameObject o = anglesDirector.NewAngles((int)(gameEvent.time * 1000), 0, 0);
+        
+        SetDisChoose();
+        focusNote = o;
+        anglesDirector.SetChoose(focusNote);
+        objectKind = 5;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+        gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
+    }
+
     public void SetSpeedTime(string timeS)
     {
         float time = float.Parse(timeS);
@@ -727,7 +778,10 @@ public class NotesDirector : MonoBehaviour
         focusTime = (int)(cTime * 1000);
         speedTimeField.text = (focusTime / 1000f).ToString("F3");
         
-        speedsDirector.SetTime(focusNote, focusTime);
+        if (objectKind == 4)
+            speedsDirector.SetTime(focusNote, focusTime);
+        else if (objectKind == 5)
+            anglesDirector.SetTime(focusNote, focusTime);
     }
 
     public void SetSpeedSpeed(string speedS)
@@ -745,10 +799,23 @@ public class NotesDirector : MonoBehaviour
         speedsDirector.SetIsVariation(focusNote, isVariation);
     }
 
+    public void SetAngleDegree(string degreeS)
+    {
+        int degree = int.Parse(degreeS);
+        anglesDirector.SetDegree(focusNote, degree);
+    }
+
+    public void SetAngleVariation(string variationS)
+    {
+        int variation = int.Parse(variationS);
+        anglesDirector.SetVariation(focusNote, variation);
+    }
+
     public void SetSpeedFieldDropDown(int value)
     {
         speedsDirector.ChangeField(value);
         speedsDirector.SetColor(FieldColor(value));
+        anglesDirector.SetColor(FieldColor(value));
     }
 
     public void DeleteFieldNoteChange(int number)
