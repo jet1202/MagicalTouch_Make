@@ -439,7 +439,7 @@ public class NotesDirector : MonoBehaviour
             {
                 focusNote.GetComponent<SlideData>().ChangeTime(focusTime);
             }
-            else
+            else if (objectKind == 3)
             {
                 int t = focusTime - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime();
                 if (t < 0)
@@ -449,6 +449,14 @@ public class NotesDirector : MonoBehaviour
                 }
                 focusNote.GetComponent<SlideMaintainData>().SetTime(t);
                 timeField.text = (focusTime / 1000f).ToString("F3");
+            }
+            else if (objectKind == 4)
+            {
+                speedsDirector.SetTime(focusNote, focusTime);
+            }
+            else
+            {
+                anglesDirector.SetTime(focusNote, focusTime);
             }
         }
     }
