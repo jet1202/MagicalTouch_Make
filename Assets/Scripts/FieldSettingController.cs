@@ -9,6 +9,7 @@ public class FieldSettingController : MonoBehaviour
 {
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private LinePreview linePreview;
     [SerializeField] private GameObject fieldsContentsPrefab;
 
     [SerializeField] private TMP_Dropdown noteDropdown;
@@ -52,6 +53,8 @@ public class FieldSettingController : MonoBehaviour
         speedDropdown.ClearOptions();
         noteDropdown.AddOptions(list);
         speedDropdown.AddOptions(list);
+        
+        linePreview.ChangeField(fieldsCount);
     }
 
     public void AddField()

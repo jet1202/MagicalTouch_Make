@@ -9,6 +9,7 @@ public class NotesController : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private Speeds speeds;
+    [SerializeField] private Angles angles;
     
     [SerializeField] private GameObject measureLines;
     [SerializeField] private GameObject subLines;
@@ -90,6 +91,7 @@ public class NotesController : MonoBehaviour
         
         // Speedの位置調整
         speeds.RenewalSpeed();
+        angles.RenewalAngle();
     }
 
     public void BeatLineSet(int beat, int split)

@@ -10,6 +10,7 @@ public class Angles : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private LinePreview linePreview;
     
     [SerializeField] private GameObject anglePrefab;
     [SerializeField] private GameObject angleLinePrefab;
@@ -29,17 +30,18 @@ public class Angles : MonoBehaviour
     public void NewField()
     {
         anglesData.Add(new List<Angle>() { new Angle(0, 0, 0) });
+        linePreview.angles = anglesData;
     }
 
     public void DeleteField(int index)
     {
         anglesData.RemoveAt(index);
+        linePreview.angles = anglesData;
     }
 
     public void ChangeField()
     {
         anglesData[speedsDirector.nowField] = new List<Angle>(fieldAngles.Values);
-        RenewalAngle();
     }
 
     // Angles
@@ -203,6 +205,7 @@ public class Angles : MonoBehaviour
         obj.SetActive(true);
         
         anglesData[speedsDirector.nowField] = new List<Angle>(fieldAngles.Values);
+        linePreview.angles = anglesData;
     }
 
     public void SetChoose(GameObject angles)

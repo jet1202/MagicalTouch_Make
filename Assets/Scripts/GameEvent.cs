@@ -42,6 +42,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private GameObject notes;
     [SerializeField] private GameObject bpms;
     [SerializeField] private GameObject speeds;
+    [SerializeField] private GameObject angles;
     
     [SerializeField] private CenterDirector centerDirector;
     [SerializeField] private NotesController notesController;
@@ -49,6 +50,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private Angles anglesDirector;
     [SerializeField] private FieldSettingController fieldSettingController;
+    [SerializeField] private LinePreview linePreview;
     
     public float time;
     public bool isPlaying;
@@ -501,6 +503,7 @@ public class GameEvent : MonoBehaviour
     {
         notes.SetActive(true);
         speeds.SetActive(false);
+        angles.SetActive(false);
         noteTab.SetActive(true);
         speedTab.SetActive(false);
         noteButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
@@ -514,6 +517,7 @@ public class GameEvent : MonoBehaviour
     {
         notes.SetActive(false);
         speeds.SetActive(true);
+        angles.SetActive(true);
         noteTab.SetActive(false);
         speedTab.SetActive(true);
         noteButton.GetComponent<Image>().color = Color.white;
@@ -570,6 +574,11 @@ public class GameEvent : MonoBehaviour
     {
         notesDirector.NoteFieldColorOn(isColor);
         isNoteColor = isColor;
+    }
+
+    public void LinePreviewSet(bool isPreview)
+    {
+        linePreview.SetPreview(isPreview);
     }
 
     public void ImportMusicClick()

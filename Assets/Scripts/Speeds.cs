@@ -38,10 +38,12 @@ public class Speeds : MonoBehaviour
     public void ChangeField(int value)
     {
         speedsData[nowField] = new List<Speed>(fieldSpeeds.Values);
-        nowField = value;
-        RenewalSpeed();
-        
         anglesDirector.ChangeField();
+        
+        nowField = value;
+        
+        RenewalSpeed();
+        anglesDirector.RenewalAngle();
     }
 
     // Speeds
