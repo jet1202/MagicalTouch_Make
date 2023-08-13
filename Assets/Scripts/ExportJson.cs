@@ -15,7 +15,7 @@ public static class ExportJson
     
     private static Field[] _fieldData;
     
-    public static void ExportingSheet(GameObject notes, string name, string subName)
+    public static void ExportingSheet(GameObject notes, string name)
     {
         // データの整理, シリアライズしたいデータを順番に_notesDataに格納
         _notesData = new NoteSaveData();

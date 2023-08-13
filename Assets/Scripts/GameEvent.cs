@@ -739,7 +739,7 @@ public class GameEvent : MonoBehaviour
 
         // try
         // {
-            ExportJson.ExportingSheet(notes, path + $"\\{name}.json", path + $"\\{name}Sub.json");
+            ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
             ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount,
                 speedsDirector.speedsData, anglesDirector.anglesData);
