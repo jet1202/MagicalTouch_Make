@@ -35,6 +35,8 @@ public class LinePreview : MonoBehaviour
 
     public void ChangeField(int fieldCount)
     {
+        if (linesParent == null) linesParent = this.gameObject.transform.GetChild(2);
+        
         foreach (Transform t in linesParent)
         {
             Destroy(t.gameObject);

@@ -166,11 +166,11 @@ public class NotesDirector : MonoBehaviour
                         
                         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         {
-                            NoteLaneSet(data.startLine - 1, data.endLine);
+                            NoteLaneSet(data.startLane - 1, data.endLane);
                         }
                         else
                         {
-                            NoteLaneSet(data.startLine - 1, data.endLine - 1);
+                            NoteLaneSet(data.startLane - 1, data.endLane - 1);
                         }
                     }
                     else
@@ -204,11 +204,11 @@ public class NotesDirector : MonoBehaviour
                         
                         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         {
-                            NoteLaneSet(data.startLine + 1, data.endLine);
+                            NoteLaneSet(data.startLane + 1, data.endLane);
                         }
                         else
                         {
-                            NoteLaneSet(data.startLine + 1, data.endLine + 1);
+                            NoteLaneSet(data.startLane + 1, data.endLane + 1);
                         }
                     }
                     else
@@ -325,8 +325,8 @@ public class NotesDirector : MonoBehaviour
         {
             SlideMaintain s = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
             timeField.text = ((s.time + focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f).ToString("F3");
-            laneFieldF.text = s.startLine.ToString();
-            laneFieldL.text = s.endLine.ToString();
+            laneFieldF.text = s.startLane.ToString();
+            laneFieldL.text = s.endLane.ToString();
             isJudgeToggle.isOn = s.isJudge;
             isVariationToggle.isOn = s.isVariation;
             
@@ -684,7 +684,7 @@ public class NotesDirector : MonoBehaviour
         foreach (var data in maintain)
         {
             SlideMaintain a = data;
-            NewSlideMaintain(a.time, a.startLine, a.endLine, a.isJudge, a.isVariation);
+            NewSlideMaintain(a.time, a.startLane, a.endLane, a.isJudge, a.isVariation);
         }
         SetDisChoose();
         focusNote = obj;
@@ -708,8 +708,8 @@ public class NotesDirector : MonoBehaviour
 
         SlideMaintain mt = new SlideMaintain();
         mt.time = Math.Max(0, time);
-        mt.startLine = start;
-        mt.endLine = end;
+        mt.startLane = start;
+        mt.endLane = end;
         mt.isJudge = isJudge;
         mt.isVariation = isVariation;
         pare.GetComponent<SlideData>().NewMaintain(obj, mt);
@@ -795,7 +795,7 @@ public class NotesDirector : MonoBehaviour
     public void SetSpeedSpeed(string speedS)
     {
         float speed = float.Parse(speedS);
-        float cSpeed = Math.Clamp(speed, 0f, 12f);
+        float cSpeed = Math.Clamp(speed, -1000f, 1000f);
         int speed100 = (int)(cSpeed * 100);
         speedSpeedField.text = (speed100 / 100f).ToString("F2");
         

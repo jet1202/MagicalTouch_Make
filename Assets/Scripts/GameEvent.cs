@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using SFB;
 using TMPro;
-using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -117,7 +116,7 @@ public class GameEvent : MonoBehaviour
                             notesDirector.focusNote.GetComponent<NotesData>().note.GetLength()) / 1000f, nowBeatLong);
 
                         nowBeatLong = Mathf.Max(0, nowBeatLong);
-                        float len = beatToTime(nowBeatLong) -
+                        float len = BeatToTime(nowBeatLong) -
                                     notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f;
                         if (len < 0f) nowBeatLong++;
                         notesDirector.NoteLengthSet(len);
@@ -134,7 +133,7 @@ public class GameEvent : MonoBehaviour
                     {
                         nowBeatTime = NextBeat(false, time, nowBeatTime);
                         nowBeatTime = Mathf.Max(0, nowBeatTime);
-                        ChangeTime(beatToTime(nowBeatTime));
+                        ChangeTime(BeatToTime(nowBeatTime));
                         nowBeatNote = -1;
                         FocusBeatSet(time);
                     }
@@ -167,11 +166,11 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
                         if (notesDirector.objectKind == 4)
-                            notesDirector.SetSpeedTime(beatToTime(nowBeatNote).ToString());
+                            notesDirector.SetSpeedTime(BeatToTime(nowBeatNote).ToString());
                         else
-                            notesDirector.TimeSet(beatToTime(nowBeatNote));
+                            notesDirector.TimeSet(BeatToTime(nowBeatNote));
                         nowBeatTime = -1;
-                        FocusBeatSet(beatToTime(nowBeatNote));
+                        FocusBeatSet(BeatToTime(nowBeatNote));
                     }
                         
                     nowBeatLong = -1;
@@ -189,7 +188,7 @@ public class GameEvent : MonoBehaviour
                             (notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() +
                             notesDirector.focusNote.GetComponent<NotesData>().note.GetLength()) / 1000f, nowBeatLong);
                         
-                        float len = beatToTime(nowBeatLong) -
+                        float len = BeatToTime(nowBeatLong) -
                                     notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f;
                         if (len + notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f >
                             audioSource.clip.length)
@@ -207,7 +206,7 @@ public class GameEvent : MonoBehaviour
                     if (notesDirector.focusNote == null)
                     {
                         nowBeatTime = NextBeat(true, time, nowBeatTime);
-                        ChangeTime(Mathf.Min(beatToTime(nowBeatTime), audioSource.clip.length));
+                        ChangeTime(Mathf.Min(BeatToTime(nowBeatTime), audioSource.clip.length));
                         nowBeatNote = -1;
                         FocusBeatSet(time);
                     }
@@ -240,11 +239,11 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(
-                                Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length).ToString());
+                                Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length).ToString());
                         else
-                            notesDirector.TimeSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
+                            notesDirector.TimeSet(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length));
                         nowBeatTime = -1;
-                        FocusBeatSet(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length));
+                        FocusBeatSet(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length));
                     }
 
                     nowBeatLong = -1;
@@ -276,13 +275,13 @@ public class GameEvent : MonoBehaviour
                 {
                     nowBeatTime = NextBeat(false, time, nowBeatTime);
                     nowBeatTime = Mathf.Max(0, nowBeatTime);
-                    ChangeTime(beatToTime(nowBeatTime));
+                    ChangeTime(BeatToTime(nowBeatTime));
                     FocusBeatSet(time);
                 }
                 else if (mouseVal < 0)
                 {
                     nowBeatTime = NextBeat(true, time, nowBeatTime);
-                    ChangeTime(Mathf.Min(beatToTime(nowBeatTime), audioSource.clip.length));
+                    ChangeTime(Mathf.Min(BeatToTime(nowBeatTime), audioSource.clip.length));
                     FocusBeatSet(time);
                 }
             }
@@ -301,11 +300,11 @@ public class GameEvent : MonoBehaviour
                         time = data.GetTime() / 1000f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         int n = nowBeatNote;
-                        notesDirector.NewNote((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                        notesDirector.NewNote((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
                             data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength(), data.GetField());
                         nowBeatNote = n;
                         nowBeatTime = -1;
-                        FocusBeatSet(beatToTime(nowBeatNote));
+                        FocusBeatSet(BeatToTime(nowBeatNote));
                         nowBeatLong = -1;
                     }
                     else if (notesDirector.objectKind == 2)
@@ -316,11 +315,11 @@ public class GameEvent : MonoBehaviour
                         time = data.GetTime() / 1000f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         int n = nowBeatNote;
-                        notesDirector.NewSlide((int)(Mathf.Min(beatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                        notesDirector.NewSlide((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
                             data.GetStartLane(), data.GetEndLane(), data.GetField(), notesDirector.focusNote.GetComponent<SlideData>().slideMaintain.Values.ToArray());
                         nowBeatNote = n;
                         nowBeatTime = -1;
-                        FocusBeatSet(beatToTime(nowBeatNote));
+                        FocusBeatSet(BeatToTime(nowBeatNote));
                         nowBeatLong = -1;
                     }
                 }
@@ -343,6 +342,7 @@ public class GameEvent : MonoBehaviour
             {
                 ChangeTime(timeSlider.value);
                 FocusBeatSet(time);
+                nowBeatTime = -1;
             }
         }
         
@@ -350,8 +350,6 @@ public class GameEvent : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F11))
         {
             Screen.fullScreen = !Screen.fullScreen;
-            if (Screen.fullScreen)
-                Screen.SetResolution(1920, 1080, true);
         }
     }
 
@@ -380,16 +378,18 @@ public class GameEvent : MonoBehaviour
         return measure * split + b;
     }
 
-    private float beatToTime(int beat)
+    private float BeatToTime(int beat)
     {
         List<float> lines = notesController.bpmMeasureLines;
 
         int measure = beat / split;
         int b = beat % split;
-        
-        float beatTime = (lines[measure + 1] - lines[measure]) / split;
 
-        return lines[measure] + beatTime * b;
+        if (measure < 0) return 0f;
+        
+        float beatTimeA = (lines[measure + 1] - lines[measure]) / split;
+
+        return lines[measure] + beatTimeA * b;
     }
 
     private int NextBeat(bool arrow, float nowTime, int beat)

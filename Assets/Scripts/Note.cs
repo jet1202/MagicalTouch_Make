@@ -246,8 +246,8 @@ public class SlideSave
 public class SlideMaintain
 {
     public int time;
-    public int startLine;
-    public int endLine;
+    public int startLane;
+    public int endLane;
     public bool isJudge;
     public bool isVariation;
 }

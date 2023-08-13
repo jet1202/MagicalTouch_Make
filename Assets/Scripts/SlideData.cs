@@ -82,7 +82,7 @@ public class SlideData : MonoBehaviour
         foreach (var data in slideMaintain)
         {
             float t = data.Value.time / 1000f;
-            float l = (data.Value.endLine + data.Value.startLine - note.GetStartLane() - note.GetEndLane()) / -2f;
+            float l = (data.Value.endLane + data.Value.startLane - note.GetStartLane() - note.GetEndLane()) / -2f;
 
             positions[i + 1] = new Vector3(t * gameEvent.speed, (laneDif * l), 0f);
 
@@ -158,7 +158,7 @@ public class SlideData : MonoBehaviour
         slideMaintain.Add(obj, data);
         obj.GetComponent<SlideMaintainData>().DefaultSettings(this.gameObject);
         obj.GetComponent<SlideMaintainData>().SetTime(data.time);
-        obj.GetComponent<SlideMaintainData>().SetLane(data.startLine, data.endLine);
+        obj.GetComponent<SlideMaintainData>().SetLane(data.startLane, data.endLane);
         LineChange();
     }
 }

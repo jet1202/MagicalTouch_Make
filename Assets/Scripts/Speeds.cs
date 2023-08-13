@@ -157,8 +157,8 @@ public class Speeds : MonoBehaviour
 
     public float SpeedY(int multiple100)
     {
-        if (multiple100 > 500) multiple100 = 500;
-        float re = -3.2f + (multiple100 / 100f) * 1.2f;
+        multiple100 = Math.Clamp(multiple100, -200, 400);
+        float re = -0.8f + (multiple100 / 100f) * 1.2f;
         return re;
     }
 
