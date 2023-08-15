@@ -16,6 +16,7 @@ public class NotesData : MonoBehaviour
     private GameObject noteBody;
     private GameObject noteFlame;
     private GameObject noteLength;
+    private GameObject noteFieldColor;
     public Note note;
     public int Number;
 
@@ -24,9 +25,10 @@ public class NotesData : MonoBehaviour
         noteBody = transform.GetChild(0).gameObject;
         noteFlame = transform.GetChild(1).gameObject;
         noteLength = transform.GetChild(2).gameObject;
+        noteFieldColor = transform.GetChild(3).gameObject;
         
-        transform.GetChild(3).GetComponent<SpriteRenderer>().color = color;
-        transform.GetChild(3).gameObject.SetActive(isColor);
+        noteFieldColor.GetComponent<SpriteRenderer>().color = color;
+        noteFieldColor.SetActive(isColor);
         
         int leng = centerDirector.NotesData.Count;
         for (int i = 0; i <= leng; i++)
@@ -62,6 +64,9 @@ public class NotesData : MonoBehaviour
             new Vector3(gameEvent.speed * note.GetLength() / 2000, 0f, 0f);
         noteLength.transform.localScale = 
             new Vector3(gameEvent.speed * note.GetLength() / 1000f, dis * 0.6f - 0.1f, 1f);
+        // noteFieldColor
+        noteFieldColor.transform.localScale =
+            new Vector3(0.05f, dis * 0.6f - 0.3f, 1f);
         // collider2D
         GetComponent<BoxCollider2D>().offset =
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f);

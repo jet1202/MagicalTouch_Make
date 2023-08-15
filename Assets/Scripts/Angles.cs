@@ -143,7 +143,7 @@ public class Angles : MonoBehaviour
                     positions.Add(new Vector3(aa[i + 1].GetTime() / 1000f * gameEvent.speed,
                         DegreeY(aa[i].GetDegree(), false), 0f));
                 }
-                else if (aa[i].GetVariation() == 1)
+                else if (aa[i].GetVariation() == 10)
                 {
 
                 }
@@ -158,8 +158,8 @@ public class Angles : MonoBehaviour
                         a1 = aa[i].GetDegree();
                         a2 = aa[i + 1].GetDegree();
                         T = j;
-                        if (aa[i].GetVariation() > 0) V = aa[i].GetVariation();
-                        else if (aa[i].GetVariation() < 0) V = -1.0f / aa[i].GetVariation();
+                        if (aa[i].GetVariation() > 0) V = aa[i].GetVariation() / 10f;
+                        else if (aa[i].GetVariation() < 0) V = -1.0f / (aa[i].GetVariation() / 10f);
                         else V = 0f;
 
                         t = t2 - t1;

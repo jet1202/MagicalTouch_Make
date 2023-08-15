@@ -833,7 +833,8 @@ public class GameEvent : MonoBehaviour
     public void SettingOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("Sound file", "wav", "ogg", "mp3")}, false);
-        musicImportField.text = paths.First();
+        if (paths.Length != 0)
+            musicImportField.text = paths.First();
     }
     
     public void ExportOpenFile()

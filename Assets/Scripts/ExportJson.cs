@@ -255,6 +255,17 @@ public static class ExportJson
         FieldSave _Data = JsonUtility.FromJson<FieldSave>(jsonStr);
         _fieldData = _Data.item;
 
+        foreach (var f in _fieldData)
+        {
+            foreach (var a in f.angleWork)
+            {
+                int v = a.variation;
+                if (Math.Abs(v) > 0 && Math.Abs(v) < 10)
+                    v *= 10;
+                a.variation = v;
+            }
+        }
+
         return _fieldData;
     }
 }

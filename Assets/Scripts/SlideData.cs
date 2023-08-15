@@ -14,6 +14,7 @@ public class SlideData : MonoBehaviour
     private GameObject noteBody;
     private GameObject noteFlame;
     private GameObject noteLine;
+    private GameObject noteFieldColor;
 
     private float startLanePosy = 4f;
     private float laneDif = 0.6f;
@@ -25,10 +26,12 @@ public class SlideData : MonoBehaviour
         noteBody = transform.GetChild(0).gameObject;
         noteFlame = transform.GetChild(1).gameObject;
         noteLine = transform.GetChild(2).gameObject;
+        noteFieldColor = transform.GetChild(3).gameObject;
+        
         lineRenderer = noteLine.GetComponent<LineRenderer>();
 
-        transform.GetChild(3).GetComponent<SpriteRenderer>().color = color;
-        transform.GetChild(3).gameObject.SetActive(isColor);
+        noteFieldColor.GetComponent<SpriteRenderer>().color = color;
+        noteFieldColor.SetActive(isColor);
         
         int leng = centerDirector.NotesData.Count;
         for (int i = 0; i <= leng; i++)
@@ -56,6 +59,9 @@ public class SlideData : MonoBehaviour
             new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f, pos.z);
         noteFlame.transform.localScale = 
             new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.4f, dis * 0.6f + 0.1f, 1f);
+        // noteFieldColor
+        noteFieldColor.transform.localScale =
+            new Vector3(0.05f, dis * 0.6f, 1f);
         // collider2D
         GetComponent<BoxCollider2D>().offset =
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f);

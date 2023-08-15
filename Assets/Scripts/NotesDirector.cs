@@ -365,7 +365,7 @@ public class NotesDirector : MonoBehaviour
             Angle a = anglesDirector.fieldAngles[focusNote];
             speedTimeField.text = (a.GetTime() / 1000f).ToString("F3");
             angleDegreeField.text = a.GetDegree().ToString();
-            angleVariationField.text = a.GetVariation().ToString();
+            angleVariationField.text = (a.GetVariation() / 10f).ToString("F1");
             
             speedObj.SetActive(false);
             angleObj.SetActive(true);
@@ -815,7 +815,10 @@ public class NotesDirector : MonoBehaviour
 
     public void SetAngleVariation(string variationS)
     {
-        int variation = int.Parse(variationS);
+        int variation = (int)(float.Parse(variationS) * 10);
+        if (Math.Abs(variation) < 10 && variation != 0)
+            variation = 0;
+        angleVariationField.text = (variation / 10f).ToString("F1");
         anglesDirector.SetVariation(focusNote, variation);
     }
 
