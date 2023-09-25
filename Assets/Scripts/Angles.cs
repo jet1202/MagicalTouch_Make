@@ -246,6 +246,7 @@ public class Angles : MonoBehaviour
     {
         if (isMod)
             degree %= 360;
+        if (degree < 0) degree += 360;
         float re = -3.2f + (degree / 360f) * 7.2f;
         return re;
     }

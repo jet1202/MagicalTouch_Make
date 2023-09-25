@@ -87,7 +87,7 @@ public class LinePreview : MonoBehaviour
             float T = time - before.GetTime() / 1000f;
             float t1 = (after.GetTime() - before.GetTime()) / 1000f;
             float a1 = after.GetDegree() - before.GetDegree();
-            int v = before.GetVariation();
+            float v = before.GetVariation() / 10f;
 
             float a;
             if (v > 0)
