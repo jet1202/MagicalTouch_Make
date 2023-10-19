@@ -105,58 +105,84 @@ public class Angles : MonoBehaviour
         }
 
         int leng = aa.Length;
-        int zone = aa[0].GetDegree() / 360;
+        int zone = (int)Math.Floor(aa[0].GetDegree() / 360f);
+        Debug.Log($"zone = {zone}");
         GameObject obj = Instantiate(angleLinePrefab, linesTransform);
         obj.transform.localPosition = new Vector3(0f, -7.2f * zone, 0f);
         List<Vector3> positions = new List<Vector3>();
         
         for (int i = 0; i < leng; i++)
         {
-            positions.Add(new Vector3(aa[i].GetTime() / 1000f * gameEvent.speed,
-                DegreeY(aa[i].GetDegree(), false), 0f));
-
-            if (aa[i].GetDegree() / 360 != zone)
-            {
-                int z = zone;
-                int Z = aa[i].GetDegree() / 360;
-                int sZ = Z + (z > Z ? -1 : 1);
-                
-                for (z = AngleLoop(zone, sZ); z != sZ; z = AngleLoop(z, sZ))
-                {
-                    obj.GetComponent<LineRenderer>().positionCount = positions.Count;
-                    obj.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
-                    obj.SetActive(true);
-
-                    positions = positions.GetRange(positions.Count - 2, 2);
-
-                    obj = Instantiate(angleLinePrefab, linesTransform);
-                    obj.transform.localPosition = new Vector3(0f, -7.2f * z, 0f);
-                }
-
-                zone = Z;
-            }
+            var nowAngleTime = aa[i].GetTime();
+            var nowAngleDegree = aa[i].GetDegree();
+            
+            positions.Add(new Vector3(nowAngleTime / 1000f * gameEvent.speed,
+                DegreeY(nowAngleDegree, false), 0f));
 
             if (i != leng - 1)
             {
+                var nextAngleTime = aa[i + 1].GetTime();
+                var nextAngleDegree = aa[i + 1].GetDegree();
+                
                 if (aa[i].GetVariation() == 0)
                 {
-                    positions.Add(new Vector3(aa[i + 1].GetTime() / 1000f * gameEvent.speed,
-                        DegreeY(aa[i].GetDegree(), false), 0f));
+                    positions.Add(new Vector3(nextAngleTime / 1000f * gameEvent.speed,
+                        DegreeY(nowAngleDegree, false), 0f));
+
+                    int Z = (int)Math.Floor(nextAngleDegree / 360f);
+                    if (Z != zone)
+                    {
+                        zone = Z;
+                        
+                        obj.GetComponent<LineRenderer>().positionCount = positions.Count;
+                        obj.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
+                        obj.SetActive(true);
+                            
+                        obj = Instantiate(angleLinePrefab, linesTransform);
+                        obj.transform.localPosition = new Vector3(0f, -7.2f * zone, 0f);
+
+                        positions = positions.GetRange(positions.Count - 1, 1);
+                    }
                 }
                 else if (aa[i].GetVariation() == 10)
                 {
+                    if ((int)Math.Floor(nextAngleDegree / 360f) != zone)
+                    {
+                        int z = zone;
+                        int Z = (int)Math.Floor(nextAngleDegree / 360f);
+                        Debug.Log($"nextZone = {Z}");
+                        bool isUp = z < Z;
+                
+                        for (z = z + (isUp ? 1 : -1); isUp ? z <= Z : z >= Z; z = z + (isUp ? 1 : -1))
+                        {
+                            positions.Add(new Vector3(nextAngleTime / 1000f * gameEvent.speed,
+                                DegreeY(nextAngleDegree, false), 0f));
+                            
+                            obj.GetComponent<LineRenderer>().positionCount = positions.Count;
+                            obj.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
+                            obj.SetActive(true);
+                            
+                            obj = Instantiate(angleLinePrefab, linesTransform);
+                            obj.transform.localPosition = new Vector3(0f, -7.2f * z, 0f);
 
+                            positions = new List<Vector3>();
+                            positions.Add(new Vector3(nowAngleTime / 1000f * gameEvent.speed,
+                                DegreeY(nowAngleDegree, false), 0f));
+                        }
+
+                        zone = Z;
+                    }
                 }
                 else
                 {
                     float T, nT, A, sT, aT, V;
                     int t1, t2, t, a1, a2, a;
-                    for (float j = aa[i].GetTime(); j < aa[i + 1].GetTime(); j += 200 / gameEvent.speed)
+                    for (float j = nowAngleTime; j < nextAngleTime; j += 200 / gameEvent.speed)
                     {
-                        t1 = aa[i].GetTime();
-                        t2 = aa[i + 1].GetTime();
-                        a1 = aa[i].GetDegree();
-                        a2 = aa[i + 1].GetDegree();
+                        t1 = nowAngleTime;
+                        t2 = nextAngleTime;
+                        a1 = nowAngleDegree;
+                        a2 = nextAngleDegree;
                         T = j;
                         if (aa[i].GetVariation() > 0) V = aa[i].GetVariation() / 10f;
                         else if (aa[i].GetVariation() < 0) V = -1.0f / (aa[i].GetVariation() / 10f);
@@ -171,13 +197,13 @@ public class Angles : MonoBehaviour
 
                         positions.Add(new Vector3(T / 1000f * gameEvent.speed, DegreeY(A, false), 0f));
                         
-                        if ((int)(A / 360) != zone)
+                        if ((int)Math.Floor(A / 360f) != zone)
                         {
                             int z = zone;
-                            int Z = (int)(A / 360);
-                            int sZ = Z + (z > Z ? -1 : 1);
-                            
-                            for (z = AngleLoop(zone, sZ); z != sZ; z = AngleLoop(z, sZ))
+                            int Z = (int)Math.Floor(A / 360f);
+                            bool isUp = z < Z;
+                
+                            for (z = z + (isUp ? 1 : -1); isUp ? z <= Z : z >= Z; z = z + (isUp ? 1 : -1))
                             {
                                 obj.GetComponent<LineRenderer>().positionCount = positions.Count;
                                 obj.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
@@ -245,8 +271,11 @@ public class Angles : MonoBehaviour
     public float DegreeY(float degree, bool isMod)
     {
         if (isMod)
+        {
             degree %= 360;
-        if (degree < 0) degree += 360;
+            if (degree < 0) degree += 360;
+        }
+
         float re = -3.2f + (degree / 360f) * 7.2f;
         return re;
     }

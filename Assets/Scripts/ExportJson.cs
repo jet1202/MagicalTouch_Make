@@ -128,7 +128,6 @@ public static class ExportJson
     public static void ExportingField(string name, int fields, List<List<Speed>> speeds, List<List<Angle>> angles)
     {
         _fieldData = new Field[fields];
-        
 
         List<SpeedItem> s = new List<SpeedItem>();
         SpeedItem s_item;
@@ -139,6 +138,7 @@ public static class ExportJson
         for (int i = 0; i < fields; i++)
         {
             s = new List<SpeedItem>();
+            a = new List<AngleWork>();
             foreach (var sp in speeds[i])
             {
                 s_item = new SpeedItem();
