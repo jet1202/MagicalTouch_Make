@@ -36,7 +36,8 @@ public static class ExportJson
 
             if (note.GetKind() == 'S')
             {
-                List<SlideMaintain> data = new List<SlideMaintain>(n.GetComponent<SlideData>().slideMaintain.Values);
+                List<SlideMaintain> data =
+                    new List<SlideMaintain>(n.GetComponent<SlideData>().slideMaintain.Values.OrderBy(x => x.time));
                 data = new List<SlideMaintain>(data.OrderBy(x => x.time));
                 slideDataA.Add(num, data.ToArray());
             }

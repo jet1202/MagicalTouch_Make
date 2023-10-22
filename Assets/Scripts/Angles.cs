@@ -40,7 +40,7 @@ public class Angles : MonoBehaviour
 
     public void ChangeField()
     {
-        anglesData[speedsDirector.nowField] = new List<Angle>(fieldAngles.Values);
+        anglesData[speedsDirector.nowField] = new List<Angle>(fieldAngles.Values.OrderBy(x => x.GetTime()));
     }
 
     // Angles
@@ -91,7 +91,8 @@ public class Angles : MonoBehaviour
 
     private void RenewalAngleLine()
     {
-        Angle[] aa = new List<Angle>(fieldAngles.Values).OrderBy(x => x.GetTime()).ToArray();
+        fieldAngles = new Dictionary<GameObject, Angle>(fieldAngles.OrderBy(x => x.Value.GetTime()));
+        Angle[] aa = new List<Angle>(fieldAngles.Values).ToArray();
 
         if (aa[0].GetTime() != 0)
         {
