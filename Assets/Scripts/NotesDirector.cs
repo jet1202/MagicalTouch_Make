@@ -22,6 +22,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] public GameObject laneObj;
     [SerializeField] private GameObject kindObj;
     [SerializeField] private GameObject bpmObj;
+    [SerializeField] private GameObject slideObj;
     [SerializeField] private GameObject maintainObj;
     [SerializeField] private GameObject fieldObj;
 
@@ -37,9 +38,11 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private TMP_Dropdown kindDropdown;
     [SerializeField] private TMP_InputField lengthField;
     [SerializeField] private TMP_InputField bpmField;
+    [SerializeField] private Toggle isDummyToggle;
     [SerializeField] private Toggle isJudgeToggle;
     [SerializeField] private Toggle isVariationToggle;
     [SerializeField] private TMP_Dropdown fieldDropdown;
+    [SerializeField] private TMP_Dropdown colorDropdown;
 
     [SerializeField] private TMP_InputField speedTimeField;
     [SerializeField] private TMP_InputField speedSpeedField;
@@ -276,7 +279,7 @@ public class NotesDirector : MonoBehaviour
     
     private void SetChoose()
     {
-        if (objectKind == 0)
+        if (objectKind == 0) // note
         {
             // focusNoteのデータを取り出し表示する
             Note n = focusNote.GetComponent<NotesData>().note;
@@ -290,38 +293,39 @@ public class NotesDirector : MonoBehaviour
             if (n.GetKind() == 'L')
             {
                 lengthObj.SetActive(true);
-                laneObj.SetActive(true);
-                kindObj.SetActive(true);
-                bpmObj.SetActive(false);
-                maintainObj.SetActive(false);
             }
             else
             {
                 lengthObj.SetActive(false);
-                laneObj.SetActive(true);
-                kindObj.SetActive(true);
-                bpmObj.SetActive(false);
-                maintainObj.SetActive(false);
             }
+            
+            laneObj.SetActive(true);
+            kindObj.SetActive(true);
+            bpmObj.SetActive(false);
+            slideObj.SetActive(false);
+            maintainObj.SetActive(false);
             
             fieldObj.SetActive(true);
         }
-        else if (objectKind == 2)
+        else if (objectKind == 2) // slide
         {
             Note n = focusNote.GetComponent<SlideData>().note;
             timeField.text = (n.GetTime() / 1000f).ToString("F3");
             laneFieldF.text = n.GetStartLane().ToString();
             laneFieldL.text = n.GetEndLane().ToString();
             fieldDropdown.value = n.GetField();
+            isDummyToggle.isOn = focusNote.GetComponent<SlideData>().isDummy;
+            colorDropdown.value = focusNote.GetComponent<SlideData>().fieldColor;
             
             lengthObj.SetActive(false);
             laneObj.SetActive(true);
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
+            slideObj.SetActive(true);
             maintainObj.SetActive(false);
             fieldObj.SetActive(true);
         }
-        else if (objectKind == 3)
+        else if (objectKind == 3) // slideMaintain
         {
             SlideMaintain s = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
             timeField.text = ((s.time + focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f).ToString("F3");
@@ -334,10 +338,11 @@ public class NotesDirector : MonoBehaviour
             laneObj.SetActive(false);
             kindObj.SetActive(false);
             bpmObj.SetActive(false);
+            slideObj.SetActive(false);
             maintainObj.SetActive(true);
             fieldObj.SetActive(false);
         }
-        else if (objectKind == 1)
+        else if (objectKind == 1) // bpm
         {
             Bpm b = bpms[focusNote];
             timeField.text = (b.GetTime() / 1000f).ToString("F3");
@@ -347,10 +352,11 @@ public class NotesDirector : MonoBehaviour
             laneObj.SetActive(false);
             kindObj.SetActive(false);
             bpmObj.SetActive(true);
+            slideObj.SetActive(false);
             maintainObj.SetActive(false);
             fieldObj.SetActive(false);
         }
-        else if (objectKind == 4)
+        else if (objectKind == 4) // speed
         {
             Speed s = speedsDirector.fieldSpeeds[focusNote];
             speedTimeField.text = (s.GetTime() / 1000f).ToString("F3");
@@ -360,7 +366,7 @@ public class NotesDirector : MonoBehaviour
             speedObj.SetActive(true);
             angleObj.SetActive(false);
         }
-        else if (objectKind == 5)
+        else if (objectKind == 5) // angle
         {
             Angle a = anglesDirector.fieldAngles[focusNote];
             speedTimeField.text = (a.GetTime() / 1000f).ToString("F3");
@@ -661,21 +667,24 @@ public class NotesDirector : MonoBehaviour
         }
     }
 
+    // slide
     public void NewSlide()
     {
         if (focusNote == null || objectKind != 2 && objectKind != 3)
-            NewSlide((int)(gameEvent.time * 1000), 5, 7, 0, Array.Empty<SlideMaintain>());
+            NewSlide((int)(gameEvent.time * 1000), 5, 7, 0, false, 0, Array.Empty<SlideMaintain>());
         else if (objectKind == 2)
             NewSlideMaintain((int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideData>().note.GetTime(), 5, 7, true, true);
         else
             NewSlideMaintain((int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime(), 5, 7, true, true);
     }
 
-    public void NewSlide(int time, int start, int end, int sub, SlideMaintain[] maintain)
+    public void NewSlide(int time, int start, int end, int field, bool isDummy, int color, SlideMaintain[] maintain)
     {
         GameObject obj = Instantiate(slidePrefab, noteParent.transform);
-        obj.GetComponent<SlideData>().note = new Note(time, start, end, 'S', 0, sub);
-        obj.GetComponent<SlideData>().DefaultSettings(FieldColor(sub), gameEvent.isNoteColor);
+        obj.GetComponent<SlideData>().note = new Note(time, start, end, 'S', 0, field);
+        obj.GetComponent<SlideData>().isDummy = isDummy;
+        obj.GetComponent<SlideData>().fieldColor = color;
+        obj.GetComponent<SlideData>().DefaultSettings(FieldColor(field), gameEvent.isNoteColor);
         obj.SetActive(true);
         
         SetDisChoose();
@@ -693,6 +702,32 @@ public class NotesDirector : MonoBehaviour
         SetChoose();
         gameEvent.nowBeatNote = -1;
         gameEvent.nowBeatLong = -1;
+    }
+
+    public void SetDummy()
+    {
+        SetDummy(isDummyToggle.isOn);
+    }
+
+    public void SetDummy(bool dummy)
+    {
+        if (objectKind != 2 || focusNote == null)
+            return;
+        
+        focusNote.GetComponent<SlideData>().ChangeDummy(dummy);
+    }
+    
+    public void SetColor()
+    {
+        SetColor(colorDropdown.value);
+    }
+
+    public void SetColor(int value)
+    {
+        if (objectKind != 2 || focusNote == null)
+            return;
+        
+        focusNote.GetComponent<SlideData>().ChangeColor(value);
     }
     
     // SlideMaintain

@@ -310,13 +310,17 @@ public class GameEvent : MonoBehaviour
                     else if (notesDirector.objectKind == 2)
                     {
                         Note data = notesDirector.focusNote.GetComponent<SlideData>().note;
+                        bool dummy = notesDirector.focusNote.GetComponent<SlideData>().isDummy;
+                        int color = notesDirector.focusNote.GetComponent<SlideData>().fieldColor;
 
                         float time;
                         time = data.GetTime() / 1000f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         int n = nowBeatNote;
-                        notesDirector.NewSlide((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
-                            data.GetStartLane(), data.GetEndLane(), data.GetField(), notesDirector.focusNote.GetComponent<SlideData>().slideMaintain.Values.ToArray());
+                        notesDirector.NewSlide(
+                            (int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                            data.GetStartLane(), data.GetEndLane(), data.GetField(), dummy, color,
+                            notesDirector.focusNote.GetComponent<SlideData>().slideMaintain.Values.ToArray());
                         nowBeatNote = n;
                         nowBeatTime = -1;
                         FocusBeatSet(BeatToTime(nowBeatNote));
@@ -654,7 +658,7 @@ public class GameEvent : MonoBehaviour
             {
                 // Sheetの入手
                 Dictionary<int, Note> notesData;
-                Dictionary<int, SlideMaintain[]> slidesData;
+                Dictionary<int, SlideSave> slidesData;
                 
                 notesData = ExportJson.ImportingSheet(sheetPath);
                 slidesData = ExportJson.ImportingSlide();
@@ -668,9 +672,12 @@ public class GameEvent : MonoBehaviour
                 foreach (var n in notesData)
                 {
                     if (n.Value.GetKind() == 'S')
-                        notesDirector.NewSlide(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetField(), slidesData[n.Key]);
+                        notesDirector.NewSlide(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
+                            n.Value.GetField(), slidesData[n.Key].isDummy, slidesData[n.Key].color,
+                            slidesData[n.Key].item);
                     else
-                        notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(), n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
+                        notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
+                            n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
                 }
 
                 notesDirector.isImporting = false;

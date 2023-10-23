@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class SlideData : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private CenterDirector centerDirector;
+
+    [SerializeField] private Sprite slideBody;
+    [SerializeField] private Sprite slideDummy;
     
     public Dictionary<GameObject, SlideMaintain> slideMaintain = new Dictionary<GameObject, SlideMaintain>();
     private LineRenderer lineRenderer;
@@ -20,6 +22,10 @@ public class SlideData : MonoBehaviour
     private float laneDif = 0.6f;
     public Note note;
     public int Number;
+    
+    // export用
+    public bool isDummy;
+    public int fieldColor;
 
     public void DefaultSettings(Color color, bool isColor)
     {
@@ -43,6 +49,9 @@ public class SlideData : MonoBehaviour
                 break;
             }
         }
+        
+        ChangeDummy(isDummy);
+        ChangeColor(fieldColor);
 
         Change();
     }
@@ -166,5 +175,18 @@ public class SlideData : MonoBehaviour
         obj.GetComponent<SlideMaintainData>().SetTime(data.time);
         obj.GetComponent<SlideMaintainData>().SetLane(data.startLane, data.endLane);
         LineChange();
+    }
+
+    public void ChangeDummy(bool isDummy)
+    {
+        if (isDummy)
+            noteBody.GetComponent<SpriteRenderer>().sprite = slideDummy;
+        else
+            noteBody.GetComponent<SpriteRenderer>().sprite = slideBody;
+    }
+
+    public void ChangeColor(int color)
+    {
+        
     }
 }

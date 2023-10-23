@@ -20,7 +20,7 @@ public static class ExportJson
         // データの整理, シリアライズしたいデータを順番に_notesDataに格納
         _notesData = new NoteSaveData();
         Dictionary<int, Note> notesDataA = new Dictionary<int, Note>();
-        Dictionary<int, SlideMaintain[]> slideDataA = new Dictionary<int, SlideMaintain[]>();
+        Dictionary<int, SlideSave> slideDataA = new Dictionary<int, SlideSave>();
 
         Note note;
         int num = 0;
@@ -36,10 +36,19 @@ public static class ExportJson
 
             if (note.GetKind() == 'S')
             {
+                var dummy = n.GetComponent<SlideData>().isDummy;
+                var color = n.GetComponent<SlideData>().fieldColor;
+                
                 List<SlideMaintain> data =
                     new List<SlideMaintain>(n.GetComponent<SlideData>().slideMaintain.Values.OrderBy(x => x.time));
                 data = new List<SlideMaintain>(data.OrderBy(x => x.time));
-                slideDataA.Add(num, data.ToArray());
+                
+                var slideData = new SlideSave();
+                slideData.number = num;
+                slideData.isDummy = dummy;
+                slideData.color = color;
+                slideData.item = data.ToArray();
+                slideDataA.Add(num, slideData);
             }
 
             num++;
@@ -72,10 +81,7 @@ public static class ExportJson
 
             if (di.Value.GetKind() == 'S')
             {
-                var sl = new SlideSave();
-                sl.number = num;
-                sl.item = slideDataA[di.Key];
-                _notesData.slideItem[s] = sl;
+                _notesData.slideItem[s] = slideDataA[di.Key];
 
                 s++;
             }
@@ -208,15 +214,15 @@ public static class ExportJson
         return notesDataA;
     }
 
-    public static Dictionary<int, SlideMaintain[]> ImportingSlide()
+    public static Dictionary<int, SlideSave> ImportingSlide()
     {
-        var a = new Dictionary<int, SlideMaintain[]>();
+        var a = new Dictionary<int, SlideSave>();
 
-        if (_slideData == null) return new Dictionary<int, SlideMaintain[]>();
+        if (_slideData == null) return new Dictionary<int, SlideSave>();
         
         foreach (var s in _slideData)
         {
-            a.Add(s.number, s.item);
+            a.Add(s.number, s);
         }
         
         return a;

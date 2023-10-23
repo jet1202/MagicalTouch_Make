@@ -239,6 +239,8 @@ public class NoteSave
 public class SlideSave
 {
     public int number;
+    public int color;
+    public bool isDummy;
     public SlideMaintain[] item;
 }
 
