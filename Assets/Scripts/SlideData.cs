@@ -177,16 +177,46 @@ public class SlideData : MonoBehaviour
         LineChange();
     }
 
-    public void ChangeDummy(bool isDummy)
+    public void ChangeDummy(bool d)
     {
-        if (isDummy)
+        if (d)
             noteBody.GetComponent<SpriteRenderer>().sprite = slideDummy;
         else
             noteBody.GetComponent<SpriteRenderer>().sprite = slideBody;
+        isDummy = d;
     }
 
-    public void ChangeColor(int color)
+    public void ChangeColor(int c)
     {
+        fieldColor = c;
         
+        // line, slideMaintainの色変更
+        noteLine.GetComponent<LineRenderer>().startColor = SlideColor(c);
+        noteLine.GetComponent<LineRenderer>().endColor = SlideColor(c);
+
+        foreach (var s in slideMaintain)
+            s.Key.transform.GetChild(0).GetComponent<SpriteRenderer>().color = SlideColor(c);
+    }
+
+    public Color SlideColor(int n)
+    {
+        Color color = Color.white;
+        switch (n)
+        {
+            case 0:
+                color = new Color(101 / 255f, 187 / 255f, 233 / 255f);
+                break;
+            case 1:
+                color = new Color(250 / 255f, 178 / 255f, 123 / 255f);
+                break;
+            case 2:
+                color = new Color(112 / 255f, 255f / 255f, 179f / 255f);
+                break;
+            case 3:
+                color = new Color(255 / 255f, 239f / 255f, 108f / 255f);
+                break;
+        }
+
+        return color;
     }
 }

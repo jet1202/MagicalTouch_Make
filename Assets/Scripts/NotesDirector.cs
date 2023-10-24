@@ -648,14 +648,10 @@ public class NotesDirector : MonoBehaviour
         notesController.MeasureLineSet(bpms);
     }
 
-    public void BpmSet()
+    public void BpmSet(string str)
     {
-        BpmSet(int.Parse(bpmField.text));
-    }
-
-    public void BpmSet(int bpm)
-    {
-        bpmBpm = Math.Max(0, Math.Min(900, bpm));
+        var bpm = int.Parse(str);
+        bpmBpm = Math.Max(0, Math.Min(1000, bpm));
         bpmField.text = bpmBpm.ToString();
 
         if (focusNote != null)
@@ -704,11 +700,6 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatLong = -1;
     }
 
-    public void SetDummy()
-    {
-        SetDummy(isDummyToggle.isOn);
-    }
-
     public void SetDummy(bool dummy)
     {
         if (objectKind != 2 || focusNote == null)
@@ -717,11 +708,6 @@ public class NotesDirector : MonoBehaviour
         focusNote.GetComponent<SlideData>().ChangeDummy(dummy);
     }
     
-    public void SetColor()
-    {
-        SetColor(colorDropdown.value);
-    }
-
     public void SetColor(int value)
     {
         if (objectKind != 2 || focusNote == null)
@@ -760,22 +746,12 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatLong = -1;
     }
 
-    public void SetJudge()
-    {
-        SetJudge(isJudgeToggle.isOn);
-    }
-
     public void SetJudge(bool judge)
     {
         if (objectKind != 3 || focusNote == null)
             return;
 
         focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isJudge = judge;
-    }
-
-    public void SetVariation()
-    {
-        SetVariation(isVariationToggle.isOn);
     }
 
     public void SetVariation(bool variation)

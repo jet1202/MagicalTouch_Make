@@ -6842,8 +6842,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameEvent: {fileID: 1825082431}
   centerDirector: {fileID: 1673888454}
-  slideBody: {fileID: 0}
-  slideDummy: {fileID: 0}
+  slideBody: {fileID: 21300000, guid: 749dcff6a38b8b04fad1ba6d506e9f13, type: 3}
+  slideDummy: {fileID: 21300000, guid: 4e82b257e84fcf84f81c1d76f7dbbc7e, type: 3}
   Number: 0
   isDummy: 0
   fieldColor: 0
@@ -7048,7 +7048,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2040143208}
         m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
         m_MethodName: BpmSet
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7069,7 +7069,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2040143208}
         m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
         m_MethodName: BpmSet
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9561,7 +9561,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2040143208}
         m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
         m_MethodName: SetJudge
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -19015,7 +19015,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2040143208}
         m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
         m_MethodName: SetVariation
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -20204,7 +20204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: blue
+  m_text: sky
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22599,7 +22599,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: blue
+    - m_Text: sky
       m_Image: {fileID: 0}
     - m_Text: orange
       m_Image: {fileID: 0}
