@@ -7,6 +7,7 @@ using SFB;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
 using Screen = UnityEngine.Screen;
@@ -797,35 +798,33 @@ public class GameEvent : MonoBehaviour
             yield break;
         }
 
-        string Extension = Path.GetExtension(fileName);
+        string Extension = Path.GetExtension(fileName).ToLower();
         if (!(Extension == ".ogg" || Extension == ".mp3" || Extension == ".wav"))
         {
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, "Audio: This file format is not supported");
             yield break;
         }
         
-        using (WWW www = new WWW("file://" + fileName))
+        string url = "file://" + fileName;
+        var request = UnityWebRequestMultimedia.GetAudioClip(url, GetAudioType(url));
+
+        ((DownloadHandlerAudioClip)request.downloadHandler).compressed = false;
+        ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
+
+        yield return request.SendWebRequest();
+        
+        if (request.result == UnityWebRequest.Result.ConnectionError)
         {
-            AudioClip audioClip;
-            
-            yield return www;
-
-            if (!string.IsNullOrEmpty(www.error))
-            {
-                noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Audio : {www.error}");
-                yield break;
-            }
-            
-            audioClip = www.GetAudioClip();
-            audioClip.name = "Audio";
-            
-            audioSource.clip = audioClip;
-            isFileSet = true;
-            timeSlider.maxValue = audioSource.clip.length;
-
-            file = Path.GetFileNameWithoutExtension(fileName);
-            title.text = file;
+            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Audio : {request.error}");
+            yield break;
         }
+        
+        audioSource.clip = DownloadHandlerAudioClip.GetContent(request);
+
+        file = Path.GetFileNameWithoutExtension(fileName);
+        isFileSet = true;
+        timeSlider.maxValue = audioSource.clip.length;
+        title.text = file;
 
         fileAddress = fileName;
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "AudioLoad Finished.");
@@ -835,6 +834,21 @@ public class GameEvent : MonoBehaviour
 
         audioSource.pitch = 1.0f;
         musicSpeedField.text = "1.0";
+    }
+
+    public AudioType GetAudioType(string url)
+    {
+        switch (Path.GetExtension(url).ToLower())
+        {
+            case ".ogg":
+                return AudioType.OGGVORBIS;
+            case ".mp3":
+                return AudioType.MPEG;
+            case ".wav":
+                return AudioType.WAV;
+            default:
+                return AudioType.UNKNOWN;
+        }
     }
 
     public void SettingOpenFile()
