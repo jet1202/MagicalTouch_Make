@@ -809,7 +809,7 @@ public class GameEvent : MonoBehaviour
         var request = UnityWebRequestMultimedia.GetAudioClip(url, GetAudioType(url));
 
         ((DownloadHandlerAudioClip)request.downloadHandler).compressed = false;
-        ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
+        ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = false;
 
         yield return request.SendWebRequest();
         
