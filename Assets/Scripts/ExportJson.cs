@@ -81,7 +81,10 @@ public static class ExportJson
 
             if (di.Value.GetKind() == 'S')
             {
-                _notesData.slideItem[s] = slideDataA[di.Key];
+                var item = slideDataA[di.Key];
+                item.number = num;
+                
+                _notesData.slideItem[s] = item;
 
                 s++;
             }
