@@ -750,7 +750,8 @@ public class GameEvent : MonoBehaviour
             ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
             ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount,
-                speedsDirector.speedsData, anglesDirector.anglesData);
+                speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>());
+            // TODO: 透明度の実装 (transparencyDirector.transparenciesData)
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");

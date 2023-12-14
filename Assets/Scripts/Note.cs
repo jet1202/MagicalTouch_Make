@@ -204,6 +204,51 @@ public class Angle
 }
 
 [Serializable]
+public class Transparency
+{
+    private int Time { get; set; }
+    private int Alpha { get; set; }
+    private bool IsVariation { get; set; }
+
+    public Transparency(int time, int alpha, bool isVariation)
+    {
+        this.Time = time;
+        this.Alpha = alpha;
+        this.IsVariation = isVariation;
+    }
+
+    public int GetTime()
+    {
+        return Time;
+    }
+
+    public int GetAlpha()
+    {
+        return Alpha;
+    }
+
+    public bool GetIsVariation()
+    {
+        return IsVariation;
+    }
+
+    public void SetTime(int time)
+    {
+        Time = time;
+    }
+
+    public void SetAlpha(int alpha)
+    {
+        Alpha = alpha;
+    }
+
+    public void SetIsVariation(bool isVariation)
+    {
+        IsVariation = isVariation;
+    }
+}
+
+[Serializable]
 public class BpmSave // save
 {
     public BpmItem[] bpmItem;
@@ -255,7 +300,7 @@ public class SlideMaintain
 }
 
 [Serializable]
-public class FieldSave
+public class FieldSave // save
 {
     public Field[] item;
 }
@@ -264,9 +309,10 @@ public class FieldSave
 public class Field
 {
     public int field;
+    public bool isDummy;
     public SpeedItem[] speedItem;
     public AngleWork[] angleWork;
-    public int[] activeTime;
+    public TransparencyItem[] transparencyItem;
 }
 
 
@@ -284,4 +330,12 @@ public class AngleWork
     public int time;
     public int angle;
     public int variation;
+}
+
+[Serializable]
+public class TransparencyItem
+{
+    public int time;
+    public int alpha;
+    public bool isVariation;
 }

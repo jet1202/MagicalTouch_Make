@@ -135,7 +135,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingField(string name, int fields, List<List<Speed>> speeds, List<List<Angle>> angles)
+    public static void ExportingField(string name, int fields, List<List<Speed>> speeds, List<List<Angle>> angles, List<List<Transparency>> transparencyItems)
     {
         _fieldData = new Field[fields];
 
@@ -145,10 +145,15 @@ public static class ExportJson
         List<AngleWork> a = new List<AngleWork>();
         AngleWork a_item;
         
+        List<TransparencyItem> t = new List<TransparencyItem>();
+        TransparencyItem t_item;
+        
         for (int i = 0; i < fields; i++)
         {
             s = new List<SpeedItem>();
             a = new List<AngleWork>();
+            t = new List<TransparencyItem>();
+            
             foreach (var sp in speeds[i])
             {
                 s_item = new SpeedItem();
@@ -169,11 +174,21 @@ public static class ExportJson
                 a.Add(a_item);
             }
 
+            foreach (var tp in transparencyItems[i])
+            {
+                t_item = new TransparencyItem();
+                t_item.time = tp.GetTime();
+                t_item.alpha = tp.GetAlpha();
+                t_item.isVariation = tp.GetIsVariation();
+                
+                t.Add(t_item);
+            }
+
             _fieldData[i] = new Field();
             _fieldData[i].field = i;
             _fieldData[i].speedItem = s.ToArray();
             _fieldData[i].angleWork = a.ToArray();
-            _fieldData[i].activeTime = Array.Empty<int>();
+            _fieldData[i].transparencyItem = Array.Empty<TransparencyItem>(); // TODO: alphaの保存
         }
 
         var data = new FieldSave();
@@ -264,17 +279,6 @@ public static class ExportJson
 
         FieldSave _Data = JsonUtility.FromJson<FieldSave>(jsonStr);
         _fieldData = _Data.item;
-
-        foreach (var f in _fieldData)
-        {
-            foreach (var a in f.angleWork)
-            {
-                int v = a.variation;
-                if (Math.Abs(v) > 0 && Math.Abs(v) < 10)
-                    v *= 10;
-                a.variation = v;
-            }
-        }
 
         return _fieldData;
     }
