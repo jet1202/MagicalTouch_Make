@@ -11,7 +11,7 @@ public class BpmData : MonoBehaviour
     private GameObject flame;
     private GameObject bpmText;
 
-    public void DefaultSettings(float time, int bpm)
+    public void DefaultSettings(float time, float bpm)
     {
         flame = transform.GetChild(0).gameObject;
         bpmText = transform.GetChild(1).gameObject;
@@ -20,7 +20,7 @@ public class BpmData : MonoBehaviour
         bpmText.transform.GetComponent<MeshRenderer>().sortingOrder = 0;
 
         transform.localPosition = new Vector3(gameEvent.speed * time, 0f, 0f);
-        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString();
+        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString("F");
     }
 
     public void Choose()
@@ -38,9 +38,9 @@ public class BpmData : MonoBehaviour
         transform.localPosition = new Vector3(gameEvent.speed * time, 0f, 0f);
     }
 
-    public void ChangeBpm(int bpm)
+    public void ChangeBpm(float bpm)
     {
-        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString();
+        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString("F");
     }
 
     public void ClearBpm()

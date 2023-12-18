@@ -1095,7 +1095,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6557,9 +6557,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &414259144
 MonoBehaviour:
@@ -16535,7 +16535,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1075580403
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26885,17 +26885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 1461003359}
-  playButton: {fileID: 1366395636}
   timeSlider: {fileID: 438234288}
-  splitField: {fileID: 1941080047}
-  timeField: {fileID: 42087300}
-  musicImportField: {fileID: 1394316460}
-  dataImportFieldSheet: {fileID: 1518412285}
-  dataImportFieldAddition: {fileID: 194539371}
-  dataImportFieldSub: {fileID: 406129023}
-  dataExportField: {fileID: 346256017}
-  dataExportNameField: {fileID: 147120354}
-  speedField: {fileID: 628374557}
   musicSpeedField: {fileID: 1652044983}
   noteButton: {fileID: 483486920}
   speedButton: {fileID: 378940287}
@@ -26910,6 +26900,7 @@ MonoBehaviour:
   bpms: {fileID: 649374827}
   speeds: {fileID: 1756020621}
   angles: {fileID: 617230985}
+  userIO: {fileID: 0}
   centerDirector: {fileID: 1673888454}
   notesController: {fileID: 592323472}
   notesDirector: {fileID: 2040143208}

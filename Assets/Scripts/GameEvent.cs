@@ -15,17 +15,7 @@ using Screen = UnityEngine.Screen;
 public class GameEvent : MonoBehaviour
 {
     [SerializeField] private Text title;
-    [SerializeField] private Button playButton;
     [SerializeField] private Slider timeSlider;
-    [SerializeField] private TMP_InputField splitField;
-    [SerializeField] private TMP_InputField timeField;
-    [SerializeField] private TMP_InputField musicImportField;
-    [SerializeField] private TMP_InputField dataImportFieldSheet;
-    [SerializeField] private TMP_InputField dataImportFieldAddition;
-    [SerializeField] private TMP_InputField dataImportFieldSub;
-    [SerializeField] private TMP_InputField dataExportField;
-    [SerializeField] private TMP_InputField dataExportNameField;
-    [SerializeField] private TMP_InputField speedField;
     [SerializeField] private TMP_InputField musicSpeedField;
 
     [SerializeField] private GameObject noteButton;
@@ -43,7 +33,8 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private GameObject bpms;
     [SerializeField] private GameObject speeds;
     [SerializeField] private GameObject angles;
-    
+
+    [SerializeField] private UserIO userIO;
     [SerializeField] private CenterDirector centerDirector;
     [SerializeField] private NotesController notesController;
     [SerializeField] private NotesDirector notesDirector;
@@ -79,10 +70,10 @@ public class GameEvent : MonoBehaviour
         isPlaying = false;
         audioSource = GetComponent<AudioSource>();
         speed = 1.0f;
-        speedField.text = speed.ToString("F1");
-        musicSpeedField.text = "1.0";
+        userIO.SpeedOutput(speed);
+        userIO.MusicSpeedOutput(1.0f);
         split = 1;
-        splitField.text = split.ToString();
+        userIO.SplitOutput(split);
         
         NoteTabSet();
     }
@@ -92,7 +83,7 @@ public class GameEvent : MonoBehaviour
         if (isPlaying)
         {
             time = audioSource.time;
-            timeField.text = time.ToString("F3");
+            userIO.TimeOutput(time);
             timeSlider.value = time;
             
             FocusBeatSet(time);
@@ -167,7 +158,7 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(false, time, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
                         if (notesDirector.objectKind == 4)
-                            notesDirector.SetSpeedTime(BeatToTime(nowBeatNote).ToString());
+                            notesDirector.SetSpeedTime(BeatToTime(nowBeatNote));
                         else
                             notesDirector.TimeSet(BeatToTime(nowBeatNote));
                         nowBeatTime = -1;
@@ -240,7 +231,7 @@ public class GameEvent : MonoBehaviour
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(
-                                Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length).ToString());
+                                Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length));
                         else
                             notesDirector.TimeSet(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length));
                         nowBeatTime = -1;
@@ -438,11 +429,11 @@ public class GameEvent : MonoBehaviour
         isOpenTab = true;
     }
 
-    public void SplitSet()
+    public void SplitSet(int value)
     {
         // SplitFieldの変更
-        split = Mathf.Max(1, int.Parse(splitField.text));
-        splitField.text = split.ToString();
+        split = value;
+        userIO.SplitOutput(split);
         nowBeatTime = -1;
         nowBeatNote = -1;
         nowBeatLong = -1;
@@ -475,9 +466,9 @@ public class GameEvent : MonoBehaviour
         if (isFileSet)
         {
             isPlaying = !isPlaying;
+            userIO.PlayButtonColor(isPlaying);
             if (isPlaying)
             {
-                playButton.GetComponent<Image>().color = new Color(87f / 255, 120f / 255, 171f / 255, 1f);
                 audioSource.time = time;
                 centerDirector.StartPlayButton();
                 if (audioSource.clip.length > time)
@@ -488,7 +479,6 @@ public class GameEvent : MonoBehaviour
             }
             else
             {
-                playButton.GetComponent<Image>().color = new Color(106f / 255, 106f / 255, 106f / 255, 1f);
                 audioSource.Stop();
                 time = audioSource.time;
             }
@@ -496,10 +486,10 @@ public class GameEvent : MonoBehaviour
         
     }
 
-    public void TimeSet()
+    public void TimeSet(float inTime)
     {
         // TimeFieldの変更
-        ChangeTime(float.Parse(timeField.text));
+        ChangeTime(inTime);
         nowBeatTime = -1;
         nowBeatLong = -1;
     }
@@ -535,12 +525,12 @@ public class GameEvent : MonoBehaviour
         anglesDirector.RenewalAngle();
     }
 
-    public void SpeedSet()
+    public void SpeedSet(float inSpeed)
     {
-        speed = float.Parse(speedField.text);
+        speed = inSpeed;
         if (speed < 1) speed = 1.0f;
         if (speed > 10) speed = 10.0f;
-        speedField.text = speed.ToString();
+        userIO.SpeedOutput(speed);
         notesController.MeasureLineSet(notesDirector.bpms);
         
         if (notesDirector.focusNote == null)
@@ -565,13 +555,12 @@ public class GameEvent : MonoBehaviour
         }
     }
     
-    public void MusicSpeedSet()
+    public void MusicSpeedSet(float musicSpeed)
     {
         // 曲の速度変更
-        float musicSpeed = float.Parse(musicSpeedField.text);
         if (musicSpeed < 0.1f) musicSpeed = 0.1f;
-        if (musicSpeed > 1.5f) musicSpeed = 1.5f;
-        musicSpeedField.text = musicSpeed.ToString();
+        if (musicSpeed > 2.0f) musicSpeed = 2.0f; 
+        userIO.MusicSpeedOutput(musicSpeed);
         audioSource.pitch = musicSpeed;
     }
 
@@ -614,19 +603,14 @@ public class GameEvent : MonoBehaviour
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(2, massage);
     }
 
-    public void MusicImport()
+    public void MusicImport(string path)
     {
-        string address = musicImportField.text.Trim(' ', '"', '\n');
-
-        StartCoroutine(StreamLoadAudioFile(address));
+        StartCoroutine(StreamLoadAudioFile(path));
         TabClose();
     }
 
-    public void DataImport()
+    public void DataImport(string notePath, string bpmPath, string fieldPath)
     {
-        string bpmPath = dataImportFieldAddition.text.Trim(' ', '"', '\n');
-        string sheetPath = dataImportFieldSheet.text.Trim(' ', '"', '\n');
-        string fieldPath = dataImportFieldSub.text.Trim(' ', '"', '\n');
 
         if (!File.Exists(bpmPath))
         {
@@ -651,25 +635,24 @@ public class GameEvent : MonoBehaviour
 
                 foreach (BpmItem b in bpmData.bpmItem)
                 {
-                    notesDirector.NewBpm(b.time, b.bpm);
+                    notesDirector.NewBpm(b.time, b.bpm / 1000f);
                 }
             }
             
-            if (sheetPath != "")
+            if (notePath != "")
             {
                 // Sheetの入手
                 Dictionary<int, Note> notesData;
                 Dictionary<int, SlideSave> slidesData;
                 
-                notesData = ExportJson.ImportingSheet(sheetPath);
+                notesData = ExportJson.ImportingSheet(notePath);
                 slidesData = ExportJson.ImportingSlide();
 
                 foreach (Transform t in notes.transform)
                 {
                     t.GetComponent<NotesData>().ClearNote();
                 }
-
-                notesDirector.isImporting = true;
+                
                 foreach (var n in notesData)
                 {
                     if (n.Value.GetKind() == 'S')
@@ -680,8 +663,6 @@ public class GameEvent : MonoBehaviour
                         notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
                             n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
                 }
-
-                notesDirector.isImporting = false;
             }
 
             if (fieldPath != "")
@@ -732,12 +713,8 @@ public class GameEvent : MonoBehaviour
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
     }
 
-    public void DataExport()
+    public void DataExport(string path)
     {
-        string path = dataExportField.text.Trim(' ', '"', '\n').TrimEnd('\\', '/');
-        string name = dataExportNameField.text.Trim(' ', '"', '\n', '\\', '/');
-        name = name == "" ? file : name;
-
         if (!Directory.Exists(path))
         {
             TabClose();
@@ -747,9 +724,9 @@ public class GameEvent : MonoBehaviour
 
         // try
         // {
-            ExportJson.ExportingSheet(notes, path + $"\\{name}.json");
-            ExportJson.ExportingBpm(path + $"\\{name}Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
-            ExportJson.ExportingField(path + $"\\{name}Field.json", fieldSettingController.fieldsCount,
+            ExportJson.ExportingSheet(notes, path + "\\Note.json");
+            ExportJson.ExportingBpm(path + "\\Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
+            ExportJson.ExportingField(path + "\\Field.json", fieldSettingController.fieldsCount,
                 speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>());
             // TODO: 透明度の実装 (transparencyDirector.transparenciesData)
             
@@ -782,7 +759,7 @@ public class GameEvent : MonoBehaviour
     {
         time = Mathf.Floor(cTime * 1000) / 1000f;
         timeSlider.value = time;
-        timeField.text = time.ToString();
+        userIO.TimeOutput(time);
     }
 
     IEnumerator StreamLoadAudioFile(string fileName)
@@ -830,7 +807,7 @@ public class GameEvent : MonoBehaviour
         fileAddress = fileName;
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "AudioLoad Finished.");
         
-        notesDirector.NewBpm(0, 120);
+        notesDirector.NewBpm(0, 120f);
         notesController.MeasureLineSet(notesDirector.bpms);
 
         audioSource.pitch = 1.0f;
@@ -852,37 +829,37 @@ public class GameEvent : MonoBehaviour
         }
     }
 
-    public void SettingOpenFile()
+    public void MusicPathOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("Sound file", "wav", "ogg", "mp3")}, false);
         if (paths.Length != 0)
-            musicImportField.text = paths.First();
+            userIO.MusicImportPathOutput(paths.First());
     }
     
-    public void ExportOpenFile()
-    {
-        var paths = StandaloneFileBrowser.OpenFolderPanel("Open Folder", "", false);
-        dataExportField.text = paths.First();
-    }
-    
-    public void ImportAdditionOpenFile()
+    public void DataImportNoteOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
             new[] { new ExtensionFilter("json file", "json") }, false);
-        dataImportFieldAddition.text = paths.First();
+        userIO.DataImportNotePathOutput(paths.First());
     }
     
-    public void ImportSheetOpenFile()
+    public void DataImportBpmOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
             new[] { new ExtensionFilter("json file", "json") }, false);
-        dataImportFieldSheet.text = paths.First();
+        userIO.DataImportBpmPathOutput(paths.First());
     }
 
-    public void ImportSubOpenFile()
+    public void DataImportFieldOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
             new[] { new ExtensionFilter("json file", "json") }, false);
-        dataImportFieldSub.text = paths.First();
+        userIO.DataImportFieldPathOutput(paths.First());
+    }
+    
+    public void DataExportOpenFile()
+    {
+        var paths = StandaloneFileBrowser.OpenFolderPanel("Open Folder", "", false);
+        userIO.DataExportPathOutput(paths.First());
     }
 }

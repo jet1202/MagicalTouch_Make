@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class NotesDirector : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private UserIO userIO;
     [SerializeField] private NotesController notesController;
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private Angles anglesDirector;
@@ -31,24 +32,6 @@ public class NotesDirector : MonoBehaviour
     
     public GameObject focusNote = null;
     public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles
-
-    [SerializeField] private TMP_InputField timeField;
-    [SerializeField] private TMP_InputField laneFieldF;
-    [SerializeField] private TMP_InputField laneFieldL;
-    [SerializeField] private TMP_Dropdown kindDropdown;
-    [SerializeField] private TMP_InputField lengthField;
-    [SerializeField] private TMP_InputField bpmField;
-    [SerializeField] private Toggle isDummyToggle;
-    [SerializeField] private Toggle isJudgeToggle;
-    [SerializeField] private Toggle isVariationToggle;
-    [SerializeField] private TMP_Dropdown fieldDropdown;
-    [SerializeField] private TMP_Dropdown colorDropdown;
-
-    [SerializeField] private TMP_InputField speedTimeField;
-    [SerializeField] private TMP_InputField speedSpeedField;
-    [SerializeField] private Toggle speedIsVariationToggle;
-    [SerializeField] private TMP_InputField angleDegreeField;
-    [SerializeField] private TMP_InputField angleVariationField;
     
     private int focusTime;
     
@@ -56,13 +39,11 @@ public class NotesDirector : MonoBehaviour
     private int noteLaneL;
     private int noteKind;
     private int noteLength;
-    private int bpmBpm;
+    private float bpmBpm;
     
     private float rayDistance = 30f;
     
     public Dictionary<GameObject, Bpm> bpms = new Dictionary<GameObject, Bpm>();
-
-    public bool isImporting = false;
 
     private void Update()
     {
@@ -283,12 +264,12 @@ public class NotesDirector : MonoBehaviour
         {
             // focusNoteのデータを取り出し表示する
             Note n = focusNote.GetComponent<NotesData>().note;
-            timeField.text = (n.GetTime() / 1000f).ToString("F3");
-            laneFieldF.text = n.GetStartLane().ToString();
-            laneFieldL.text = n.GetEndLane().ToString();
-            kindDropdown.value = NoteKindToInt(n.GetKind());
-            lengthField.text = (n.GetLength() / 1000f).ToString("F3");
-            fieldDropdown.value = n.GetField();
+            userIO.NoteTimeOutput(n.GetTime() / 1000f); 
+            userIO.NoteLaneFOutput(n.GetStartLane());
+            userIO.NoteLaneLOutput(n.GetEndLane());
+            userIO.NoteKindDropdownOutput(NoteKindToInt(n.GetKind()));
+            userIO.NoteLengthOutput(n.GetLength() / 1000f);
+            userIO.NoteFieldDropdownOutput(n.GetField());
 
             if (n.GetKind() == 'L')
             {
@@ -309,13 +290,14 @@ public class NotesDirector : MonoBehaviour
         }
         else if (objectKind == 2) // slide
         {
-            Note n = focusNote.GetComponent<SlideData>().note;
-            timeField.text = (n.GetTime() / 1000f).ToString("F3");
-            laneFieldF.text = n.GetStartLane().ToString();
-            laneFieldL.text = n.GetEndLane().ToString();
-            fieldDropdown.value = n.GetField();
-            isDummyToggle.isOn = focusNote.GetComponent<SlideData>().isDummy;
-            colorDropdown.value = focusNote.GetComponent<SlideData>().fieldColor;
+            SlideData data = focusNote.GetComponent<SlideData>();
+            Note n = data.note;
+            userIO.NoteTimeOutput(n.GetTime() / 1000f);
+            userIO.NoteLaneFOutput(n.GetStartLane());
+            userIO.NoteLaneLOutput(n.GetEndLane());
+            userIO.NoteFieldDropdownOutput(n.GetField());
+            userIO.IsDummyToggleOutput(data.isDummy);
+            userIO.SlideFieldColorDropdownOutput(data.fieldColor);
             
             lengthObj.SetActive(false);
             laneObj.SetActive(true);
@@ -328,11 +310,11 @@ public class NotesDirector : MonoBehaviour
         else if (objectKind == 3) // slideMaintain
         {
             SlideMaintain s = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
-            timeField.text = ((s.time + focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f).ToString("F3");
-            laneFieldF.text = s.startLane.ToString();
-            laneFieldL.text = s.endLane.ToString();
-            isJudgeToggle.isOn = s.isJudge;
-            isVariationToggle.isOn = s.isVariation;
+            userIO.NoteTimeOutput((s.time + focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f);
+            userIO.NoteLaneFOutput(s.startLane);
+            userIO.NoteLaneLOutput(s.endLane);
+            userIO.IsJudgeToggleOutput(s.isJudge);
+            userIO.IsVariationToggleOutput(s.isVariation);
             
             lengthObj.SetActive(false);
             laneObj.SetActive(false);
@@ -345,8 +327,8 @@ public class NotesDirector : MonoBehaviour
         else if (objectKind == 1) // bpm
         {
             Bpm b = bpms[focusNote];
-            timeField.text = (b.GetTime() / 1000f).ToString("F3");
-            bpmField.text = b.GetBpm().ToString();
+            userIO.NoteTimeOutput(b.GetTime() / 1000f);
+            userIO.BpmOutput(b.GetBpm());
             
             lengthObj.SetActive(false);
             laneObj.SetActive(false);
@@ -359,9 +341,9 @@ public class NotesDirector : MonoBehaviour
         else if (objectKind == 4) // speed
         {
             Speed s = speedsDirector.fieldSpeeds[focusNote];
-            speedTimeField.text = (s.GetTime() / 1000f).ToString("F3");
-            speedSpeedField.text = (s.GetSpeed100() / 100f).ToString("F2");
-            speedIsVariationToggle.isOn = s.GetIsVariation();
+            userIO.SpeedTimeOutput(s.GetTime() / 1000f);
+            userIO.SpeedSpeedOutput(s.GetSpeed100() / 100f);
+            userIO.SpeedIsVariationToggleOutput(s.GetIsVariation());
             
             speedObj.SetActive(true);
             angleObj.SetActive(false);
@@ -369,9 +351,9 @@ public class NotesDirector : MonoBehaviour
         else if (objectKind == 5) // angle
         {
             Angle a = anglesDirector.fieldAngles[focusNote];
-            speedTimeField.text = (a.GetTime() / 1000f).ToString("F3");
-            angleDegreeField.text = a.GetDegree().ToString();
-            angleVariationField.text = (a.GetVariation() / 10f).ToString("F1");
+            userIO.SpeedTimeOutput(a.GetTime() / 1000f);
+            userIO.AngleDegreeOutput(a.GetDegree());
+            userIO.AngleVariationOutput(a.GetVariation() / 10f);
             
             speedObj.SetActive(false);
             angleObj.SetActive(true);
@@ -417,16 +399,11 @@ public class NotesDirector : MonoBehaviour
         gameEvent.FocusBeatSet(gameEvent.time);
     }
     
-    public void TimeSet()
-    {
-        TimeSet(float.Parse(timeField.text));
-    }
-    
     public void TimeSet(float cTime)
     {
         cTime = Math.Min(gameEvent.GetComponent<AudioSource>().clip.length, Math.Max(cTime, 0f));
         focusTime = (int)(cTime * 1000);
-        timeField.text = (focusTime / 1000f).ToString("F3");
+        userIO.NoteTimeOutput(focusTime / 1000f);
         
         if (focusNote != null)
         {
@@ -454,7 +431,7 @@ public class NotesDirector : MonoBehaviour
                     t = 0;
                 }
                 focusNote.GetComponent<SlideMaintainData>().SetTime(t);
-                timeField.text = (focusTime / 1000f).ToString("F3");
+                userIO.NoteTimeOutput(focusTime / 1000f);
             }
             else if (objectKind == 4)
             {
@@ -496,12 +473,6 @@ public class NotesDirector : MonoBehaviour
         else
             return false;
     }
-
-    public void NoteLaneSet()
-    {
-        if (isImporting) return;
-        NoteLaneSet(int.Parse(laneFieldF.text), int.Parse(laneFieldL.text));
-    }
     
     public void NoteLaneSet(int start, int end)
     {
@@ -511,8 +482,8 @@ public class NotesDirector : MonoBehaviour
         noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
         noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
         
-        laneFieldF.text = noteLaneF.ToString();
-        laneFieldL.text = noteLaneL.ToString();
+        userIO.NoteLaneFOutput(noteLaneF);
+        userIO.NoteLaneLOutput(noteLaneL);
         
         if (focusNote != null)
         {
@@ -525,11 +496,9 @@ public class NotesDirector : MonoBehaviour
         }
     }
 
-    public void NoteKindSet()
+    public void NoteKindSet(int value)
     {
-        if (isImporting) return;
-
-        noteKind = kindDropdown.value;
+        noteKind = value;
         if (focusNote != null)
         {
             focusNote.GetComponent<NotesData>().ChangeKind(NoteKindToChar(noteKind));
@@ -540,14 +509,7 @@ public class NotesDirector : MonoBehaviour
         else
             lengthObj.SetActive(false);
     }
-
-    public void NoteLengthSet()
-    {
-        if (isImporting) return;
-
-        NoteLengthSet(float.Parse(lengthField.text));
-    }
-
+    
     public void NoteLengthSet(float cLength)
     {
         noteLength = (int)(Math.Max(cLength, 0f) * 1000);
@@ -558,25 +520,22 @@ public class NotesDirector : MonoBehaviour
                 noteLength = (int)((gameEvent.GetComponent<AudioSource>().clip.length - focusTime / 1000f) * 1000);
             }
             
-            lengthField.text = (noteLength / 1000f).ToString();
+            userIO.NoteLengthOutput(noteLength / 1000f);
             focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
         }
     }
 
-    public void NoteFieldSet()
+    public void NoteFieldSet(int value)
     {
-        if (isImporting) return;
-
-        int v = fieldDropdown.value;
         if (objectKind == 0)
         {
-            focusNote.GetComponent<NotesData>().ChangeField(v);
-            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(v);
+            focusNote.GetComponent<NotesData>().ChangeField(value);
+            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
         }
         else if (objectKind == 2)
         {
-            focusNote.GetComponent<SlideData>().ChangeField(fieldDropdown.value);
-            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(v);
+            focusNote.GetComponent<SlideData>().ChangeField(value);
+            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
         }
     }
 
@@ -627,15 +586,15 @@ public class NotesDirector : MonoBehaviour
     // Bpm
     public void NewBpm()
     {
-        NewBpm((int)(gameEvent.time * 1000), 120);
+        NewBpm((int)(gameEvent.time * 1000), 120f);
     }
 
-    public void NewBpm(int time, int bpm)
+    public void NewBpm(int time, float bpm)
     {
         GameObject obj = Instantiate(bpmPrefab, bpmParent.transform);
         obj.GetComponent<BpmData>().DefaultSettings(time / 1000f, bpm);
         obj.SetActive(true);
-        bpms.Add(obj, new Bpm(time, bpm));
+        bpms.Add(obj, new Bpm(time, (int)(bpm * 1000)));
         
         SetDisChoose();
         focusNote = obj;
@@ -648,16 +607,15 @@ public class NotesDirector : MonoBehaviour
         notesController.MeasureLineSet(bpms);
     }
 
-    public void BpmSet(string str)
+    public void BpmSet(float bpm)
     {
-        var bpm = int.Parse(str);
-        bpmBpm = Math.Max(0, Math.Min(1000, bpm));
-        bpmField.text = bpmBpm.ToString();
+        bpmBpm = Math.Max(0f, Math.Min(1000f, bpm));
+        userIO.BpmOutput(bpmBpm);
 
         if (focusNote != null)
         {
-            bpms[focusNote].SetBpm(bpmBpm);
-            focusNote.GetComponent<BpmData>().ChangeBpm(bpmBpm);
+            bpms[focusNote].SetBpm((int)(bpmBpm * 1000f));
+            focusNote.GetComponent<BpmData>().ChangeBpm((int)(bpmBpm * 1000f));
             
             notesController.MeasureLineSet(bpms);
         }
@@ -790,12 +748,11 @@ public class NotesDirector : MonoBehaviour
         gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
     }
 
-    public void SetSpeedTime(string timeS)
+    public void SetSpeedTime(float time)
     {
-        float time = float.Parse(timeS);
         float cTime = Math.Clamp(time, 0f, gameEvent.GetComponent<AudioSource>().clip.length);
         focusTime = (int)(cTime * 1000);
-        speedTimeField.text = (focusTime / 1000f).ToString("F3");
+        userIO.SpeedTimeOutput(focusTime / 1000f);
         
         if (objectKind == 4)
             speedsDirector.SetTime(focusNote, focusTime);
@@ -803,12 +760,11 @@ public class NotesDirector : MonoBehaviour
             anglesDirector.SetTime(focusNote, focusTime);
     }
 
-    public void SetSpeedSpeed(string speedS)
+    public void SetSpeedSpeed(float speed)
     {
-        float speed = float.Parse(speedS);
         float cSpeed = Math.Clamp(speed, -1000f, 1000f);
         int speed100 = (int)(cSpeed * 100);
-        speedSpeedField.text = (speed100 / 100f).ToString("F2");
+        userIO.SpeedSpeedOutput(speed100 / 100f);
         
         speedsDirector.SetSpeed(focusNote, speed100);
     }
@@ -818,22 +774,20 @@ public class NotesDirector : MonoBehaviour
         speedsDirector.SetIsVariation(focusNote, isVariation);
     }
 
-    public void SetAngleDegree(string degreeS)
+    public void SetAngleDegree(int degree)
     {
-        int degree = int.Parse(degreeS);
         anglesDirector.SetDegree(focusNote, degree);
     }
 
-    public void SetAngleVariation(string variationS)
+    public void SetAngleVariation(int variation)
     {
-        int variation = (int)(float.Parse(variationS) * 10);
         if (Math.Abs(variation) < 10 && variation != 0)
             variation = 0;
-        angleVariationField.text = (variation / 10f).ToString("F1");
+        userIO.AngleVariationOutput(variation / 10f);
         anglesDirector.SetVariation(focusNote, variation);
     }
 
-    public void SetSpeedFieldDropDown(int value)
+    public void SetSpeedFieldDropdown(int value)
     {
         speedsDirector.ChangeField(value);
         speedsDirector.SetColor(FieldColor(value));
