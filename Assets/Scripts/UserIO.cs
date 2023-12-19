@@ -236,6 +236,7 @@ public class UserIO : MonoBehaviour
     }
     
     // Bottom
+    [Header("note関係")]
     [SerializeField] private TMP_InputField noteTimeField;
     [SerializeField] private TMP_InputField noteLaneFieldF;
     [SerializeField] private TMP_InputField noteLaneFieldL;
@@ -253,6 +254,7 @@ public class UserIO : MonoBehaviour
     [SerializeField] private Toggle speedIsVariationToggle;
     [SerializeField] private TMP_InputField angleDegreeField;
     [SerializeField] private TMP_InputField angleVariationField;
+    [SerializeField] private TMP_Dropdown speedFieldDropdown;
     
     // Button ========================================
     
@@ -449,6 +451,19 @@ public class UserIO : MonoBehaviour
     }
     public void SpeedFieldDropdownOutput(int value)
     {
-        noteFieldDropdown.value = value;
+        speedFieldDropdown.value = value;
+    }
+
+    public void UpdateFieldDropdown(int value)
+    {
+        noteFieldDropdown.ClearOptions();
+        slideFieldColorDropdown.ClearOptions();
+        
+        List<string> list = new List<string>();
+        for (int i = 0; i < value; i++)
+            list.Add(i.ToString());
+        
+        noteFieldDropdown.AddOptions(list);
+        slideFieldColorDropdown.AddOptions(list);
     }
 }

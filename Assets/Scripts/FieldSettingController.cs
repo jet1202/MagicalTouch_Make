@@ -8,12 +8,10 @@ using UnityEngine.UI;
 public class FieldSettingController : MonoBehaviour
 {
     [SerializeField] private NotesDirector notesDirector;
+    [SerializeField] private UserIO userIO;
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private LinePreview linePreview;
     [SerializeField] private GameObject fieldsContentsPrefab;
-
-    [SerializeField] private TMP_Dropdown noteDropdown;
-    [SerializeField] private TMP_Dropdown speedDropdown;
 
     [SerializeField] private GameObject scrollView;
     private GameObject viewport;
@@ -45,14 +43,7 @@ public class FieldSettingController : MonoBehaviour
         }
         
         // DropDownの要素数の変更
-        List<string> list = new List<string>();
-        for (int i = 0; i < fieldsCount; i++)
-            list.Add(i.ToString());
-        
-        noteDropdown.ClearOptions();
-        speedDropdown.ClearOptions();
-        noteDropdown.AddOptions(list);
-        speedDropdown.AddOptions(list);
+        userIO.UpdateFieldDropdown(fieldsCount);
         
         linePreview.ChangeField(fieldsCount);
     }

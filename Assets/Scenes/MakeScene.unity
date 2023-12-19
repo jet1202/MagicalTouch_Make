@@ -399,9 +399,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ImportAdditionOpenFile
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataImportBpmPathOpenFileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -711,10 +711,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TimeSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TimeInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -732,10 +732,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TimeSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TimeInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1095,7 +1095,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1137,59 +1137,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 66281749}
   m_CullTransparentMesh: 1
---- !u!1 &74199350
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 74199351}
-  - component: {fileID: 74199352}
-  m_Layer: 5
-  m_Name: Text Area
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &74199351
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74199350}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 451785756}
-  - {fileID: 330716374}
-  m_Father: {fileID: 147120353}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &74199352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74199350}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding: {x: -8, y: -5, z: -8, w: -5}
-  m_Softness: {x: 0, y: 0}
 --- !u!1 &94561904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,9 +1381,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ImportSheetOpenFile
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataImportNotePathOpenFileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1915,10 +1862,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLaneSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLaneFInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1936,10 +1883,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLaneSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLaneFInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2103,182 +2050,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
---- !u!1 &147120352
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 147120353}
-  - component: {fileID: 147120356}
-  - component: {fileID: 147120355}
-  - component: {fileID: 147120354}
-  m_Layer: 5
-  m_Name: NameFieldTMP
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &147120353
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147120352}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 74199351}
-  m_Father: {fileID: 1194468355}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -70}
-  m_SizeDelta: {x: 700, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &147120354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147120352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 147120355}
-  m_TextViewport: {fileID: 74199351}
-  m_TextComponent: {fileID: 330716375}
-  m_Placeholder: {fileID: 451785758}
-  m_VerticalScrollbar: {fileID: 0}
-  m_VerticalScrollbarEventHandler: {fileID: 0}
-  m_LayoutGroup: {fileID: 0}
-  m_ScrollSensitivity: 1
-  m_ContentType: 0
-  m_InputType: 0
-  m_AsteriskChar: 42
-  m_KeyboardType: 0
-  m_LineType: 0
-  m_HideMobileInput: 0
-  m_HideSoftKeyboard: 0
-  m_CharacterValidation: 0
-  m_RegexValue: 
-  m_GlobalPointSize: 14
-  m_CharacterLimit: 0
-  m_OnEndEdit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnSubmit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnSelect:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnDeselect:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnTextSelection:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnEndTextSelection:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnTouchScreenKeyboardStatusChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_CustomCaretColor: 0
-  m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: 
-  m_CaretBlinkRate: 0.85
-  m_CaretWidth: 1
-  m_ReadOnly: 0
-  m_RichText: 1
-  m_GlobalFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_OnFocusSelectAll: 1
-  m_ResetOnDeActivation: 1
-  m_RestoreOriginalTextOnEscape: 1
-  m_isRichTextEditingAllowed: 0
-  m_LineLimit: 0
-  m_InputValidator: {fileID: 0}
---- !u!114 &147120355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147120352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &147120356
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147120352}
-  m_CullTransparentMesh: 1
 --- !u!1 &156084220
 GameObject:
   m_ObjectHideFlags: 0
@@ -2389,11 +2160,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notesDirector: {fileID: 2040143208}
+  userIO: {fileID: 1825082434}
   speedsDirector: {fileID: 1756020624}
   linePreview: {fileID: 1709066839}
   fieldsContentsPrefab: {fileID: 7443753425330538638, guid: a57e1e8349ec67b40970b9d953b8fcea, type: 3}
-  noteDropdown: {fileID: 595939354}
-  speedDropdown: {fileID: 996866199}
   scrollView: {fileID: 1624161044}
   fieldsCount: 1
 --- !u!4 &165815385
@@ -2514,10 +2284,10 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteKindSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteKindDropdownInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5169,141 +4939,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Notice
---- !u!1 &330716373
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 330716374}
-  - component: {fileID: 330716376}
-  - component: {fileID: 330716375}
-  m_Layer: 5
-  m_Name: Text
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &330716374
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330716373}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 74199351}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &330716375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330716373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: "\u200B"
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 1
-  m_enableExtraPadding: 1
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &330716376
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330716373}
-  m_CullTransparentMesh: 1
 --- !u!1 &343959384
 GameObject:
   m_ObjectHideFlags: 0
@@ -5662,10 +5297,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: TimeSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteTimeInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5683,10 +5318,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: TimeSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteTimeInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5844,9 +5479,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SpeedTabSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedTabButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6557,9 +6192,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &414259144
 MonoBehaviour:
@@ -6698,9 +6333,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: FieldColorSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: FieldColorToggle
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7045,9 +6680,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: BpmSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: BpmInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7066,9 +6701,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: BpmSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: BpmInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7163,162 +6798,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 440174146}
-  m_CullTransparentMesh: 1
---- !u!1 &451785755
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 451785756}
-  - component: {fileID: 451785759}
-  - component: {fileID: 451785758}
-  - component: {fileID: 451785757}
-  m_Layer: 5
-  m_Name: Placeholder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &451785756
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451785755}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 74199351}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &451785757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451785755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 1
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
---- !u!114 &451785758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451785755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: Enter Name...
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 2150773298
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 2
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 1
-  m_enableExtraPadding: 1
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &451785759
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451785755}
   m_CullTransparentMesh: 1
 --- !u!1 &452578584
 GameObject:
@@ -7422,9 +6901,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedTime
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedTimeInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7443,9 +6922,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedTime
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedTimeInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7642,9 +7121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: NoteTabSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteTabButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8347,9 +7826,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetDummy
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: IsDummyToggleInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8986,9 +8465,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: LinePreviewSet
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: LinePreviewToggle
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9226,10 +8705,10 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteFieldSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteFieldDropdownInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9422,9 +8901,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NewSpeed
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedAddButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9558,9 +9037,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetJudge
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: IsJudgeToggleInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9952,9 +9431,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ImportMusicClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: ImportMusicButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10104,10 +9583,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SpeedSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -10125,10 +9604,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SpeedSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -10397,9 +9876,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TabClose
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TabCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10979,9 +10458,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NewBpm
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: BpmAddButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11686,9 +11165,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: InfoClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: InfoButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12697,9 +12176,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetAngleVariation
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: AngleVariationInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12718,9 +12197,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetAngleVariation
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: AngleVariationInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14196,10 +13675,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLengthSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLengthInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -14217,10 +13696,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLengthSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLengthInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -15580,9 +15059,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedFieldDropDown
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedFieldDropdownInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16383,9 +15862,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NewNote
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteAddButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16535,7 +16014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1075580403
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16651,7 +16130,7 @@ RectTransform:
   m_Children:
   - {fileID: 527323198}
   m_Father: {fileID: 1194468355}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -16702,9 +16181,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: DataExport
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataExportButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16912,9 +16391,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NewAngle
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: AngleAddButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17663,10 +17142,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLaneSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLaneLInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -17684,10 +17163,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NoteLaneSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoteLaneLInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -17793,7 +17272,6 @@ RectTransform:
   m_Children:
   - {fileID: 630700717}
   - {fileID: 346256016}
-  - {fileID: 147120353}
   - {fileID: 1278164234}
   - {fileID: 1075697503}
   - {fileID: 2007213844}
@@ -18192,7 +17670,7 @@ RectTransform:
   m_Children:
   - {fileID: 1131295183}
   m_Father: {fileID: 1194468355}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -18243,9 +17721,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ExportOpenFile
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataExportPathOpenFileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18377,9 +17855,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TabClose
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TabCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18876,9 +18354,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: MusicImport
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: MusicImportButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19012,9 +18490,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetVariation
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: IsVariationToggleInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19657,9 +19135,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameDirector, Assembly-CSharp
-        m_MethodName: PlayClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: PlayButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20768,9 +20246,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: NewSlide
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SlideAddButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21253,9 +20731,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ImportClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: ImportButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21387,9 +20865,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SettingOpenFile
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: MusicPathOpenFileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22610,9 +22088,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetColor
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SlideFieldColorDropdownInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23648,10 +23126,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: MusicSpeedSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: MusicSpeedInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -23669,10 +23147,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: MusicSpeedSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: MusicSpeedInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -23905,9 +23383,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameDirector, Assembly-CSharp
-        m_MethodName: SettingsClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SettingButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24039,9 +23517,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: NoticeClose
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: NoticeCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24249,9 +23727,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TabClose
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TabCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25430,9 +24908,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetAngleDegree
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: AngleDegreeInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25451,9 +24929,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetAngleDegree
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: AngleDegreeInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26568,9 +26046,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ExportClick
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: ExportButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26863,6 +26341,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1825082432}
+  - component: {fileID: 1825082434}
   - component: {fileID: 1825082431}
   - component: {fileID: 1825082433}
   m_Layer: 0
@@ -26900,7 +26379,7 @@ MonoBehaviour:
   bpms: {fileID: 649374827}
   speeds: {fileID: 1756020621}
   angles: {fileID: 617230985}
-  userIO: {fileID: 0}
+  userIO: {fileID: 1825082434}
   centerDirector: {fileID: 1673888454}
   notesController: {fileID: 592323472}
   notesDirector: {fileID: 2040143208}
@@ -27033,6 +26512,47 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1825082434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825082430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c3a63e86c13680468a36a50fa1eae32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 1825082431}
+  notesDirector: {fileID: 2040143208}
+  playButton: {fileID: 1366395636}
+  timeField: {fileID: 42087300}
+  splitField: {fileID: 1941080047}
+  speedField: {fileID: 628374557}
+  musicSpeedField: {fileID: 1652044983}
+  musicImportField: {fileID: 1394316460}
+  dataImportFieldNote: {fileID: 1518412285}
+  dataImportFieldBpm: {fileID: 194539371}
+  dataImportFieldField: {fileID: 406129023}
+  dataExportPathField: {fileID: 346256017}
+  noteTimeField: {fileID: 349766314}
+  noteLaneFieldF: {fileID: 129998456}
+  noteLaneFieldL: {fileID: 1176717299}
+  noteKindDropdown: {fileID: 172581806}
+  noteLengthField: {fileID: 937189312}
+  bpmField: {fileID: 440174147}
+  isDummyToggle: {fileID: 527526798}
+  isJudgeToggle: {fileID: 609419350}
+  isVariationToggle: {fileID: 1335283049}
+  noteFieldDropdown: {fileID: 595939354}
+  slideFieldColorDropdown: {fileID: 1573253679}
+  speedTimeField: {fileID: 452578586}
+  speedSpeedField: {fileID: 2146900634}
+  speedIsVariationToggle: {fileID: 1870433250}
+  angleDegreeField: {fileID: 1710088352}
+  angleVariationField: {fileID: 839119706}
+  speedFieldDropdown: {fileID: 996866199}
 --- !u!1 &1828403264
 GameObject:
   m_ObjectHideFlags: 0
@@ -27980,9 +27500,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedIsVariation
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedIsVariationToggleInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28851,10 +28371,10 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SplitSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SplitInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -28872,10 +28392,10 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: SplitSet
-        m_Mode: 1
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SplitInput
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -29469,9 +28989,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: DataImport
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataImportButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29628,7 +29148,7 @@ RectTransform:
   m_Children:
   - {fileID: 50984619}
   m_Father: {fileID: 1194468355}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -29679,9 +29199,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: TabClose
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: TabCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -30308,6 +29828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameEvent: {fileID: 1825082431}
+  userIO: {fileID: 0}
   notesController: {fileID: 592323472}
   speedsDirector: {fileID: 1756020624}
   anglesDirector: {fileID: 617230987}
@@ -30328,23 +29849,6 @@ MonoBehaviour:
   angleObj: {fileID: 1910566755}
   focusNote: {fileID: 0}
   objectKind: 0
-  timeField: {fileID: 349766314}
-  laneFieldF: {fileID: 129998456}
-  laneFieldL: {fileID: 1176717299}
-  kindDropdown: {fileID: 172581806}
-  lengthField: {fileID: 937189312}
-  bpmField: {fileID: 440174147}
-  isDummyToggle: {fileID: 527526798}
-  isJudgeToggle: {fileID: 609419350}
-  isVariationToggle: {fileID: 1335283049}
-  fieldDropdown: {fileID: 595939354}
-  colorDropdown: {fileID: 1573253679}
-  speedTimeField: {fileID: 452578586}
-  speedSpeedField: {fileID: 2146900634}
-  speedIsVariationToggle: {fileID: 1870433250}
-  angleDegreeField: {fileID: 1710088352}
-  angleVariationField: {fileID: 839119706}
-  isImporting: 0
 --- !u!4 &2040143209
 Transform:
   m_ObjectHideFlags: 0
@@ -31068,9 +30572,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1825082431}
-        m_TargetAssemblyTypeName: GameEvent, Assembly-CSharp
-        m_MethodName: ImportSubOpenFile
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: DataImportFieldPathOpenFileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32122,9 +31626,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedSpeed
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedSpeedInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32143,9 +31647,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040143208}
-        m_TargetAssemblyTypeName: NotesDirector, Assembly-CSharp
-        m_MethodName: SetSpeedSpeed
+      - m_Target: {fileID: 1825082434}
+        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
+        m_MethodName: SpeedSpeedInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
