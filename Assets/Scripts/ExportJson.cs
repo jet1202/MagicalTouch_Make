@@ -262,6 +262,15 @@ public static class ExportJson
 
         _bpmData = JsonUtility.FromJson<BpmSave>(jsonStr);
 
+        List<BpmItem> bpmItems = new List<BpmItem>();
+        foreach (var item in _bpmData.bpmItem)
+        {
+            if (item.bpm < 1)
+                item.bpm *= 1000;
+            bpmItems.Add(item);
+        }
+        _bpmData.bpmItem = bpmItems.ToArray();
+
         return _bpmData;
     }
 

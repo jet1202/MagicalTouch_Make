@@ -609,7 +609,7 @@ public class NotesDirector : MonoBehaviour
 
     public void BpmSet(float bpm)
     {
-        bpmBpm = Math.Max(0f, Math.Min(1000f, bpm));
+        bpmBpm = Math.Max(1f, Math.Min(1000f, bpm));
         userIO.BpmOutput(bpmBpm);
 
         if (focusNote != null)

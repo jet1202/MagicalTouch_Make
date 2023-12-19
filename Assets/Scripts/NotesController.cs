@@ -59,7 +59,7 @@ public class NotesController : MonoBehaviour
             else
                 nextBpm = bpms[i + 1];
 
-            for (float j = bpm.GetTime() / 1000f; j < nextBpm.GetTime() / 1000f; j += 60f / bpm.GetBpm() * 4)
+            for (float j = bpm.GetTime() / 1000f; j < nextBpm.GetTime() / 1000f; j += 60f / (bpm.GetBpm() / 1000f) * 4)
             {
                 bpmMeasureLines.Add(j);
             }
