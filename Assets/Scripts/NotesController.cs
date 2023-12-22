@@ -14,7 +14,7 @@ public class NotesController : MonoBehaviour
     [SerializeField] private GameObject measureLines;
     [SerializeField] private GameObject subLines;
     [SerializeField] private GameObject notes;
-    [SerializeField] private AudioSource audio;
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] private GameObject measureLinePrefab;
     [SerializeField] private GameObject subLinePrefab;
     private float time;
@@ -36,7 +36,7 @@ public class NotesController : MonoBehaviour
 
     public void MeasureLineSet(Dictionary<GameObject, Bpm> bpmData)
     {
-        if (audio.clip == null) return;
+        if (audioSource.clip == null) return;
         
         // 既存のラインを削除
         foreach (Transform g in measureLines.transform)
@@ -47,7 +47,7 @@ public class NotesController : MonoBehaviour
         List<Bpm> bpms = new List<Bpm>(new List<Bpm>(bpmData.Values).OrderBy(x => x.GetTime()));
         
         // ラインを生成
-        time = audio.clip.length;
+        time = audioSource.clip.length;
         leng = bpms.Count;
         Bpm bpm, nextBpm;
         bpmMeasureLines = new List<float>();

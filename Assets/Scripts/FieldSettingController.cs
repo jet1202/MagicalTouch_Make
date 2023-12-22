@@ -17,12 +17,14 @@ public class FieldSettingController : MonoBehaviour
     private GameObject viewport;
     private Transform content;
     
-    public int fieldsCount = 1;
+    [NonSerialized] public int fieldsCount = 1;
+    [NonSerialized] public List<bool> fieldsIsDummy = new List<bool>();
 
     private void Start()
     {
         content = scrollView.transform.GetChild(0).GetChild(0);
         
+        AddIsDummy();
         RenewalField();
     }
 
@@ -40,6 +42,12 @@ public class FieldSettingController : MonoBehaviour
             contents.name = i.ToString();
             contents.transform.GetChild(1).GetComponent<Text>().text = i.ToString();
             contents.transform.GetChild(0).GetComponent<Image>().color = notesDirector.FieldColor(i);
+            contents.SetActive(true);
+
+            Color c = fieldsIsDummy[i]
+                ? new Color(100f / 255f, 100f / 255f, 100f / 255f)
+                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
+            contents.transform.GetChild(1).GetComponent<Text>().color = c;
         }
         
         // DropDownの要素数の変更
@@ -51,6 +59,7 @@ public class FieldSettingController : MonoBehaviour
     public void AddField()
     {
         fieldsCount++;
+        AddIsDummy();
         RenewalField();
         
         speedsDirector.NewField();
@@ -59,9 +68,30 @@ public class FieldSettingController : MonoBehaviour
     public void DeleteField(int number)
     {
         fieldsCount--;
+        DeleteIsDummy(number);
         RenewalField();
         
         speedsDirector.DeleteField(number);
         notesDirector.DeleteFieldNoteChange(number);
+    }
+
+    public void SelectField(int number)
+    {
+        userIO.FieldIsDummyToggleOutput(fieldsIsDummy[number]);
+    }
+
+    public void SetIsDummy()
+    {
+        
+    }
+
+    private void AddIsDummy()
+    {
+        fieldsIsDummy.Add(false);
+    }
+    
+    private void DeleteIsDummy(int number)
+    {
+        fieldsIsDummy.RemoveAt(number);
     }
 }

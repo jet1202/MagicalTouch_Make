@@ -8,6 +8,7 @@ public class UserIO : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
+    [SerializeField] private FieldSettingController fieldSettingController;
     
     // Userの入力・出力を管理する関数群
     
@@ -17,6 +18,7 @@ public class UserIO : MonoBehaviour
     [SerializeField] private TMP_InputField splitField;
     [SerializeField] private TMP_InputField speedField;
     [SerializeField] private TMP_InputField musicSpeedField;
+    [SerializeField] private Toggle fieldIsDummyToggle;
     [SerializeField] private TMP_InputField musicImportField;
     [SerializeField] private TMP_InputField dataImportFieldNote;
     [SerializeField] private TMP_InputField dataImportFieldBpm;
@@ -93,7 +95,18 @@ public class UserIO : MonoBehaviour
         gameEvent.NoticeClose();
     }
     
-    // Import, ExportButton
+    // Setting, Import, ExportButton
+    public void AddFieldButton()
+    {
+        // フィールド追加ボタン
+        fieldSettingController.AddField();
+    }
+
+    public void FieldContentSelectButton(int value)
+    {
+        Debug.Log($"contents: {value}");
+    }
+    
     public void MusicImportButton()
     {
         // 音楽インポート
@@ -159,6 +172,15 @@ public class UserIO : MonoBehaviour
     {
         // linePreviewToggle
         gameEvent.LinePreviewSet(isOn);
+    }
+
+    public void FieldIsDummyToggleInput(bool isOn)
+    {
+        
+    }
+    public void FieldIsDummyToggleOutput(bool isOn)
+    {
+        fieldIsDummyToggle.isOn = isOn;
     }
     
     // InputField ====================================
@@ -348,7 +370,6 @@ public class UserIO : MonoBehaviour
         noteFieldDropdown.value = value;
     }
     
-    //TODO: Bpmの浮動小数点対応
     public void BpmInput(string text)
     {
         float bpm = float.Parse(text);

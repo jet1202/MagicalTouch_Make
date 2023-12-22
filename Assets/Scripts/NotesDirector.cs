@@ -328,7 +328,7 @@ public class NotesDirector : MonoBehaviour
         {
             Bpm b = bpms[focusNote];
             userIO.NoteTimeOutput(b.GetTime() / 1000f);
-            userIO.BpmOutput(b.GetBpm());
+            userIO.BpmOutput(b.GetBpm() / 1000f);
             
             lengthObj.SetActive(false);
             laneObj.SetActive(false);
@@ -615,7 +615,7 @@ public class NotesDirector : MonoBehaviour
         if (focusNote != null)
         {
             bpms[focusNote].SetBpm((int)(bpmBpm * 1000f));
-            focusNote.GetComponent<BpmData>().ChangeBpm((int)(bpmBpm * 1000f));
+            focusNote.GetComponent<BpmData>().ChangeBpm(bpmBpm);
             
             notesController.MeasureLineSet(bpms);
         }

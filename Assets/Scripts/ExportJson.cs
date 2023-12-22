@@ -135,7 +135,7 @@ public static class ExportJson
         writer.Close();
     }
 
-    public static void ExportingField(string name, int fields, List<List<Speed>> speeds, List<List<Angle>> angles, List<List<Transparency>> transparencyItems)
+    public static void ExportingField(string name, int fields, List<bool> isDummy, List<List<Speed>> speeds, List<List<Angle>> angles, List<List<Transparency>> transparencyItems)
     {
         _fieldData = new Field[fields];
 
@@ -186,6 +186,7 @@ public static class ExportJson
 
             _fieldData[i] = new Field();
             _fieldData[i].field = i;
+            _fieldData[i].isDummy = isDummy[i];
             _fieldData[i].speedItem = s.ToArray();
             _fieldData[i].angleWork = a.ToArray();
             _fieldData[i].transparencyItem = Array.Empty<TransparencyItem>(); // TODO: alphaの保存

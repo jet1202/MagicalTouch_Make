@@ -672,6 +672,9 @@ public class GameEvent : MonoBehaviour
 
                 List<List<Speed>> speedData = new List<List<Speed>>();
                 List<List<Angle>> angleData = new List<List<Angle>>();
+                List<List<Transparency>> transData = new List<List<Transparency>>();
+
+                List<bool> isDummyData = new List<bool>();
 
                 int i = 0;
                 foreach (var f in fieldData)
@@ -688,6 +691,14 @@ public class GameEvent : MonoBehaviour
                         angleData[i].Add(new Angle(a.time, a.angle, a.variation));
                     }
                     
+                    transData.Add(new List<Transparency>());
+                    foreach (var t in f.transparencyItem)
+                    {
+                        transData[i].Add(new Transparency(t.time, t.alpha, t.isVariation));
+                    }
+                    
+                    isDummyData.Add(f.isDummy);
+                    
                     i++;
                 }
 
@@ -697,8 +708,11 @@ public class GameEvent : MonoBehaviour
 
                 anglesDirector.anglesData = angleData; 
                 anglesDirector.RenewalAngle();
+                
+                // TODO: transDirector.transparencyData = transData;
 
                 fieldSettingController.fieldsCount = i;
+                fieldSettingController.fieldsIsDummy = isDummyData;
                 fieldSettingController.RenewalField();
             }
         // }
@@ -727,6 +741,7 @@ public class GameEvent : MonoBehaviour
             ExportJson.ExportingSheet(notes, path + "\\Note.json");
             ExportJson.ExportingBpm(path + "\\Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + "\\Field.json", fieldSettingController.fieldsCount,
+                fieldSettingController.fieldsIsDummy,
                 speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>());
             // TODO: 透明度の実装 (transparencyDirector.transparenciesData)
             
