@@ -6,6 +6,7 @@ using UnityEngine;
 public class SlideData : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private CenterDirector centerDirector;
 
     [SerializeField] private Sprite slideBody;
@@ -171,7 +172,7 @@ public class SlideData : MonoBehaviour
     public void NewMaintain(GameObject obj, SlideMaintain data)
     {
         slideMaintain.Add(obj, data);
-        obj.GetComponent<SlideMaintainData>().DefaultSettings(this.gameObject);
+        obj.GetComponent<SlideMaintainData>().DefaultSettings(this.gameObject, fieldColor);
         obj.GetComponent<SlideMaintainData>().SetTime(data.time);
         obj.GetComponent<SlideMaintainData>().SetLane(data.startLane, data.endLane);
         LineChange();
@@ -186,34 +187,44 @@ public class SlideData : MonoBehaviour
         isDummy = d;
     }
 
+    public void ChangeColor()
+    {
+        ChangeColor(fieldColor);
+    }
+
     public void ChangeColor(int c)
     {
         fieldColor = c;
+        notesDirector.SetNoteColor(transform);
+        float a = noteBody.GetComponent<SpriteRenderer>().color.a;
         
         // line, slideMaintainの色変更
-        noteLine.GetComponent<LineRenderer>().startColor = SlideColor(c);
-        noteLine.GetComponent<LineRenderer>().endColor = SlideColor(c);
+        noteLine.GetComponent<LineRenderer>().startColor = SlideColor(c, a);
+        noteLine.GetComponent<LineRenderer>().endColor = SlideColor(c, a);
 
         foreach (var s in slideMaintain)
-            s.Key.transform.GetChild(0).GetComponent<SpriteRenderer>().color = SlideColor(c);
+        {
+            s.Key.transform.GetChild(0).GetComponent<SpriteRenderer>().color = SlideColor(c, a);
+            notesDirector.SetNoteColor(s.Key.transform);
+        }
     }
 
-    public Color SlideColor(int n)
+    public Color SlideColor(int n, float a)
     {
         Color color = Color.white;
         switch (n)
         {
             case 0:
-                color = new Color(101 / 255f, 187 / 255f, 233 / 255f);
+                color = new Color(101 / 255f, 187 / 255f, 233 / 255f, a);
                 break;
             case 1:
-                color = new Color(250 / 255f, 178 / 255f, 123 / 255f);
+                color = new Color(250 / 255f, 178 / 255f, 123 / 255f, a);
                 break;
             case 2:
-                color = new Color(112 / 255f, 255f / 255f, 179f / 255f);
+                color = new Color(112 / 255f, 255f / 255f, 179f / 255f, a);
                 break;
             case 3:
-                color = new Color(255 / 255f, 239f / 255f, 108f / 255f);
+                color = new Color(255 / 255f, 239f / 255f, 108f / 255f, a);
                 break;
         }
 

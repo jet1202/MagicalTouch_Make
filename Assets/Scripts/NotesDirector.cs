@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class NotesDirector : MonoBehaviour
@@ -10,8 +12,10 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private UserIO userIO;
     [SerializeField] private NotesController notesController;
+    [SerializeField] private FieldSettingController fieldSettingController;
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private Angles anglesDirector;
+    
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
     [SerializeField] private GameObject slidePrefab;
@@ -531,11 +535,13 @@ public class NotesDirector : MonoBehaviour
         {
             focusNote.GetComponent<NotesData>().ChangeField(value);
             focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
+            SetNoteColor(focusNote.transform);
         }
         else if (objectKind == 2)
         {
             focusNote.GetComponent<SlideData>().ChangeField(value);
             focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
+            focusNote.GetComponent<SlideData>().ChangeColor();
         }
     }
 
@@ -627,9 +633,13 @@ public class NotesDirector : MonoBehaviour
         if (focusNote == null || objectKind != 2 && objectKind != 3)
             NewSlide((int)(gameEvent.time * 1000), 5, 7, 0, false, 0, Array.Empty<SlideMaintain>());
         else if (objectKind == 2)
-            NewSlideMaintain((int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideData>().note.GetTime(), 5, 7, true, true);
+            NewSlideMaintain(
+                (int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideData>().note.GetTime(), 5,
+                7, true, true);
         else
-            NewSlideMaintain((int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime(), 5, 7, true, true);
+            NewSlideMaintain(
+                (int)(gameEvent.time * 1000) - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime(), 5,
+                7, true, true);
     }
 
     public void NewSlide(int time, int start, int end, int field, bool isDummy, int color, SlideMaintain[] maintain)
@@ -830,6 +840,75 @@ public class NotesDirector : MonoBehaviour
             if (t.CompareTag("SlideMaintain")) continue;
 
             t.GetChild(3).gameObject.SetActive(isColor);
+        }
+    }
+
+    public void NoteColorSetting()
+    {
+        foreach (Transform t in noteParent.transform)
+        {
+            SetNoteColor(t);
+        }
+    }
+
+    public void SetNoteColor(Transform t)
+    {
+        float alpha = gameEvent.noteAlpha / 100f;
+        Note n;
+        
+        int type = 0;
+        switch (t.tag)
+        {
+            case "Normal":
+            case "Hold":
+            case "Flick":
+            case "Long":
+                n = t.GetComponent<NotesData>().note;
+                type = 1;
+                break;
+            case "Slide":
+                n = t.GetComponent<SlideData>().note;
+                type = 2;
+                break;
+            case "SlideMaintain":
+                n = t.GetComponent<SlideMaintainData>().parentSc.note;
+                type = 3;
+                break;
+            default:
+                n = null;
+                Debug.Log("null");
+                break;
+        }
+
+        if (n == null) return;
+        
+        if (gameEvent.isDummyHide)
+            t.gameObject.SetActive(!fieldSettingController.FieldIsDummy(n.GetField()));
+        else
+            t.gameObject.SetActive(true);
+        
+        Color cTmp;
+        float a = fieldSettingController.FieldIsDummy(n.GetField()) ? alpha / 2f : alpha;
+        switch (type)
+        {
+            case 1:
+                t.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, a);
+                cTmp = t.GetChild(2).GetComponent<SpriteRenderer>().color;
+                cTmp = new Color(cTmp.r, cTmp.g, cTmp.b, a);
+                t.GetChild(2).GetComponent<SpriteRenderer>().color = cTmp;
+                break;
+            case 2:
+                t.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, a);
+                cTmp = t.GetChild(2).GetComponent<LineRenderer>().startColor; 
+                cTmp = new Color(cTmp.r, cTmp.g, cTmp.b, a); 
+                t.GetChild(2).GetComponent<LineRenderer>().startColor = cTmp; 
+                t.GetChild(2).GetComponent<LineRenderer>().endColor = cTmp; 
+                break;
+            case 3: 
+                cTmp = t.GetChild(0).GetComponent<SpriteRenderer>().color; 
+                cTmp = new Color(cTmp.r, cTmp.g, cTmp.b, a); 
+                t.GetChild(0).GetComponent<SpriteRenderer>().color = cTmp; 
+                break;
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class SlideMaintainData : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
-    [SerializeField] private CenterDirector centerDirector;
+    [SerializeField] private NotesDirector notesDirector;
     
     private float startLanePosy = 4f;
     private float laneDif = 0.6f;
@@ -15,12 +15,15 @@ public class SlideMaintainData : MonoBehaviour
     public GameObject parent;
     public SlideData parentSc;
 
-    public void DefaultSettings(GameObject paren)
+    public void DefaultSettings(GameObject paren, int color)
     {
         body = this.transform.GetChild(0).gameObject;
         flame = this.transform.GetChild(1).gameObject;
-        parent = paren.gameObject;
+        parent = paren;
         parentSc = parent.GetComponent<SlideData>();
+        
+        body.GetComponent<SpriteRenderer>().color = parentSc.SlideColor(color, 1f);
+        notesDirector.SetNoteColor(this.transform);
     }
 
     public void Choose()
@@ -35,7 +38,10 @@ public class SlideMaintainData : MonoBehaviour
 
     public void Change()
     {
-        transform.localPosition = new Vector3((parentSc.slideMaintain[this.gameObject].time + parentSc.note.GetTime()) / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
+        transform.localPosition =
+            new Vector3(
+                (parentSc.slideMaintain[this.gameObject].time + parentSc.note.GetTime()) / 1000f * gameEvent.speed,
+                transform.localPosition.y, 0f);
         
         float start = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].startLane);
         float end = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].endLane);
@@ -48,7 +54,8 @@ public class SlideMaintainData : MonoBehaviour
 
     public void SetTime(int time)
     {
-        transform.localPosition = new Vector3((time + parentSc.note.GetTime()) / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
+        transform.localPosition = new Vector3((time + parentSc.note.GetTime()) / 1000f * gameEvent.speed,
+            transform.localPosition.y, 0f);
         parentSc.slideMaintain[this.gameObject].time = time;
         
         parentSc.LineChange();

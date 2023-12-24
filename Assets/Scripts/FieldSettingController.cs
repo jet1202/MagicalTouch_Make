@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class FieldSettingController : MonoBehaviour
@@ -19,6 +20,8 @@ public class FieldSettingController : MonoBehaviour
     
     [NonSerialized] public int fieldsCount = 1;
     [NonSerialized] public List<bool> fieldsIsDummy = new List<bool>();
+
+    private int fieldNumber = 0;
 
     private void Start()
     {
@@ -38,17 +41,15 @@ public class FieldSettingController : MonoBehaviour
         for (int i = 0; i < fieldsCount; i++)
         {
             GameObject contents = Instantiate(fieldsContentsPrefab, content);
-
+            int index = i;
+            
             contents.name = i.ToString();
             contents.transform.GetChild(1).GetComponent<Text>().text = i.ToString();
             contents.transform.GetChild(0).GetComponent<Image>().color = notesDirector.FieldColor(i);
+            contents.GetComponent<Button>().onClick.AddListener(() => userIO.FieldScrollViewSelect(index));
             contents.SetActive(true);
-
-            Color c = fieldsIsDummy[i]
-                ? new Color(100f / 255f, 100f / 255f, 100f / 255f)
-                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
-            contents.transform.GetChild(1).GetComponent<Text>().color = c;
         }
+        ContentsColorSetting();
         
         // DropDownの要素数の変更
         userIO.UpdateFieldDropdown(fieldsCount);
@@ -77,12 +78,16 @@ public class FieldSettingController : MonoBehaviour
 
     public void SelectField(int number)
     {
+        fieldNumber = number;
         userIO.FieldIsDummyToggleOutput(fieldsIsDummy[number]);
+        ContentsColorSetting();
     }
 
-    public void SetIsDummy()
+    public void SetIsDummy(bool isOn)
     {
-        
+        fieldsIsDummy[fieldNumber] = isOn;
+        ContentsColorSetting();
+        notesDirector.NoteColorSetting();
     }
 
     private void AddIsDummy()
@@ -93,5 +98,27 @@ public class FieldSettingController : MonoBehaviour
     private void DeleteIsDummy(int number)
     {
         fieldsIsDummy.RemoveAt(number);
+    }
+
+    public bool FieldIsDummy(int number)
+    {
+        return fieldsIsDummy[number];
+    }
+
+    private void ContentsColorSetting()
+    {
+        for (int i = 0; i < fieldsCount; i++)
+        {
+            GameObject obj = content.GetChild(i).gameObject;
+            Color c = fieldsIsDummy[i]
+                ? new Color(100f / 255f, 100f / 255f, 100f / 255f)
+                : new Color(50f / 255f, 50f / 255f, 50f / 255f);
+            Color c2 = i == fieldNumber
+                ? new Color(1f, 1f, 1f, 100f / 255f)
+                : new Color(1f, 1f, 1f, 0f);
+
+            obj.transform.GetChild(1).GetComponent<Text>().color = c;
+            obj.transform.GetComponent<Image>().color = c2;
+        }
     }
 }

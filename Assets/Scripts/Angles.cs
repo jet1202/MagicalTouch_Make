@@ -107,7 +107,6 @@ public class Angles : MonoBehaviour
 
         int leng = aa.Length;
         int zone = (int)Math.Floor(aa[0].GetDegree() / 360f);
-        Debug.Log($"zone = {zone}");
         GameObject obj = Instantiate(angleLinePrefab, linesTransform);
         obj.transform.localPosition = new Vector3(0f, -7.2f * zone, 0f);
         List<Vector3> positions = new List<Vector3>();
@@ -290,13 +289,5 @@ public class Angles : MonoBehaviour
         {
             g.transform.GetChild(1).GetComponent<SpriteRenderer>().color = color;
         }
-    }
-
-    private int AngleLoop(int a, int b)
-    {
-        if (a > b) a--;
-        else if (a < b) a++;
-
-        return a;
     }
 }

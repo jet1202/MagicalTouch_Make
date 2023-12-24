@@ -6,7 +6,9 @@ using UnityEngine;
 public class NotesData : MonoBehaviour
 {
     [SerializeField] private GameEvent gameEvent;
+    [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private CenterDirector centerDirector;
+    
     [SerializeField] private Sprite normalNote;
     [SerializeField] private Sprite holdNote;
     [SerializeField] private Sprite flickNote;
@@ -45,6 +47,7 @@ public class NotesData : MonoBehaviour
         
         noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
         transform.gameObject.tag = "Normal";
+        notesDirector.SetNoteColor(transform);
     }
 
     private void Change()

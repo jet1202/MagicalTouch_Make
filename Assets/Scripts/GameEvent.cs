@@ -54,6 +54,8 @@ public class GameEvent : MonoBehaviour
     public bool isOpenTab = false;
     public bool isEdit;
     public bool isNoteColor = false;
+    public bool isDummyHide = false;
+    public int noteAlpha = 100;
     public int tabMode = 0; // 0 Note 1 Speed
 
     private float beatTime;
@@ -575,6 +577,18 @@ public class GameEvent : MonoBehaviour
         linePreview.SetPreview(isPreview);
     }
 
+    public void DummyHideSet(bool isHide)
+    {
+        isDummyHide = isHide;
+        notesDirector.NoteColorSetting();
+    }
+
+    public void NoteAlphaSet(float alpha)
+    {
+        noteAlpha = (int)(alpha * 100);
+        notesDirector.NoteColorSetting();
+    }
+
     public void ImportMusicClick()
     {
         musicImportCanvas.gameObject.SetActive(true);
@@ -618,8 +632,8 @@ public class GameEvent : MonoBehaviour
             return;
         }
 
-        // try
-        // {
+        try
+        {
             if (bpmPath != "")
             {
                 // bpmの入手
@@ -692,11 +706,14 @@ public class GameEvent : MonoBehaviour
                     }
                     
                     transData.Add(new List<Transparency>());
-                    foreach (var t in f.transparencyItem)
+                    if (f.transparencyItem != null)
                     {
-                        transData[i].Add(new Transparency(t.time, t.alpha, t.isVariation));
+                        foreach (var t in f.transparencyItem)
+                        {
+                            transData[i].Add(new Transparency(t.time, t.alpha, t.isVariation));
+                        }
                     }
-                    
+
                     isDummyData.Add(f.isDummy);
                     
                     i++;
@@ -715,13 +732,13 @@ public class GameEvent : MonoBehaviour
                 fieldSettingController.fieldsIsDummy = isDummyData;
                 fieldSettingController.RenewalField();
             }
-        // }
-        // catch (Exception e)
-        // {
-        //      TabClose();
-        //      noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
-        //      return;
-        // }
+        }
+        catch (Exception e)
+        {
+             TabClose();
+             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
+             return;
+        }
         
         TabClose();
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
@@ -736,23 +753,23 @@ public class GameEvent : MonoBehaviour
             return;
         }
 
-        // try
-        // {
+        try
+        {
             ExportJson.ExportingSheet(notes, path + "\\Note.json");
             ExportJson.ExportingBpm(path + "\\Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + "\\Field.json", fieldSettingController.fieldsCount,
                 fieldSettingController.fieldsIsDummy,
-                speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>());
+                speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>(Enumerable.Repeat(new List<Transparency>(), fieldSettingController.fieldsCount)));
             // TODO: 透明度の実装 (transparencyDirector.transparenciesData)
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
-        // }
-        // catch (Exception e)
-        // {
-        //     TabClose();
-        //     noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Export: {e}");
-        // }
+        }
+        catch (Exception e)
+        {
+            TabClose();
+            noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Export: {e}");
+        }
     }
 
     public void TabClose()

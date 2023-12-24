@@ -96,17 +96,6 @@ public class UserIO : MonoBehaviour
     }
     
     // Setting, Import, ExportButton
-    public void AddFieldButton()
-    {
-        // フィールド追加ボタン
-        fieldSettingController.AddField();
-    }
-
-    public void FieldContentSelectButton(int value)
-    {
-        Debug.Log($"contents: {value}");
-    }
-    
     public void MusicImportButton()
     {
         // 音楽インポート
@@ -159,7 +148,7 @@ public class UserIO : MonoBehaviour
         gameEvent.DataExportOpenFile();
     }
     
-    // Toggle ========================================
+    // Toggle, Slider ========================================
     
     // SettingToggle
     public void FieldColorToggle(bool isOn)
@@ -174,13 +163,16 @@ public class UserIO : MonoBehaviour
         gameEvent.LinePreviewSet(isOn);
     }
 
-    public void FieldIsDummyToggleInput(bool isOn)
+    public void IsDummyHideToggle(bool isOn)
     {
-        
+        // isDummyHideToggle
+        gameEvent.DummyHideSet(isOn);
     }
-    public void FieldIsDummyToggleOutput(bool isOn)
+
+    public void NoteAlphaSlider(float value)
     {
-        fieldIsDummyToggle.isOn = isOn;
+        // noteAlphaSlider
+        gameEvent.NoteAlphaSet(value);
     }
     
     // InputField ====================================
@@ -255,6 +247,28 @@ public class UserIO : MonoBehaviour
     public void DataExportPathOutput(string path)
     {
         dataExportPathField.text = path;
+    }
+    
+    // SettingのScrollView関係
+
+    public void FieldScrollViewSelect(int value)
+    {
+        fieldSettingController.SelectField(value);
+    }
+    
+    public void AddFieldButton()
+    {
+        // フィールド追加ボタン
+        fieldSettingController.AddField();
+    }
+    
+    public void FieldIsDummyToggleInput(bool isOn)
+    {
+        fieldSettingController.SetIsDummy(isOn);
+    }
+    public void FieldIsDummyToggleOutput(bool isOn)
+    {
+        fieldIsDummyToggle.isOn = isOn;
     }
     
     // Bottom
@@ -474,17 +488,17 @@ public class UserIO : MonoBehaviour
     {
         speedFieldDropdown.value = value;
     }
-
+    
     public void UpdateFieldDropdown(int value)
     {
         noteFieldDropdown.ClearOptions();
-        slideFieldColorDropdown.ClearOptions();
+        speedFieldDropdown.ClearOptions();
         
         List<string> list = new List<string>();
         for (int i = 0; i < value; i++)
             list.Add(i.ToString());
         
         noteFieldDropdown.AddOptions(list);
-        slideFieldColorDropdown.AddOptions(list);
+        speedFieldDropdown.AddOptions(list);
     }
 }

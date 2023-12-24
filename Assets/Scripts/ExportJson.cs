@@ -174,14 +174,17 @@ public static class ExportJson
                 a.Add(a_item);
             }
 
-            foreach (var tp in transparencyItems[i])
+            if (transparencyItems[i] != null)
             {
-                t_item = new TransparencyItem();
-                t_item.time = tp.GetTime();
-                t_item.alpha = tp.GetAlpha();
-                t_item.isVariation = tp.GetIsVariation();
-                
-                t.Add(t_item);
+                foreach (var tp in transparencyItems[i])
+                {
+                    t_item = new TransparencyItem();
+                    t_item.time = tp.GetTime();
+                    t_item.alpha = tp.GetAlpha();
+                    t_item.isVariation = tp.GetIsVariation();
+
+                    t.Add(t_item);
+                }
             }
 
             _fieldData[i] = new Field();
@@ -266,7 +269,7 @@ public static class ExportJson
         List<BpmItem> bpmItems = new List<BpmItem>();
         foreach (var item in _bpmData.bpmItem)
         {
-            if (item.bpm < 1)
+            if (item.bpm < 1000)
                 item.bpm *= 1000;
             bpmItems.Add(item);
         }
