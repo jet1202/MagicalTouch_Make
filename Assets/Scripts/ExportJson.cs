@@ -192,7 +192,7 @@ public static class ExportJson
             _fieldData[i].isDummy = isDummy[i];
             _fieldData[i].speedItem = s.ToArray();
             _fieldData[i].angleWork = a.ToArray();
-            _fieldData[i].transparencyItem = Array.Empty<TransparencyItem>(); // TODO: alphaの保存
+            _fieldData[i].transparencyItem = t.ToArray();
         }
 
         var data = new FieldSave();

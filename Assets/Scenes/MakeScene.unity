@@ -13849,7 +13849,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &868694560
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -29431,6 +29431,7 @@ MonoBehaviour:
   bpms: {fileID: 649374827}
   speeds: {fileID: 1756020621}
   angles: {fileID: 617230985}
+  transparencies: {fileID: 1112240856}
   userIO: {fileID: 1825082434}
   centerDirector: {fileID: 1673888454}
   notesController: {fileID: 592323472}

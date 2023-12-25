@@ -34,6 +34,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private GameObject bpms;
     [SerializeField] private GameObject speeds;
     [SerializeField] private GameObject angles;
+    [SerializeField] private GameObject transparencies;
 
     [SerializeField] private UserIO userIO;
     [SerializeField] private CenterDirector centerDirector;
@@ -515,6 +516,7 @@ public class GameEvent : MonoBehaviour
         notes.SetActive(true);
         speeds.SetActive(false);
         angles.SetActive(false);
+        transparencies.SetActive(false);
         noteTab.SetActive(true);
         speedTab.SetActive(false);
         noteButton.GetComponent<Image>().color = new Color(150f / 255f, 150f / 255f, 150f / 255f, 1f);
@@ -529,6 +531,7 @@ public class GameEvent : MonoBehaviour
         notes.SetActive(false);
         speeds.SetActive(true);
         angles.SetActive(true);
+        transparencies.SetActive(true);
         noteTab.SetActive(false);
         speedTab.SetActive(true);
         noteButton.GetComponent<Image>().color = Color.white;
