@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.PlayerLoop;
-using UnityEngine.UI;
 
 public class NotesDirector : MonoBehaviour
 {
@@ -15,6 +11,7 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private FieldSettingController fieldSettingController;
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private Angles anglesDirector;
+    [SerializeField] private Transparencies alphaDirector;
     
     [SerializeField] private GameObject noteParent;
     [SerializeField] private GameObject notePrefab;
@@ -33,9 +30,10 @@ public class NotesDirector : MonoBehaviour
 
     [SerializeField] private GameObject speedObj;
     [SerializeField] private GameObject angleObj;
+    [SerializeField] private GameObject transparencyObj;
     
     public GameObject focusNote = null;
-    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles
+    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles 6 transparencies
     
     private int focusTime;
     
@@ -131,6 +129,17 @@ public class NotesDirector : MonoBehaviour
                         gameEvent.nowBeatNote = -1;
                         gameEvent.nowBeatLong = -1;
                         gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
+                    }
+                    else if (hit.collider.gameObject.CompareTag("AlphaPoint"))
+                    {
+                        SetDisChoose();
+                        focusNote = hit.collider.gameObject;
+                        alphaDirector.SetChoose(focusNote);
+                        objectKind = 6;
+                        SetChoose();
+                        gameEvent.nowBeatNote = -1;
+                        gameEvent.nowBeatLong = -1;
+                        gameEvent.FocusBeatSet(alphaDirector.fieldTransparencies[focusNote].GetTime() / 1000f);
                     }
                     else if (hit.collider.gameObject.CompareTag("EditRange"))
                     {
@@ -255,6 +264,10 @@ public class NotesDirector : MonoBehaviour
                     {
                         anglesDirector.DeleteAngles(focusNote);
                     }
+                    else if (objectKind == 6)
+                    {
+                        alphaDirector.DeleteTransparencies(focusNote);
+                    }
 
                     focusNote = null;
                 }
@@ -351,6 +364,7 @@ public class NotesDirector : MonoBehaviour
             
             speedObj.SetActive(true);
             angleObj.SetActive(false);
+            transparencyObj.SetActive(false);
         }
         else if (objectKind == 5) // angle
         {
@@ -361,6 +375,18 @@ public class NotesDirector : MonoBehaviour
             
             speedObj.SetActive(false);
             angleObj.SetActive(true);
+            transparencyObj.SetActive(false);
+        }
+        else if (objectKind == 6) // Transparency
+        {
+            Transparency t = alphaDirector.fieldTransparencies[focusNote];
+            userIO.SpeedTimeOutput(t.GetTime() / 1000f);
+            userIO.TransparencyAlphaOutput(t.GetAlpha());
+            userIO.TransparencyIsVariationToggleOutput(t.GetIsVariation());
+            
+            speedObj.SetActive(false);
+            angleObj.SetActive(false);
+            transparencyObj.SetActive(true);
         }
     }
 
@@ -391,6 +417,10 @@ public class NotesDirector : MonoBehaviour
         else if (objectKind == 5)
         {
             anglesDirector.SetDisChoose(focusNote);
+        }
+        else if (objectKind == 6)
+        {
+            alphaDirector.SetDisChoose(focusNote);
         }
     }
 
@@ -441,9 +471,13 @@ public class NotesDirector : MonoBehaviour
             {
                 speedsDirector.SetTime(focusNote, focusTime);
             }
-            else
+            else if (objectKind == 5)
             {
                 anglesDirector.SetTime(focusNote, focusTime);
+            }
+            else if (objectKind == 6)
+            {
+                alphaDirector.SetTime(focusNote, focusTime);
             }
         }
     }
@@ -758,6 +792,20 @@ public class NotesDirector : MonoBehaviour
         gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
     }
 
+    public void NewTransparency()
+    {
+        GameObject o = alphaDirector.NewTransparencies((int)(gameEvent.time * 1000), 100, false);
+        
+        SetDisChoose();
+        focusNote = o;
+        speedsDirector.SetChoose(focusNote);
+        objectKind = 6;
+        SetChoose();
+        gameEvent.nowBeatNote = -1;
+        gameEvent.nowBeatLong = -1;
+        gameEvent.FocusBeatSet(alphaDirector.fieldTransparencies[focusNote].GetTime() / 1000f);
+    }
+
     public void SetSpeedTime(float time)
     {
         float cTime = Math.Clamp(time, 0f, gameEvent.GetComponent<AudioSource>().clip.length);
@@ -768,6 +816,8 @@ public class NotesDirector : MonoBehaviour
             speedsDirector.SetTime(focusNote, focusTime);
         else if (objectKind == 5)
             anglesDirector.SetTime(focusNote, focusTime);
+        else if (objectKind == 6)
+            alphaDirector.SetTime(focusNote, focusTime);
     }
 
     public void SetSpeedSpeed(float speed)
@@ -796,12 +846,23 @@ public class NotesDirector : MonoBehaviour
         userIO.AngleVariationOutput(variation / 10f);
         anglesDirector.SetVariation(focusNote, variation);
     }
+    
+    public void SetTransparencyAlpha(int alpha)
+    {
+        alphaDirector.SetAlpha(focusNote, alpha);
+    }
+    
+    public void SetTransparencyIsVariation(bool isVariation)
+    {
+        alphaDirector.SetIsVariation(focusNote, isVariation);
+    }
 
     public void SetSpeedFieldDropdown(int value)
     {
         speedsDirector.ChangeField(value);
         speedsDirector.SetColor(FieldColor(value));
         anglesDirector.SetColor(FieldColor(value));
+        alphaDirector.SetColor(FieldColor(value));
     }
 
     public void DeleteFieldNoteChange(int number)

@@ -290,6 +290,8 @@ public class UserIO : MonoBehaviour
     [SerializeField] private Toggle speedIsVariationToggle;
     [SerializeField] private TMP_InputField angleDegreeField;
     [SerializeField] private TMP_InputField angleVariationField;
+    [SerializeField] private TMP_InputField transparencyAlphaField;
+    [SerializeField] private Toggle transparencyIsVariationToggle;
     [SerializeField] private TMP_Dropdown speedFieldDropdown;
     
     // Button ========================================
@@ -319,6 +321,11 @@ public class UserIO : MonoBehaviour
     public void AngleAddButton()
     {
         notesDirector.NewAngle();
+    }
+    
+    public void TransparencyAddButton()
+    {
+        notesDirector.NewTransparency();
     }
     
     // InputField, Dropdown, Toggle ==================
@@ -478,6 +485,25 @@ public class UserIO : MonoBehaviour
     public void AngleVariationOutput(float value)
     {
         angleVariationField.text = value.ToString("F1");
+    }
+    
+    public void TransparencyAlphaInput(string text)
+    {
+        int alpha = int.Parse(text);
+        notesDirector.SetTransparencyAlpha(alpha);
+    }
+    public void TransparencyAlphaOutput(float value)
+    {
+        transparencyAlphaField.text = value.ToString("F2");
+    }
+    
+    public void TransparencyIsVariationToggleInput(bool isOn)
+    {
+        notesDirector.SetTransparencyIsVariation(isOn);
+    }
+    public void TransparencyIsVariationToggleOutput(bool isOn)
+    {
+        transparencyIsVariationToggle.isOn = isOn;
     }
     
     public void SpeedFieldDropdownInput(int value)

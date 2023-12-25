@@ -15,6 +15,7 @@ TagManager:
   - SpeedPoint
   - FieldElement
   - AnglePoint
+  - AlphaPoint
   layers:
   - Default
   - TransparentFX

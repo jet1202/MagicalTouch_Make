@@ -9,6 +9,7 @@ public class Speeds : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Angles anglesDirector;
+    [SerializeField] private Transparencies alphaDirector;
     
     [SerializeField] private GameObject speedPrefab;
     
@@ -27,23 +28,27 @@ public class Speeds : MonoBehaviour
     {
         speedsData.Add(new List<Speed>() { new Speed(0, 100, false) });
         anglesDirector.NewField();
+        alphaDirector.NewField();
     }
 
     public void DeleteField(int index)
     {
         speedsData.RemoveAt(index);
         anglesDirector.DeleteField(index);
+        alphaDirector.DeleteField(index);
     }
 
     public void ChangeField(int value)
     {
         speedsData[nowField] = new List<Speed>(fieldSpeeds.Values);
         anglesDirector.ChangeField();
+        alphaDirector.ChangeField();
         
         nowField = value;
         
         RenewalSpeed();
         anglesDirector.RenewalAngle();
+        alphaDirector.RenewalAlpha();
     }
 
     // Speeds

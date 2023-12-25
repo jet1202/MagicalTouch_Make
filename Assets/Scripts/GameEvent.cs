@@ -41,6 +41,7 @@ public class GameEvent : MonoBehaviour
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
     [SerializeField] private Angles anglesDirector;
+    [SerializeField] private Transparencies alphaDirector;
     [SerializeField] private FieldSettingController fieldSettingController;
     [SerializeField] private LinePreview linePreview;
     
@@ -134,31 +135,10 @@ public class GameEvent : MonoBehaviour
                     }
                     else
                     {
-                        float time;
-                        if (notesDirector.objectKind == 0)
-                            time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 1)
-                            time = notesDirector.bpms[notesDirector.focusNote].GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 2)
-                            time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 3)
-                        {
-                            time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
-                                .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
-                                .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
-                        }
-                        else if (notesDirector.objectKind == 4)
-                        {
-                            // Speeds
-                            time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
-                        }
-                        else
-                        {
-                            // angles
-                            time = anglesDirector.fieldAngles[notesDirector.focusNote].GetTime() / 1000f;
-                        }
-
-                        nowBeatNote = NextBeat(false, time, nowBeatNote);
+                        float t;
+                        t = GetFocusTime();
+                        
+                        nowBeatNote = NextBeat(false, t, nowBeatNote);
                         nowBeatNote = Mathf.Max(0, nowBeatNote);
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(BeatToTime(nowBeatNote));
@@ -207,31 +187,10 @@ public class GameEvent : MonoBehaviour
                     }
                     else
                     {
-                        float time;
-                        if (notesDirector.objectKind == 0)
-                            time = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 1)
-                            time = notesDirector.bpms[notesDirector.focusNote].GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 2)
-                            time = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime() / 1000f;
-                        else if (notesDirector.objectKind == 3)
-                        {
-                            time = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
-                                .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
-                                .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
-                        }
-                        else if (notesDirector.objectKind == 4)
-                        {
-                            // Speeds
-                            time = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
-                        }
-                        else
-                        {
-                            // angles
-                            time = anglesDirector.fieldAngles[notesDirector.focusNote].GetTime() / 1000f;
-                        }
+                        float t;
+                        t = GetFocusTime();
 
-                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        nowBeatNote = NextBeat(true, t, nowBeatNote);
                         if (notesDirector.objectKind == 4)
                             notesDirector.SetSpeedTime(
                                 Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length));
@@ -368,6 +327,42 @@ public class GameEvent : MonoBehaviour
         {
             Screen.fullScreen = !Screen.fullScreen;
         }
+    }
+
+    private float GetFocusTime()
+    {
+        float t = 0;
+        switch (notesDirector.objectKind)
+        {
+            case 0:
+                t = notesDirector.focusNote.GetComponent<NotesData>().note.GetTime() / 1000f;
+                break;
+            case 1:
+                t = notesDirector.bpms[notesDirector.focusNote].GetTime() / 1000f;
+                break;
+            case 2:
+                t = notesDirector.focusNote.GetComponent<SlideData>().note.GetTime() / 1000f;
+                break;
+            case 3:
+                t = (notesDirector.focusNote.GetComponent<SlideMaintainData>().parentSc
+                    .slideMaintain[notesDirector.focusNote].time + notesDirector.focusNote
+                    .GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f;
+                break;
+            case 4:
+                // Speeds
+                t = speedsDirector.fieldSpeeds[notesDirector.focusNote].GetTime() / 1000f;
+                break;
+            case 5:
+                // angles
+                t = anglesDirector.fieldAngles[notesDirector.focusNote].GetTime() / 1000f;
+                break;
+            case 6:
+                // Transparencies
+                t = alphaDirector.fieldTransparencies[notesDirector.focusNote].GetTime() / 1000f;
+                break;
+        }
+
+        return t;
     }
 
     private int timeToBeat(float nowTime)
@@ -544,6 +539,7 @@ public class GameEvent : MonoBehaviour
         
         speedsDirector.RenewalSpeed();
         anglesDirector.RenewalAngle();
+        alphaDirector.RenewalAlpha();
     }
 
     public void SpeedSet(float inSpeed)
@@ -745,7 +741,8 @@ public class GameEvent : MonoBehaviour
                 anglesDirector.anglesData = angleData; 
                 anglesDirector.RenewalAngle();
                 
-                // TODO: transDirector.transparencyData = transData;
+                alphaDirector.alphaData = transData;
+                alphaDirector.RenewalAlpha();
 
                 fieldSettingController.fieldsCount = i;
                 fieldSettingController.fieldsIsDummy = isDummyData;
@@ -777,9 +774,8 @@ public class GameEvent : MonoBehaviour
             ExportJson.ExportingSheet(notes, path + "\\Note.json");
             ExportJson.ExportingBpm(path + "\\Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + "\\Field.json", fieldSettingController.fieldsCount,
-                fieldSettingController.fieldsIsDummy,
-                speedsDirector.speedsData, anglesDirector.anglesData, new List<List<Transparency>>(Enumerable.Repeat(new List<Transparency>(), fieldSettingController.fieldsCount)));
-            // TODO: 透明度の実装 (transparencyDirector.transparenciesData)
+                fieldSettingController.fieldsIsDummy, speedsDirector.speedsData, anglesDirector.anglesData,
+                alphaDirector.alphaData);
             
             TabClose();
             noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Finish Export.");
