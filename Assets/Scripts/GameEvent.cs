@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using SFB;
 using TMPro;
 using UnityEngine;
@@ -246,39 +247,57 @@ public class GameEvent : MonoBehaviour
             
             // スクロールで時間移動できる機能
             mouseVal = Input.GetAxis("Mouse ScrollWheel");
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            if (mouseVal != 0 && !isOpenTab)
             {
-                // Shiftを押していたらTimeとSpeedで移動
-                if (mouseVal > 0)
+                // スクロールしたときに、EditRange内にポインタがいれば移動
+                bool isIn = false;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                foreach (RaycastHit2D hit in Physics2D.RaycastAll(ray.origin, ray.direction, 10f))
                 {
-                    ChangeTime(time - 9f / speed);
-                    nowBeatTime = -1;
-                    FocusBeatSet(time);
+                    if (hit.collider.gameObject.CompareTag("EditRange"))
+                    {
+                        isIn = true;
+                        break;
+                    }
                 }
-                else if (mouseVal < 0)
+                if (isIn)
                 {
-                    ChangeTime(time + 9f / speed);
-                    nowBeatTime = -1;
-                    FocusBeatSet(time);
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    {
+                        // Shiftを押していたらTimeとSpeedで移動
+                        if (mouseVal > 0)
+                        {
+                            ChangeTime(time - 9f / speed);
+                            nowBeatTime = -1;
+                            FocusBeatSet(time);
+                        }
+                        else if (mouseVal < 0)
+                        {
+                            ChangeTime(time + 9f / speed);
+                            nowBeatTime = -1;
+                            FocusBeatSet(time);
+                        }
+                    }
+                    else
+                    {
+                        // Shiftを押していなければBpmとSplitで移動
+                        if (mouseVal > 0)
+                        {
+                            nowBeatTime = NextBeat(false, time, nowBeatTime);
+                            nowBeatTime = Mathf.Max(0, nowBeatTime);
+                            ChangeTime(BeatToTime(nowBeatTime));
+                            FocusBeatSet(time);
+                        }
+                        else if (mouseVal < 0)
+                        {
+                            nowBeatTime = NextBeat(true, time, nowBeatTime);
+                            ChangeTime(Mathf.Min(BeatToTime(nowBeatTime), audioSource.clip.length));
+                            FocusBeatSet(time);
+                        }
+                    }
                 }
             }
-            else
-            {
-                // Shiftを押していなければBpmとSplitで移動
-                if (mouseVal > 0)
-                {
-                    nowBeatTime = NextBeat(false, time, nowBeatTime);
-                    nowBeatTime = Mathf.Max(0, nowBeatTime);
-                    ChangeTime(BeatToTime(nowBeatTime));
-                    FocusBeatSet(time);
-                }
-                else if (mouseVal < 0)
-                {
-                    nowBeatTime = NextBeat(true, time, nowBeatTime);
-                    ChangeTime(Mathf.Min(BeatToTime(nowBeatTime), audioSource.clip.length));
-                    FocusBeatSet(time);
-                }
-            }
+            
 
 
             // 複製機能の実装
