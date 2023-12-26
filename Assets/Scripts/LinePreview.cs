@@ -10,9 +10,12 @@ public class LinePreview : MonoBehaviour
     [SerializeField] private NotesDirector notesDirector;
 
     public List<List<Angle>> angles;
+    public List<List<Transparency>> transparencies;
     private bool isPreview = false;
     private Transform linesParent;
     private float time;
+
+    public bool isAlpha = false;
 
     void Start()
     {
@@ -29,7 +32,15 @@ public class LinePreview : MonoBehaviour
         for (int i = 0; i < leng; i++)
         {
             float degree = -TimeToAngle(time, angles[i]);
+            float alpha = TimeToAlpha(time, transparencies[i]);
             linesParent.GetChild(i).transform.eulerAngles = new Vector3(0f, 0f, degree);
+
+            if (isAlpha)
+            {
+                Color c = linesParent.GetChild(i).GetChild(0).GetComponent<SpriteRenderer>().color;
+                c = new Color(c.r, c.g, c.b, alpha);
+                linesParent.GetChild(i).GetChild(0).GetComponent<SpriteRenderer>().color = c;
+            }
         }
     }
 
@@ -100,6 +111,51 @@ public class LinePreview : MonoBehaviour
             float angle = (before.GetDegree() + a) % 360;
 
             return angle;
+        }
+    }
+    
+    private float TimeToAlpha(float t, List<Transparency> transparencyWork)
+    {
+        int leng = transparencyWork.Count;
+        int index = leng - 1;
+        for (int i = 0; i < leng; i++)
+        {
+            if (transparencyWork[i].GetTime() > t * 1000)
+            {
+                index = i - 1;
+                break;
+            }
+        }
+        
+        if (index == leng - 1)
+        {
+            int a = transparencyWork[index].GetAlpha();
+            return a / 100f;
+        }
+        else if (index == -1)
+        {
+            int a = transparencyWork[0].GetAlpha();
+            return a / 100f;
+        }
+        else
+        {
+            Transparency before = transparencyWork[index];
+            Transparency after = transparencyWork[index + 1];
+            
+            float T = time - before.GetTime() / 1000f;
+            float t1 = (after.GetTime() - before.GetTime()) / 1000f;
+            int a1 = after.GetAlpha() - before.GetAlpha();
+            bool iv = before.GetIsVariation();
+
+            float a;
+            if (iv)
+                a = a1 * (T / t1);
+            else
+                a = 0;
+
+            float alpha = (before.GetAlpha() + a) / 100f;
+
+            return alpha;
         }
     }
 }

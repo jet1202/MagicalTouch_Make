@@ -9,6 +9,7 @@ public class Transparencies : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private Speeds speedsDirector;
+    [SerializeField] private LinePreview linePreview;
 
     [SerializeField] private GameObject transparencyPrefab;
 
@@ -18,17 +19,19 @@ public class Transparencies : MonoBehaviour
     public void NewField()
     {
         alphaData.Add(new List<Transparency>() { new Transparency(0, 100, false) });
-        
+        linePreview.transparencies = alphaData;
     }
     
     public void DeleteField(int index)
     {
         alphaData.RemoveAt(index);
+        linePreview.transparencies = alphaData;
     }
 
     public void ChangeField()
     {
-        alphaData[speedsDirector.nowField] = new List<Transparency>(fieldTransparencies.Values);
+        List<Transparency> t = new List<Transparency>(fieldTransparencies.Values.OrderBy(x => x.GetTime()));
+        alphaData[speedsDirector.nowField] = t;
     }
     
     // Transparencies
@@ -105,7 +108,9 @@ public class Transparencies : MonoBehaviour
         transform.GetComponent<LineRenderer>().positionCount = positions.Count;
         transform.GetComponent<LineRenderer>().SetPositions(positions.ToArray());
         
-        alphaData[speedsDirector.nowField] = new List<Transparency>(fieldTransparencies.Values);
+        List<Transparency> t = new List<Transparency>(fieldTransparencies.Values.OrderBy(x => x.GetTime()));
+        alphaData[speedsDirector.nowField] = t;
+        linePreview.transparencies = alphaData;
     }
 
     public void SetChoose(GameObject transparencies)

@@ -169,6 +169,11 @@ public class UserIO : MonoBehaviour
         gameEvent.DummyHideSet(isOn);
     }
 
+    public void IsPreviewAlphaToggle(bool isOn)
+    {
+        gameEvent.PreviewAlphaSet(isOn);
+    }
+
     public void NoteAlphaSlider(float value)
     {
         // noteAlphaSlider
@@ -492,9 +497,9 @@ public class UserIO : MonoBehaviour
         int alpha = int.Parse(text);
         notesDirector.SetTransparencyAlpha(alpha);
     }
-    public void TransparencyAlphaOutput(float value)
+    public void TransparencyAlphaOutput(int value)
     {
-        transparencyAlphaField.text = value.ToString("F2");
+        transparencyAlphaField.text = value.ToString();
     }
     
     public void TransparencyIsVariationToggleInput(bool isOn)

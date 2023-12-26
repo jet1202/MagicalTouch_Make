@@ -601,6 +601,11 @@ public class GameEvent : MonoBehaviour
         notesDirector.NoteColorSetting();
     }
 
+    public void PreviewAlphaSet(bool isAlpha)
+    {
+        linePreview.isAlpha = isAlpha;
+    }
+
     public void NoteAlphaSet(float alpha)
     {
         noteAlpha = (int)(alpha * 100);
