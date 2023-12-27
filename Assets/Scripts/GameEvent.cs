@@ -895,25 +895,10 @@ public class GameEvent : MonoBehaviour
             userIO.MusicImportPathOutput(paths.First());
     }
     
-    public void DataImportNoteOpenFile()
+    public void DataImportOpenFile()
     {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
-            new[] { new ExtensionFilter("json file", "json") }, false);
-        userIO.DataImportNotePathOutput(paths.First());
-    }
-    
-    public void DataImportBpmOpenFile()
-    {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
-            new[] { new ExtensionFilter("json file", "json") }, false);
-        userIO.DataImportBpmPathOutput(paths.First());
-    }
-
-    public void DataImportFieldOpenFile()
-    {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "",
-            new[] { new ExtensionFilter("json file", "json") }, false);
-        userIO.DataImportFieldPathOutput(paths.First());
+        var paths = StandaloneFileBrowser.OpenFolderPanel("Open Folder", "", false);
+        userIO.DataImportPathOutput(paths.First());
     }
     
     public void DataExportOpenFile()

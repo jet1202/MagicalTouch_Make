@@ -50,8 +50,7 @@ public class NotesData : MonoBehaviour
         
         Change();
         
-        noteBody.GetComponent<SpriteRenderer>().sprite = NoteKind(note.GetKind());
-        transform.gameObject.tag = "Normal";
+        ChangeKind(note.GetKind());
         notesDirector.SetNoteColor(transform);
     }
 

@@ -20,9 +20,7 @@ public class UserIO : MonoBehaviour
     [SerializeField] private TMP_InputField musicSpeedField;
     [SerializeField] private Toggle fieldIsDummyToggle;
     [SerializeField] private TMP_InputField musicImportField;
-    [SerializeField] private TMP_InputField dataImportFieldNote;
-    [SerializeField] private TMP_InputField dataImportFieldBpm;
-    [SerializeField] private TMP_InputField dataImportFieldField;
+    [SerializeField] private TMP_InputField dataImportField;
     [SerializeField] private TMP_InputField dataExportPathField;
     
     // Button ========================================
@@ -105,9 +103,11 @@ public class UserIO : MonoBehaviour
 
     public void DataImportButton()
     {
-        string notePath = dataImportFieldNote.text.Trim(' ', '"', '\n');
-        string bpmPath = dataImportFieldBpm.text.Trim(' ', '"', '\n');
-        string fieldPath = dataImportFieldField.text.Trim(' ', '"', '\n');
+        string directoryPath = dataImportField.text.Trim(' ', '"', '\n');
+
+        string notePath = directoryPath + "/Note.json";
+        string bpmPath = directoryPath + "/Bpm.json";
+        string fieldPath = directoryPath + "/Field.json";
         
         gameEvent.DataImport(notePath, bpmPath, fieldPath);
     }
@@ -124,22 +124,10 @@ public class UserIO : MonoBehaviour
         gameEvent.MusicPathOpenFile();
     }
     
-    public void DataImportNotePathOpenFileButton()
+    public void DataImportPathOpenFileButton()
     {
         // データパス選択ファイルを開く
-        gameEvent.DataImportNoteOpenFile();
-    }
-    
-    public void DataImportBpmPathOpenFileButton()
-    {
-        // データパス選択ファイルを開く
-        gameEvent.DataImportBpmOpenFile();
-    }
-    
-    public void DataImportFieldPathOpenFileButton()
-    {
-        // データパス選択ファイルを開く
-        gameEvent.DataImportFieldOpenFile();
+        gameEvent.DataImportOpenFile();
     }
     
     public void DataExportPathOpenFileButton()
@@ -239,19 +227,9 @@ public class UserIO : MonoBehaviour
         musicImportField.text = path;
     }
     
-    public void DataImportNotePathOutput(string path)
+    public void DataImportPathOutput(string path)
     {
-        dataImportFieldNote.text = path;
-    }
-    
-    public void DataImportBpmPathOutput(string path)
-    {
-        dataImportFieldBpm.text = path;
-    }
-    
-    public void DataImportFieldPathOutput(string path)
-    {
-        dataImportFieldField.text = path;
+        dataImportField.text = path;
     }
     
     public void DataExportPathOutput(string path)
