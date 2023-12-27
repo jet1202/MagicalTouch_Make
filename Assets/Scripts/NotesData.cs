@@ -13,12 +13,16 @@ public class NotesData : MonoBehaviour
     [SerializeField] private Sprite holdNote;
     [SerializeField] private Sprite flickNote;
     [SerializeField] private Sprite longNote;
+
+    [SerializeField] private GameObject longInsidePrefab;
+    
     private float startLanePosy = 4f;
     private float laneDif = 0.6f;
     private GameObject noteBody;
     private GameObject noteFlame;
     private GameObject noteLength;
     private GameObject noteFieldColor;
+    private GameObject longInsideParent;
     public Note note;
     public int Number;
 
@@ -28,6 +32,7 @@ public class NotesData : MonoBehaviour
         noteFlame = transform.GetChild(1).gameObject;
         noteLength = transform.GetChild(2).gameObject;
         noteFieldColor = transform.GetChild(3).gameObject;
+        longInsideParent = transform.GetChild(4).gameObject;
         
         noteFieldColor.GetComponent<SpriteRenderer>().color = color;
         noteFieldColor.SetActive(isColor);
@@ -78,6 +83,8 @@ public class NotesData : MonoBehaviour
 
         centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
             new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
+        
+        ChangeLongInside();
     }
 
     public void ChangeTimeBySpeed()
@@ -100,6 +107,7 @@ public class NotesData : MonoBehaviour
         note.SetTime(time);
         transform.localPosition = new Vector3(time / 1000f * gameEvent.speed, transform.localPosition.y, 0f);
         CenterNotesDataUpdate();
+        ChangeLongInside();
     }
 
     public void ChangeLane(int startLane, int endLane)
@@ -159,6 +167,23 @@ public class NotesData : MonoBehaviour
     {
         centerDirector.NotesData.Remove(Number);
         Destroy(this.gameObject);
+    }
+
+    public void ChangeLongInside()
+    {
+        float[] t = notesDirector.GetLongInsideTime(note.GetTime(), note.GetLength());
+        longInsideParent.SetActive(gameEvent.isLongInside);
+
+        foreach (Transform g in longInsideParent.transform)
+            Destroy(g.gameObject);
+
+        foreach (float time in t)
+        {
+            float x = (time - note.GetTime() / 1000f) * gameEvent.speed;
+            GameObject obj = Instantiate(longInsidePrefab, longInsideParent.transform);
+            obj.transform.localPosition = new Vector3(x, 0f, 0f);
+            obj.SetActive(true);
+        }
     }
     
     private Sprite NoteKind(char kind)

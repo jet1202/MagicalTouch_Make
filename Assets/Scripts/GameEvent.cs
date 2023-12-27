@@ -56,6 +56,7 @@ public class GameEvent : MonoBehaviour
     public bool isNoteColor = false;
     public bool isDummyHide = false;
     public int noteAlpha = 100;
+    public bool isLongInside = false;
     public int tabMode = 0; // 0 Note 1 Speed
 
     private float beatTime;
@@ -596,6 +597,12 @@ public class GameEvent : MonoBehaviour
     {
         isDummyHide = isHide;
         notesDirector.NoteColorSetting();
+    }
+
+    public void LongInsideSet(bool isInside)
+    {
+        isLongInside = isInside;
+        notesDirector.LongNoteInsideSetting(isInside);
     }
 
     public void PreviewAlphaSet(bool isAlpha)

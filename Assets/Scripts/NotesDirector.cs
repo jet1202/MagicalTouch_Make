@@ -42,6 +42,7 @@ public class NotesDirector : MonoBehaviour
     private int noteKind;
     private int noteLength;
     private float bpmBpm;
+    private int longSplit = 8;
     
     private float rayDistance = 30f;
     
@@ -973,6 +974,17 @@ public class NotesDirector : MonoBehaviour
         }
     }
 
+    public void LongNoteInsideSetting(bool isInside)
+    {
+        foreach (Transform t in noteParent.transform)
+        {
+            if (t.CompareTag("Long"))
+            {
+                t.GetChild(4).gameObject.SetActive(isInside);
+            }
+        }
+    }
+
     public Color FieldColor(int number)
     {
         if (number == 0)
@@ -1011,6 +1023,29 @@ public class NotesDirector : MonoBehaviour
         return color;
     }
 
+    public float[] GetLongInsideTime(int startTime, int length)
+    {
+        List<float> insideTime = new List<float>();
+        if (length <= 100) return insideTime.ToArray();
+        
+        int split = longSplit;
+
+        int leng = notesController.bpmMeasureLines.Count;
+        for (int i = 0; i < leng - 1; i++)
+        {
+            float s = notesController.bpmMeasureLines[i + 1] - notesController.bpmMeasureLines[i];
+            for (int j = 0; j < longSplit; j++)
+            {
+                float t = (notesController.bpmMeasureLines[i] + (s / split * j));
+                if (startTime / 1000f < t && t < (startTime + length - 100) / 1000f)
+                    insideTime.Add(t);
+            }
+        }
+        insideTime.Add((startTime + length - 100) / 1000f);
+
+        return insideTime.ToArray();
+    }
+
     public int CountNotes()
     {
         int type = -1;
@@ -1040,7 +1075,7 @@ public class NotesDirector : MonoBehaviour
             else if (type == 1)
             {
                 count++;
-                // TODO: longの内部判定
+                count += t.GetChild(4).childCount;
             }
             else if (type == 2)
             {

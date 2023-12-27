@@ -80,6 +80,11 @@ public class NotesController : MonoBehaviour
                 g.GetComponent<SlideData>().Change();
             else if (g.CompareTag("SlideMaintain"))
                 g.GetComponent<SlideMaintainData>().Change();
+            else　if (g.CompareTag("Long"))
+            {
+                g.GetComponent<NotesData>().ChangeTimeBySpeed();
+                g.GetComponent<NotesData>().ChangeLongInside();
+            }
             else
                 g.GetComponent<NotesData>().ChangeTimeBySpeed();
         }
@@ -90,7 +95,7 @@ public class NotesController : MonoBehaviour
             g.Key.GetComponent<BpmData>().ChangeTime(g.Value.GetTime() / 1000f);
         }
         
-        // Speedの位置調整
+        // Speed変更による位置調整
         speeds.RenewalSpeed();
         angles.RenewalAngle();
         transparencies.RenewalAlpha();

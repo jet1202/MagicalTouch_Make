@@ -179,6 +179,11 @@ public class UserIO : MonoBehaviour
         // noteAlphaSlider
         gameEvent.NoteAlphaSet(value);
     }
+
+    public void IsLongNoteInsideToggle(bool isOn)
+    {
+        gameEvent.LongInsideSet(isOn);
+    }
     
     // InputField ====================================
 
