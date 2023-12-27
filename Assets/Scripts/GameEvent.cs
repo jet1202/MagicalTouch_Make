@@ -3,15 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using SFB;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using Button = UnityEngine.UI.Button;
-using Screen = UnityEngine.Screen;
 
 public class GameEvent : MonoBehaviour
 {
@@ -636,7 +633,7 @@ public class GameEvent : MonoBehaviour
         string massage = $"Version : {UnityEngine.Device.Application.version}\n" +
                          $"URL : https://github.com/jet1202/MagicalTouch_Make/\n\n" +
                          $"MusicLength : {len}\n" +
-                         $"The number of notes : {notes.transform.childCount}\n";
+                         $"The number of notes : {notesDirector.CountNotes()}\n";
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(2, massage);
     }
 

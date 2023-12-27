@@ -1010,4 +1010,56 @@ public class NotesDirector : MonoBehaviour
         Color color = new Color(r, g, b);
         return color;
     }
+
+    public int CountNotes()
+    {
+        int type = -1;
+        int count = 0;
+        foreach (Transform t in noteParent.transform)
+        {
+            switch (t.tag)
+            {
+                case "Normal":
+                case "Hold":
+                case "Flick":
+                    type = 0;
+                    break;
+                case "Long":
+                    type = 1;
+                    break;
+                case "Slide":
+                    type = 2;
+                    break;
+                case "SlideMaintain":
+                    type = 3;
+                    break;
+            }
+
+            if (type == 0)
+                count++;
+            else if (type == 1)
+            {
+                count++;
+                // TODO: longの内部判定
+            }
+            else if (type == 2)
+            {
+                if (!t.GetComponent<SlideData>().isDummy)
+                {
+                    count++;
+
+                    var sm = t.GetComponent<SlideData>().slideMaintain.Values;
+                    foreach (var m in sm)
+                    {
+                        if (m.isJudge)
+                            count++;
+                    }
+                }
+            }
+            else if (type == 3)
+                ;
+        }
+
+        return count;
+    }
 }

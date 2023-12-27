@@ -119,14 +119,17 @@ public class NotesData : MonoBehaviour
             case 'N':
                 noteBody.GetComponent<SpriteRenderer>().sprite = normalNote;
                 transform.gameObject.tag = "Normal";
+                ChangeLength(0);
                 break;
             case 'H':
                 noteBody.GetComponent<SpriteRenderer>().sprite = holdNote;
                 transform.gameObject.tag = "Hold";
+                ChangeLength(0);
                 break;
             case 'F':
                 noteBody.GetComponent<SpriteRenderer>().sprite = flickNote;
                 transform.gameObject.tag = "Flick";
+                ChangeLength(0);
                 break;
             case 'L':
                 noteBody.GetComponent<SpriteRenderer>().sprite = longNote;
