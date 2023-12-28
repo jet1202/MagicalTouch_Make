@@ -215,16 +215,25 @@ public class SlideData : MonoBehaviour
         switch (n)
         {
             case 0:
-                color = new Color(101 / 255f, 187 / 255f, 233 / 255f, a);
+                color = new Color(153 / 255f, 204 / 255f, 255 / 255f, a);
                 break;
             case 1:
-                color = new Color(250 / 255f, 178 / 255f, 123 / 255f, a);
+                color = new Color(255 / 255f, 204 / 255f, 153 / 255f, a);
                 break;
             case 2:
-                color = new Color(112 / 255f, 255f / 255f, 179f / 255f, a);
+                color = new Color(153 / 255f, 255f / 255f, 153f / 255f, a);
                 break;
             case 3:
-                color = new Color(255 / 255f, 239f / 255f, 108f / 255f, a);
+                color = new Color(255 / 255f, 255f / 255f, 153f / 255f, a);
+                break;
+            case 4:
+                color = new Color(255 / 255f, 153f / 255f, 153f / 255f, a);
+                break;
+            case 5:
+                color = new Color(204f / 255f, 153f / 255f, 255f / 255f, a);
+                break;
+            case 6:
+                color = new Color(255f / 255f, 255f / 255f, 255f / 255f, a);
                 break;
         }
 

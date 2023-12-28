@@ -659,8 +659,8 @@ public class GameEvent : MonoBehaviour
             return;
         }
 
-        try
-        {
+        // try
+        // {
             if (bpmPath != "")
             {
                 // bpmの入手
@@ -677,32 +677,6 @@ public class GameEvent : MonoBehaviour
                 foreach (BpmItem b in bpmData.bpmItem)
                 {
                     notesDirector.NewBpm(b.time, b.bpm / 1000f);
-                }
-            }
-            
-            if (notePath != "")
-            {
-                // Sheetの入手
-                Dictionary<int, Note> notesData;
-                Dictionary<int, SlideSave> slidesData;
-                
-                notesData = ExportJson.ImportingSheet(notePath);
-                slidesData = ExportJson.ImportingSlide();
-
-                foreach (Transform t in notes.transform)
-                {
-                    t.GetComponent<NotesData>().ClearNote();
-                }
-                
-                foreach (var n in notesData)
-                {
-                    if (n.Value.GetKind() == 'S')
-                        notesDirector.NewSlide(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
-                            n.Value.GetField(), slidesData[n.Key].isDummy, slidesData[n.Key].color,
-                            slidesData[n.Key].item);
-                    else
-                        notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
-                            n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
                 }
             }
 
@@ -740,6 +714,10 @@ public class GameEvent : MonoBehaviour
                             transData[i].Add(new Transparency(t.time, t.alpha, t.isVariation));
                         }
                     }
+                    else
+                    {
+                        transData[i].Add(new Transparency(0, 100, false));
+                    }
 
                     isDummyData.Add(f.isDummy);
                     
@@ -760,13 +738,39 @@ public class GameEvent : MonoBehaviour
                 fieldSettingController.fieldsIsDummy = isDummyData;
                 fieldSettingController.RenewalField();
             }
-        }
-        catch (Exception e)
-        {
-             TabClose();
-             noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
-             return;
-        }
+            
+            if (notePath != "")
+            {
+                // Sheetの入手
+                Dictionary<int, Note> notesData;
+                Dictionary<int, SlideSave> slidesData;
+                
+                notesData = ExportJson.ImportingSheet(notePath);
+                slidesData = ExportJson.ImportingSlide();
+
+                foreach (Transform t in notes.transform)
+                {
+                    t.GetComponent<NotesData>().ClearNote();
+                }
+                
+                foreach (var n in notesData)
+                {
+                    if (n.Value.GetKind() == 'S')
+                        notesDirector.NewSlide(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
+                            n.Value.GetField(), slidesData[n.Key].isDummy, slidesData[n.Key].color,
+                            slidesData[n.Key].item);
+                    else
+                        notesDirector.NewNote(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
+                            n.Value.GetKind(), n.Value.GetLength(), n.Value.GetField());
+                }
+            }
+        // }
+        // catch (Exception e)
+        // {
+        //      TabClose();
+        //      noticeCanvas.GetComponent<NoticeController>().OpenNotice(1, $"Import: {e}");
+        //      return;
+        // }
         
         TabClose();
         noticeCanvas.GetComponent<NoticeController>().OpenNotice(0, "Import Finished.");
@@ -905,5 +909,15 @@ public class GameEvent : MonoBehaviour
     {
         var paths = StandaloneFileBrowser.OpenFolderPanel("Open Folder", "", false);
         userIO.DataExportPathOutput(paths.First());
+    }
+
+    public void BgmVolumeSet(float value)
+    {
+        audioSource.volume = value;
+    }
+
+    public void SeVolumeSet(float value)
+    {
+        centerDirector.GetComponent<AudioSource>().volume = value;
     }
 }

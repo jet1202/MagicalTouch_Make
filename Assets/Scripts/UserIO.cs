@@ -138,6 +138,24 @@ public class UserIO : MonoBehaviour
     
     // Toggle, Slider ========================================
     
+    public void NoteAlphaSlider(float value)
+    {
+        // noteAlphaSlider
+        gameEvent.NoteAlphaSet(value);
+    }
+    
+    public void BgmVolumeSlider(float value)
+    {
+        // bgmVolumeSlider
+        gameEvent.BgmVolumeSet(value);
+    }
+    
+    public void SeVolumeSlider(float value)
+    {
+        // seVolumeSlider
+        gameEvent.SeVolumeSet(value);
+    }
+    
     // SettingToggle
     public void FieldColorToggle(bool isOn)
     {
@@ -160,12 +178,6 @@ public class UserIO : MonoBehaviour
     public void IsPreviewAlphaToggle(bool isOn)
     {
         gameEvent.PreviewAlphaSet(isOn);
-    }
-
-    public void NoteAlphaSlider(float value)
-    {
-        // noteAlphaSlider
-        gameEvent.NoteAlphaSet(value);
     }
 
     public void IsLongNoteInsideToggle(bool isOn)
