@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
 
 public static class ExportJson
 {
@@ -154,7 +153,8 @@ public static class ExportJson
             a = new List<AngleWork>();
             t = new List<TransparencyItem>();
             
-            foreach (var sp in speeds[i])
+            var ss = speeds[i].OrderBy(x => x.GetTime());
+            foreach (var sp in ss)
             {
                 s_item = new SpeedItem();
                 s_item.time = sp.GetTime();
@@ -164,7 +164,8 @@ public static class ExportJson
                 s.Add(s_item);
             }
             
-            foreach (var ap in angles[i])
+            var aa = angles[i].OrderBy(x => x.GetTime());
+            foreach (var ap in aa)
             {
                 a_item = new AngleWork();
                 a_item.time = ap.GetTime();
@@ -173,10 +174,11 @@ public static class ExportJson
                 
                 a.Add(a_item);
             }
-
+            
             if (transparencyItems[i] != null)
             {
-                foreach (var tp in transparencyItems[i])
+                var tt = transparencyItems[i].OrderBy(x => x.GetTime());
+                foreach (var tp in tt)
                 {
                     t_item = new TransparencyItem();
                     t_item.time = tp.GetTime();

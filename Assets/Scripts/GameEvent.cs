@@ -270,10 +270,8 @@ public class GameEvent : MonoBehaviour
                         float time;
                         time = data.GetTime() / 1000f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
-                        int n = nowBeatNote;
                         notesDirector.NewNote((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
                             data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength(), data.GetField());
-                        nowBeatNote = n;
                         nowBeatTime = -1;
                         FocusBeatSet(BeatToTime(nowBeatNote));
                         nowBeatLong = -1;
@@ -287,12 +285,55 @@ public class GameEvent : MonoBehaviour
                         float time;
                         time = data.GetTime() / 1000f;
                         nowBeatNote = NextBeat(true, time, nowBeatNote);
-                        int n = nowBeatNote;
                         notesDirector.NewSlide(
                             (int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
                             data.GetStartLane(), data.GetEndLane(), data.GetField(), dummy, color,
                             notesDirector.focusNote.GetComponent<SlideData>().slideMaintain.Values.ToArray());
-                        nowBeatNote = n;
+                        nowBeatTime = -1;
+                        FocusBeatSet(BeatToTime(nowBeatNote));
+                        nowBeatLong = -1;
+                    }
+                    else if (notesDirector.objectKind == 4) // Speeds
+                    {
+                        Speed data = speedsDirector.fieldSpeeds[notesDirector.focusNote];
+                        
+                        float time;
+                        time = data.GetTime() / 1000f;
+                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        
+                        notesDirector.NewSpeed((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                            data.GetSpeed100(), data.GetIsVariation());
+                        
+                        nowBeatTime = -1;
+                        FocusBeatSet(BeatToTime(nowBeatNote));
+                        nowBeatLong = -1;
+                    }
+                    else if (notesDirector.objectKind == 5) // Angles
+                    {
+                        Angle data = anglesDirector.fieldAngles[notesDirector.focusNote];
+                        
+                        float time;
+                        time = data.GetTime() / 1000f;
+                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        
+                        notesDirector.NewAngle((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                            data.GetDegree(), data.GetVariation());
+                        
+                        nowBeatTime = -1;
+                        FocusBeatSet(BeatToTime(nowBeatNote));
+                        nowBeatLong = -1;
+                    }
+                    else if (notesDirector.objectKind == 6) // Transparencies
+                    {
+                        Transparency data = alphaDirector.fieldTransparencies[notesDirector.focusNote];
+                        
+                        float time;
+                        time = data.GetTime() / 1000f;
+                        nowBeatNote = NextBeat(true, time, nowBeatNote);
+                        
+                        notesDirector.NewTransparency((int)(Mathf.Min(BeatToTime(nowBeatNote), audioSource.clip.length) * 1000),
+                            data.GetAlpha(), data.GetIsVariation());
+                        
                         nowBeatTime = -1;
                         FocusBeatSet(BeatToTime(nowBeatNote));
                         nowBeatLong = -1;

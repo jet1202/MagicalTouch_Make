@@ -767,7 +767,12 @@ public class NotesDirector : MonoBehaviour
 
     public void NewSpeed()
     {
-        GameObject o = speedsDirector.NewSpeeds((int)(gameEvent.time * 1000), 100, false);
+        NewSpeed((int)(gameEvent.time * 1000), 100, false);
+    }
+
+    public void NewSpeed(int time, int speed100, bool isVariation)
+    {
+        GameObject o = speedsDirector.NewSpeeds(time, speed100, isVariation);
         
         SetDisChoose();
         focusNote = o;
@@ -778,10 +783,15 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatLong = -1;
         gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime() / 1000f);
     }
-
+    
     public void NewAngle()
     {
-        GameObject o = anglesDirector.NewAngles((int)(gameEvent.time * 1000), 0, 0);
+        NewAngle((int)(gameEvent.time * 1000), 0, 0);
+    }
+
+    public void NewAngle(int time, int degree, int variation)
+    {
+        GameObject o = anglesDirector.NewAngles(time, degree, variation);
         
         SetDisChoose();
         focusNote = o;
@@ -792,10 +802,15 @@ public class NotesDirector : MonoBehaviour
         gameEvent.nowBeatLong = -1;
         gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime() / 1000f);
     }
-
+    
     public void NewTransparency()
     {
-        GameObject o = alphaDirector.NewTransparencies((int)(gameEvent.time * 1000), 100, false);
+        NewTransparency((int)(gameEvent.time * 1000), 100, false);
+    }
+
+    public void NewTransparency(int time, int alpha, bool isVariation)
+    {
+        GameObject o = alphaDirector.NewTransparencies(time, alpha, isVariation);
         
         SetDisChoose();
         focusNote = o;
@@ -1050,6 +1065,7 @@ public class NotesDirector : MonoBehaviour
     {
         int type = -1;
         int count = 0;
+        int f = 0;
         foreach (Transform t in noteParent.transform)
         {
             switch (t.tag)
@@ -1058,18 +1074,25 @@ public class NotesDirector : MonoBehaviour
                 case "Hold":
                 case "Flick":
                     type = 0;
+                    f = t.GetComponent<NotesData>().note.GetField();
                     break;
                 case "Long":
                     type = 1;
+                    f = t.GetComponent<NotesData>().note.GetField();
                     break;
                 case "Slide":
                     type = 2;
+                    f = t.GetComponent<SlideData>().note.GetField();
                     break;
                 case "SlideMaintain":
                     type = 3;
+                    f = t.GetComponent<SlideMaintainData>().parentSc.note.GetField();
                     break;
             }
-
+            
+            if (fieldSettingController.FieldIsDummy(f))
+                continue;
+            
             if (type == 0)
                 count++;
             else if (type == 1)
