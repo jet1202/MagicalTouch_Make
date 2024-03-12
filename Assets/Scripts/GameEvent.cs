@@ -362,10 +362,35 @@ public class GameEvent : MonoBehaviour
             }
         }
         
+        
+        // キーボード入力
+        
         // フルスクリーンモード切り替え
         if (Input.GetKeyDown(KeyCode.F11))
         {
             Screen.fullScreen = !Screen.fullScreen;
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightAlt))
+        {
+            // open
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                userIO.DataImportPathOpenFileButton();
+                userIO.DataImportButton();
+            }
+            
+            // save
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ||
+                    userIO.DataExportPathInput() == "")
+                {
+                    userIO.DataExportPathOpenFileButton();
+                }
+                
+                userIO.DataExportButton();
+            }
         }
     }
 
@@ -916,6 +941,8 @@ public class GameEvent : MonoBehaviour
 
         audioSource.pitch = 1.0f;
         musicSpeedField.text = "1.0";
+        
+        TitleBarSetter.Instance.SetTitleBar(file);
     }
 
     public AudioType GetAudioType(string url)
@@ -936,7 +963,7 @@ public class GameEvent : MonoBehaviour
     public void MusicPathOpenFile()
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", new []{new ExtensionFilter("Sound file", "wav", "ogg", "mp3")}, false);
-        if (paths.Length != 0)
+        if (paths.Length != 0)  
             userIO.MusicImportPathOutput(paths.First());
     }
     

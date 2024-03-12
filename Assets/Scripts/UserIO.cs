@@ -110,6 +110,8 @@ public class UserIO : MonoBehaviour
         string fieldPath = directoryPath + "/Field.json";
         
         gameEvent.DataImport(notePath, bpmPath, fieldPath);
+        
+        DataExportPathOutput(directoryPath);
     }
 
     public void DataExportButton()
@@ -242,6 +244,11 @@ public class UserIO : MonoBehaviour
     public void DataImportPathOutput(string path)
     {
         dataImportField.text = path;
+    }
+
+    public string DataExportPathInput()
+    {
+        return dataExportPathField.text;
     }
     
     public void DataExportPathOutput(string path)
