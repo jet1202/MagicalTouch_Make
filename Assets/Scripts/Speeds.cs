@@ -177,4 +177,17 @@ public class Speeds : MonoBehaviour
             g.transform.GetChild(1).GetComponent<SpriteRenderer>().color = color;
         }
     }
+
+    public int GetTimeToLastSpeed(int time)
+    {
+        Speed beforeS = new Speed(0, 100, false);
+        foreach (Speed s in fieldSpeeds.Values)
+        {
+            if (s.GetTime() < time)
+                beforeS = s;
+            else
+                break;
+        }
+        return beforeS.GetSpeed100();
+    }
 }

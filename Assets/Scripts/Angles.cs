@@ -290,4 +290,17 @@ public class Angles : MonoBehaviour
             g.transform.GetChild(1).GetComponent<SpriteRenderer>().color = color;
         }
     }
+
+    public int GetTimeToLastAngle(int time)
+    {
+        Angle beforeA = new Angle(0, 0, 0);
+        foreach (Angle a in fieldAngles.Values)
+        {
+            if (a.GetTime() < time)
+                beforeA = a;
+            else
+                break;
+        }
+        return beforeA.GetDegree();
+    }
 }

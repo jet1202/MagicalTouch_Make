@@ -767,7 +767,8 @@ public class NotesDirector : MonoBehaviour
 
     public void NewSpeed()
     {
-        NewSpeed((int)(gameEvent.time * 1000), 100, false);
+        int t = (int)(gameEvent.time * 1000);
+        NewSpeed(t, speedsDirector.GetTimeToLastSpeed(t), false);
     }
 
     public void NewSpeed(int time, int speed100, bool isVariation)
@@ -786,7 +787,8 @@ public class NotesDirector : MonoBehaviour
     
     public void NewAngle()
     {
-        NewAngle((int)(gameEvent.time * 1000), 0, 0);
+        int t = (int)(gameEvent.time * 1000);
+        NewAngle(t, anglesDirector.GetTimeToLastAngle(t), 0);
     }
 
     public void NewAngle(int time, int degree, int variation)
@@ -805,7 +807,8 @@ public class NotesDirector : MonoBehaviour
     
     public void NewTransparency()
     {
-        NewTransparency((int)(gameEvent.time * 1000), 100, false);
+        int t = (int)(gameEvent.time * 1000);
+        NewTransparency(t, alphaDirector.GetTimeToLastAlpha(t), false);
     }
 
     public void NewTransparency(int time, int alpha, bool isVariation)
@@ -838,7 +841,7 @@ public class NotesDirector : MonoBehaviour
 
     public void SetSpeedSpeed(float speed)
     {
-        float cSpeed = Math.Clamp(speed, -1000f, 1000f);
+        float cSpeed = Math.Clamp(speed, -10000f, 10000f);
         int speed100 = (int)(cSpeed * 100);
         userIO.SpeedSpeedOutput(speed100 / 100f);
         

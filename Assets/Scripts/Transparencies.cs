@@ -160,4 +160,17 @@ public class Transparencies : MonoBehaviour
             g.transform.GetChild(1).GetComponent<SpriteRenderer>().color = color;
         }
     }
+
+    public int GetTimeToLastAlpha(int time)
+    {
+        Transparency beforeA = new Transparency(0, 100, false);
+        foreach (Transparency a in fieldTransparencies.Values)
+        {
+            if (a.GetTime() < time)
+                beforeA = a;
+            else
+                break;
+        }
+        return beforeA.GetAlpha();
+    }
 }
