@@ -214,7 +214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &11339983
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9598,7 +9598,7 @@ MonoBehaviour:
   audioSource: {fileID: 1825082433}
   measureLinePrefab: {fileID: 6739434388085820929, guid: 2f44b42a076f7c440b14d63a5beaac80, type: 3}
   subLinePrefab: {fileID: 5751548526591210359, guid: 33fe24805b21a6740a2074a59e78ae0d, type: 3}
-  bpmMeasureLines: []
+  bpmLines: 
 --- !u!1 &595897609
 GameObject:
   m_ObjectHideFlags: 0
@@ -30225,9 +30225,7 @@ MonoBehaviour:
   isLongInside: 0
   tabMode: 0
   focusBeat: 0
-  nowBeatTime: -1
-  nowBeatNote: -1
-  nowBeatLong: -1
+  nowBeat: -1
   timeSignature: 4
 --- !u!4 &1825082432
 Transform:

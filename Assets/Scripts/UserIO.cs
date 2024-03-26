@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -204,7 +205,7 @@ public class UserIO : MonoBehaviour
 
     public void TimeInput(string text)
     {
-        float time = float.Parse(text);
+        int time = (int)Math.Round(float.Parse(text) * 1000f);
         gameEvent.TimeSet(time);
     }
 
@@ -340,7 +341,7 @@ public class UserIO : MonoBehaviour
     // NoteTab
     public void NoteTimeInput(string text)
     {
-        float time = float.Parse(text);
+        int time = (int)Math.Round(float.Parse(text) * 1000f);
         notesDirector.TimeSet(time);
     }
     public void NoteTimeOutput(float value)
@@ -381,7 +382,7 @@ public class UserIO : MonoBehaviour
     
     public void NoteLengthInput(string text)
     {
-        float length = float.Parse(text);
+        int length = (int)Math.Round(float.Parse(text) * 1000f);
         notesDirector.NoteLengthSet(length);
     }
     public void NoteLengthOutput(float value)
@@ -447,7 +448,7 @@ public class UserIO : MonoBehaviour
     // SpeedTab
     public void SpeedTimeInput(string text)
     {
-        float time = float.Parse(text);
+        int time = (int)Math.Round(float.Parse(text) * 1000f);
         notesDirector.SetSpeedTime(time);
     }
     public void SpeedTimeOutput(float value)

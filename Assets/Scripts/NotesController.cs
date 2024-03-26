@@ -21,7 +21,7 @@ public class NotesController : MonoBehaviour
     private float time;
     private int leng;
 
-    public List<float> bpmMeasureLines = new List<float>();
+    public List<int> bpmLines = new List<int>();
         
     private void Start()
     {
@@ -32,7 +32,7 @@ public class NotesController : MonoBehaviour
 
     void Update()
     {
-        transform.position = new Vector3(gameEvent.time * -gameEvent.speed, 0, 0);
+        transform.position = new Vector3(gameEvent.time * -gameEvent.speed / 1000f, 0, 0);
     }
 
     public void MeasureLineSet(Dictionary<GameObject, Bpm> bpmData)
@@ -51,7 +51,7 @@ public class NotesController : MonoBehaviour
         time = audioSource.clip.length;
         leng = bpms.Count;
         Bpm bpm, nextBpm;
-        bpmMeasureLines = new List<float>();
+        bpmLines = new List<int>();
         for (int i = 0; i < leng; i++)
         {
             bpm = bpms[i];
@@ -62,14 +62,15 @@ public class NotesController : MonoBehaviour
 
             for (float j = bpm.GetTime() / 1000f; j < nextBpm.GetTime() / 1000f; j += 60f / (bpm.GetBpm() / 1000f) * 4)
             {
-                bpmMeasureLines.Add(j);
+                int t = (int)Math.Round(j * 1000);
+                bpmLines.Add(t);
             }
         }
 
-        foreach (var t in bpmMeasureLines)
+        foreach (var t in bpmLines)
         {
             GameObject obj = Instantiate(measureLinePrefab, measureLines.transform);
-            obj.transform.localPosition = new Vector3(t * gameEvent.speed, 0.5f, 0);
+            obj.transform.localPosition = new Vector3(t * gameEvent.speed / 1000f, 0.5f, 0);
             obj.SetActive(true);
         }
 
@@ -119,18 +120,19 @@ public class NotesController : MonoBehaviour
             }
 
             // サブラインの調整
-            float beatTime = 0f;
-            float measureTime = 0f;
-            if (beat / split >= 0 && beat / split < bpmMeasureLines.Count - 1)
+            if (beat / split >= 0 && beat / split < bpmLines.Count - 1)
             {
-                beatTime = bpmMeasureLines[beat / split];
-                measureTime = bpmMeasureLines[beat / split + 1] - beatTime;
-            }
+                int beatTime = 0;
+                int measureTime = 0;
+                
+                beatTime = bpmLines[beat / split];
+                measureTime = bpmLines[beat / split + 1] - beatTime;
 
-            for (int i = 1; i < split; i++)
-            {
-                subLines.transform.GetChild(i - 1).transform.localPosition =
-                    new Vector3((beatTime + measureTime / split * i) * gameEvent.speed, 0.5f, 0f);
+                for (int i = 1; i < split; i++)
+                {
+                    subLines.transform.GetChild(i - 1).transform.localPosition =
+                        new Vector3((beatTime + (float)measureTime / split * i) * gameEvent.speed / 1000f, 0.5f, 0f);
+                }
             }
         }
     }
