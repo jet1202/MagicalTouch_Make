@@ -342,7 +342,7 @@ public class UserIO : MonoBehaviour
     public void NoteTimeInput(string text)
     {
         int time = (int)Math.Round(float.Parse(text) * 1000f);
-        notesDirector.TimeSet(time);
+        notesDirector.TimeSetAll(time);
     }
     public void NoteTimeOutput(float value)
     {
@@ -353,7 +353,7 @@ public class UserIO : MonoBehaviour
     {
         int laneF = int.Parse(text);
         int laneL = int.Parse(noteLaneFieldL.text);
-        notesDirector.NoteLaneSet(laneF, laneL);
+        notesDirector.NoteLaneSetAll(laneF, laneL);
     }
     public void NoteLaneFOutput(int value)
     {
@@ -364,7 +364,7 @@ public class UserIO : MonoBehaviour
     {
         int laneF = int.Parse(noteLaneFieldF.text);
         int laneL = int.Parse(text);
-        notesDirector.NoteLaneSet(laneF, laneL);
+        notesDirector.NoteLaneSetAll(laneF, laneL);
     }
     public void NoteLaneLOutput(int value)
     {
@@ -373,7 +373,7 @@ public class UserIO : MonoBehaviour
     
     public void NoteKindDropdownInput(int value)
     {
-        notesDirector.NoteKindSet(value);
+        notesDirector.NoteKindSetAll(value);
     }
     public void NoteKindDropdownOutput(int value)
     {
@@ -383,7 +383,7 @@ public class UserIO : MonoBehaviour
     public void NoteLengthInput(string text)
     {
         int length = (int)Math.Round(float.Parse(text) * 1000f);
-        notesDirector.NoteLengthSet(length);
+        notesDirector.NoteLengthSetAll(length);
     }
     public void NoteLengthOutput(float value)
     {
@@ -392,7 +392,7 @@ public class UserIO : MonoBehaviour
     
     public void NoteFieldDropdownInput(int value)
     {
-        notesDirector.NoteFieldSet(value);
+        notesDirector.NoteFieldSetAll(value);
     }
     public void NoteFieldDropdownOutput(int value)
     {
@@ -401,8 +401,8 @@ public class UserIO : MonoBehaviour
     
     public void BpmInput(string text)
     {
-        float bpm = float.Parse(text);
-        notesDirector.BpmSet(bpm);
+        int bpm = (int)Math.Round(float.Parse(text) * 1000);
+        notesDirector.BpmSetAll(bpm);
     }
     public void BpmOutput(float value)
     {
@@ -411,7 +411,7 @@ public class UserIO : MonoBehaviour
 
     public void IsDummyToggleInput(bool isOn)
     {
-        notesDirector.SetDummy(isOn);
+        notesDirector.SetDummyAll(isOn);
     }
     public void IsDummyToggleOutput(bool isOn)
     {
@@ -420,7 +420,7 @@ public class UserIO : MonoBehaviour
     
     public void SlideFieldColorDropdownInput(int value)
     {
-        notesDirector.SetColor(value);
+        notesDirector.SetColorAll(value);
     }
     public void SlideFieldColorDropdownOutput(int value)
     {
@@ -429,7 +429,7 @@ public class UserIO : MonoBehaviour
     
     public void IsJudgeToggleInput(bool isOn)
     {
-        notesDirector.SetJudge(isOn);
+        notesDirector.SetJudgeAll(isOn);
     }
     public void IsJudgeToggleOutput(bool isOn)
     {
@@ -438,7 +438,7 @@ public class UserIO : MonoBehaviour
     
     public void IsVariationToggleInput(bool isOn)
     {
-        notesDirector.SetVariation(isOn);
+        notesDirector.SetVariationAll(isOn);
     }
     public void IsVariationToggleOutput(bool isOn)
     {
@@ -449,7 +449,7 @@ public class UserIO : MonoBehaviour
     public void SpeedTimeInput(string text)
     {
         int time = (int)Math.Round(float.Parse(text) * 1000f);
-        notesDirector.SetSpeedTime(time);
+        notesDirector.TimeSetAll(time);
     }
     public void SpeedTimeOutput(float value)
     {
@@ -459,7 +459,7 @@ public class UserIO : MonoBehaviour
     public void SpeedSpeedInput(string text)
     {
         float speed = float.Parse(text);
-        notesDirector.SetSpeedSpeed(speed);
+        notesDirector.SetSpeedSpeedAll(speed);
     }
     public void SpeedSpeedOutput(float value)
     {
@@ -468,7 +468,7 @@ public class UserIO : MonoBehaviour
     
     public void SpeedIsVariationToggleInput(bool isOn)
     {
-        notesDirector.SetSpeedIsVariation(isOn);
+        notesDirector.SetSpeedIsVariationAll(isOn);
     }
     public void SpeedIsVariationToggleOutput(bool isOn)
     {
@@ -478,7 +478,7 @@ public class UserIO : MonoBehaviour
     public void AngleDegreeInput(string text)
     {
         int degree = int.Parse(text);
-        notesDirector.SetAngleDegree(degree);
+        notesDirector.SetAngleDegreeAll(degree);
     }
     public void AngleDegreeOutput(int value)
     {
@@ -488,7 +488,7 @@ public class UserIO : MonoBehaviour
     public void AngleVariationInput(string text)
     {
         int variation = (int)(float.Parse(text) * 10);
-        notesDirector.SetAngleVariation(variation);
+        notesDirector.SetAngleVariationAll(variation);
     }
     public void AngleVariationOutput(float value)
     {
@@ -498,7 +498,7 @@ public class UserIO : MonoBehaviour
     public void TransparencyAlphaInput(string text)
     {
         int alpha = int.Parse(text);
-        notesDirector.SetTransparencyAlpha(alpha);
+        notesDirector.SetTransparencyAlphaAll(alpha);
     }
     public void TransparencyAlphaOutput(int value)
     {
@@ -507,7 +507,7 @@ public class UserIO : MonoBehaviour
     
     public void TransparencyIsVariationToggleInput(bool isOn)
     {
-        notesDirector.SetTransparencyIsVariation(isOn);
+        notesDirector.SetTransparencyIsVariationAll(isOn);
     }
     public void TransparencyIsVariationToggleOutput(bool isOn)
     {

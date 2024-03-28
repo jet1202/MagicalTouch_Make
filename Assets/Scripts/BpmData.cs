@@ -40,7 +40,7 @@ public class BpmData : MonoBehaviour
 
     public void ChangeBpm(float bpm)
     {
-        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString("F");
+        bpmText.GetComponent<TextMeshPro>().text = bpm.ToString("F4");
     }
 
     public void ClearBpm()

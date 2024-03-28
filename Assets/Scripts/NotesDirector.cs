@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -31,9 +32,11 @@ public class NotesDirector : MonoBehaviour
     [SerializeField] private GameObject speedObj;
     [SerializeField] private GameObject angleObj;
     [SerializeField] private GameObject transparencyObj;
+
+    [SerializeField] private GameObject selectRectangleObj;
     
-    public GameObject focusNote = null;
-    public int objectKind; // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles 6 transparencies
+    public List<KeyValuePair<int, GameObject>> focusNotes = new List<KeyValuePair<int, GameObject>>();
+    // 0 note 1 bpm 2 slide 3 slideMaintain 4 speeds 5 angles 6 transparencies
     
     private int focusTime;
     
@@ -41,10 +44,12 @@ public class NotesDirector : MonoBehaviour
     private int noteLaneL;
     private int noteKind;
     private int noteLength;
-    private float bpmBpm;
+    private int bpmBpm;
     private int longSplit = 8;
     
     private float rayDistance = 30f;
+    private Vector2 downMousePos = new Vector2();
+    bool isDrag = false;
     
     public Dictionary<GameObject, Bpm> bpms = new Dictionary<GameObject, Bpm>();
 
@@ -61,217 +66,359 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance);
-                
-                if (hit.collider != null)
+                downMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                isDrag = false;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (isDrag)
                 {
-                    if (IsNote(hit.collider.gameObject.tag))
+                    Vector2 center = (downMousePos + pos) / 2;
+                    float width = Math.Abs(downMousePos.x - pos.x);
+                    float height = Math.Abs(downMousePos.y - pos.y);
+                    selectRectangleObj.transform.position = new Vector3(center.x, center.y, 0);
+                    selectRectangleObj.transform.localScale = new Vector3(width, height, 1);
+                }
+                else
+                {
+                    if (Vector2.Distance(downMousePos, pos) > 0.3f)
                     {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        focusNote.GetComponent<NotesData>().Choose();
-                        objectKind = 0;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(focusNote.GetComponent<NotesData>().note.GetTime());
-                    }
-                    else if (hit.collider.gameObject.CompareTag("Bpm"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        focusNote.GetComponent<BpmData>().Choose();
-                        objectKind = 1;
-                        SetChoose();
-                    }
-                    else if (hit.collider.gameObject.CompareTag("Slide"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        focusNote.GetComponent<SlideData>().Choose();
-                        objectKind = 2;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(focusNote.GetComponent<SlideData>().note.GetTime());
-                    }
-                    else if (hit.collider.gameObject.CompareTag("SlideMaintain"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        focusNote.GetComponent<SlideMaintainData>().Choose();
-                        objectKind = 3;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].time);
-                    }
-                    else if (hit.collider.gameObject.CompareTag("SpeedPoint"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        speedsDirector.SetChoose(focusNote);
-                        objectKind = 4;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime());
-                    }
-                    else if (hit.collider.gameObject.CompareTag("AnglePoint"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        anglesDirector.SetChoose(focusNote);
-                        objectKind = 5;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime());
-                    }
-                    else if (hit.collider.gameObject.CompareTag("AlphaPoint"))
-                    {
-                        SetDisChoose();
-                        focusNote = hit.collider.gameObject;
-                        alphaDirector.SetChoose(focusNote);
-                        objectKind = 6;
-                        SetChoose();
-                        gameEvent.FocusBeatSet(alphaDirector.fieldTransparencies[focusNote].GetTime());
-                    }
-                    else if (hit.collider.gameObject.CompareTag("EditRange"))
-                    {
-                        SetDisChoose();
-                        focusNote = null;
-                        gameEvent.FocusBeatSet(gameEvent.time);
+                        isDrag = true;
+                        selectRectangleObj.SetActive(true);
                     }
                 }
             }
 
+            if (Input.GetMouseButtonUp(0))
+            {
+                RaycastHit2D[] hits;
+                if (isDrag)
+                {
+                    selectRectangleObj.SetActive(false);
+                    
+                    Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 center = (downMousePos + pos) / 2;
+                    float width = Math.Abs(downMousePos.x - pos.x);
+                    float height = Math.Abs(downMousePos.y - pos.y);
+                    
+                    hits = Physics2D.BoxCastAll(center, new Vector2(width, height), 0, Vector2.zero);
+                }
+                else
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    hits = new RaycastHit2D[1] {Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance)};
+                }
+
+                foreach (var hit in hits)
+                {
+                    int mode = 0;
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                        mode += 1;
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        mode += 2;
+                    
+                    int k = GetObjKind(hit.collider.gameObject);
+                    
+                    ClickResponse(mode, new KeyValuePair<int, GameObject>(k, hit.collider.gameObject), isDrag);
+                }
+
+                isDrag = false;
+            }
+
+            // 左右キー操作
+            int key = 0;
             if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                if (focusNote != null && objectKind != 1 && objectKind != 4 && objectKind != 5)
-                {
-                    if (objectKind == 3)
-                    {
-                        SlideMaintain data;
-                        data = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
-                        
-                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        {
-                            NoteLaneSet(data.startLane - 1, data.endLane);
-                        }
-                        else
-                        {
-                            NoteLaneSet(data.startLane - 1, data.endLane - 1);
-                        }
-                    }
-                    else
-                    {
-                        Note data;
-                        if (objectKind == 0)
-                            data = focusNote.GetComponent<NotesData>().note;
-                        else
-                            data = focusNote.GetComponent<SlideData>().note;
-
-                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        {
-                            NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane());
-                        }
-                        else
-                        {
-                            NoteLaneSet(data.GetStartLane() - 1, data.GetEndLane() - 1);
-                        }
-                    }
-                }
-            }
-
+                key--;
             if (Input.GetKeyDown(KeyCode.DownArrow))
+                key++;
+
+            if (key != 0)
             {
-                if (focusNote != null && objectKind != 1 && objectKind != 4 && objectKind != 5)
+                bool isShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                int k;
+                GameObject obj;
+                int start, end;
+                foreach (var kv in focusNotes)
                 {
-                    if (objectKind == 3)
+                    k = kv.Key;
+                    obj = kv.Value;
+                    
+                    if (k == 0)
                     {
-                        SlideMaintain data;
-                        data = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
-                        
-                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        {
-                            NoteLaneSet(data.startLane + 1, data.endLane);
-                        }
-                        else
-                        {
-                            NoteLaneSet(data.startLane + 1, data.endLane + 1);
-                        }
+                        var data = obj.GetComponent<NotesData>().note;
+                        start = data.GetStartLane();
+                        end = data.GetEndLane();
+                    }
+                    else if (k == 2)
+                    {
+                        var data = obj.GetComponent<SlideData>().note;
+                        start = data.GetStartLane();
+                        end = data.GetEndLane();
+                    }
+                    else if (k == 3)
+                    {
+                        var data = obj.GetComponent<SlideMaintainData>().parentSc.slideMaintain[obj];
+                        start = data.startLane;
+                        end = data.endLane;
                     }
                     else
-                    {
-                        Note data;
-                        if (objectKind == 0)
-                            data = focusNote.GetComponent<NotesData>().note;
-                        else
-                            data = focusNote.GetComponent<SlideData>().note;
+                        return;
 
-                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        {
-                            NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane());
-                        }
-                        else
-                        {
-                            NoteLaneSet(data.GetStartLane() + 1, data.GetEndLane() + 1);
-                        }
-                    }
+                    NoteLaneSet(kv, start + key, end + (isShift ? 0 : key));
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))
             {
-                if (focusNote != null)
+                int k;
+                GameObject obj;
+                foreach (var kv in focusNotes)
                 {
-                    if (objectKind == 0)
+                    k = kv.Key;
+                    obj = kv.Value;
+                    if (k == 0)
                     {
-                        focusNote.GetComponent<NotesData>().ClearNote();
-                        gameEvent.FocusBeatSet(gameEvent.time);
+                        obj.GetComponent<NotesData>().ClearNote();
                     }
-                    else if (objectKind == 2)
+                    else if (k == 2)
                     {
-                        focusNote.GetComponent<SlideData>().ClearNote();
-                        gameEvent.FocusBeatSet(gameEvent.time);
+                        obj.GetComponent<SlideData>().ClearNote();
                     }
-                    else if (objectKind == 3)
+                    else if (k == 3)
                     {
-                        focusNote.GetComponent<SlideMaintainData>().Clear();
+                        obj.GetComponent<SlideMaintainData>().Clear();
                     }
-                    else if (objectKind == 1)
+                    else if (k == 1)
                     {
                         if (bpms.Count != 1)
                         {
-                            focusNote.GetComponent<BpmData>().ClearBpm();
-                            bpms.Remove(focusNote);
+                            obj.GetComponent<BpmData>().ClearBpm();
+                            bpms.Remove(obj);
                             notesController.MeasureLineSet(bpms);
-                            gameEvent.FocusBeatSet(gameEvent.time);
                         }
                     }
-                    else if (objectKind == 4)
+                    else if (k == 4)
                     {
-                        speedsDirector.DeleteSpeeds(focusNote);
+                        speedsDirector.DeleteSpeeds(obj);
                     }
-                    else if (objectKind == 5)
+                    else if (k == 5)
                     {
-                        anglesDirector.DeleteAngles(focusNote);
+                        anglesDirector.DeleteAngles(obj);
                     }
-                    else if (objectKind == 6)
+                    else if (k == 6)
                     {
-                        alphaDirector.DeleteTransparencies(focusNote);
+                        alphaDirector.DeleteTransparencies(obj);
                     }
-
-                    focusNote = null;
+                    
                 }
+                ClearFocus();
             }
         }
     }
-    
-    private void SetChoose()
+
+    private void ClickResponse(int mode, KeyValuePair<int, GameObject> kv, bool isDrag)
     {
-        if (objectKind == 0) // note
+        switch (mode)
+        {
+            case 0:
+                // Normal
+                ClearFocus();
+                AddObj(kv);
+                break;
+            case 1:
+                // Shift
+                if (GetFocusNotesIndex(kv.Value) == -1 && !isDrag)
+                    AddObj(kv);
+                else
+                    CoreObj(kv);
+                break;
+            case 2:
+                // Ctrl
+                if (GetFocusNotesIndex(kv.Value) == -1 && !isDrag)
+                    ;
+                else
+                    DeleteObj(kv);
+                break;
+            case 3:
+                // Shift + Ctrl
+                if (GetFocusNotesIndex(kv.Value) == -1 && !isDrag) ;
+                else ;
+                break;
+        }
+    }
+
+    public void ClearFocus()
+    {
+        for (int i = focusNotes.Count - 1; i >= 0; i--)
+        {
+            DeleteObj(focusNotes[i]);
+        }
+        gameEvent.FocusBeatSet(gameEvent.time);
+    }
+
+    public void CoreObj(KeyValuePair<int, GameObject> kv)
+    {
+        int index = GetFocusNotesIndex(kv.Value);
+        if (index == -1)
+        {
+            focusNotes.Insert(0, kv);
+        }
+        else
+        {
+            focusNotes.RemoveAt(index);
+            focusNotes.Insert(0, kv);
+        }
+        CorePresent();
+    }
+    
+    public void AddObj(KeyValuePair<int, GameObject> kv)
+    {
+        int index = GetFocusNotesIndex(kv.Value);
+        if (index == -1)
+        {
+            focusNotes.Add(kv);
+            SetChoose(kv, false);
+            if (focusNotes.Count == 1)
+                CorePresent();
+        }
+    }
+    
+    public void DeleteObj(KeyValuePair<int, GameObject> kv)
+    {
+        int index = GetFocusNotesIndex(kv.Value);
+        if (index != -1)
+        {
+            focusNotes.RemoveAt(index);
+            SetDisChoose(kv);
+            if (index == 0)
+                CorePresent();
+        }
+    }
+
+    private int GetObjKind(GameObject obj)
+    {
+        int k = -1;
+        if (IsNote(obj.tag))
+            k = 0;
+        else if (obj.CompareTag("Bpm"))
+            k = 1;
+        else if (obj.CompareTag("Slide"))
+            k = 2;
+        else if (obj.CompareTag("SlideMaintain"))
+            k = 3;
+        else if (obj.CompareTag("SpeedPoint"))
+            k = 4;
+        else if (obj.CompareTag("AnglePoint"))
+            k = 5;
+        else if (obj.CompareTag("AlphaPoint"))
+            k = 6;
+
+        return k;
+    }
+
+    private int GetFocusNotesIndex(GameObject obj)
+    {
+        if (obj == null) return -1;
+        
+        int index = -1;
+        for (int i = 0; i < focusNotes.Count; i++)
+        {
+            if (focusNotes[i].Value == obj)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    private void SetChoose(KeyValuePair<int, GameObject> kv, bool isCore)
+    {
+        //TODO: isCoreの処理
+        switch (kv.Key)
+        {
+            case 0:
+                kv.Value.GetComponent<NotesData>().Choose();
+                break;
+            case 1:
+                kv.Value.GetComponent<BpmData>().Choose();
+                break;
+            case 2:
+                kv.Value.GetComponent<SlideData>().Choose();
+                break;
+            case 3:
+                kv.Value.GetComponent<SlideMaintainData>().Choose();
+                break;
+            case 4:
+                speedsDirector.SetChoose(kv.Value);
+                break;
+            case 5:
+                anglesDirector.SetChoose(kv.Value);
+                break;
+            case 6:
+                alphaDirector.SetChoose(kv.Value);
+                break;
+        }
+    }
+
+    private void SetDisChoose(KeyValuePair<int, GameObject> kv)
+    {
+        switch (kv.Key)
+        {
+            case 0:
+                kv.Value.GetComponent<NotesData>().DisChoose();
+                break;
+            case 1:
+                kv.Value.GetComponent<BpmData>().DisChoose();
+                break;
+            case 2:
+                kv.Value.GetComponent<SlideData>().DisChoose();
+                break;
+            case 3:
+                kv.Value.GetComponent<SlideMaintainData>().DisChoose();
+                break;
+            case 4:
+                speedsDirector.SetDisChoose(kv.Value);
+                break;
+            case 5:
+                anglesDirector.SetDisChoose(kv.Value);
+                break;
+            case 6:
+                alphaDirector.SetDisChoose(kv.Value);
+                break;
+        }
+    }
+    
+    private void CorePresent()
+    {
+        if (focusNotes.Count == 0)
+        {
+            gameEvent.FocusBeatSet(gameEvent.time);
+            return;
+        }
+        
+        SetChoose(focusNotes[0], true);
+        if (focusNotes.Count > 1)
+            SetChoose(focusNotes[1], false);
+        
+        int i = focusNotes[0].Key;
+        GameObject obj = focusNotes[0].Value;
+        
+        if (i == 0) // note
         {
             // focusNoteのデータを取り出し表示する
-            Note n = focusNote.GetComponent<NotesData>().note;
+            NotesData data = obj.GetComponent<NotesData>();
+            Note n = data.note;
             userIO.NoteTimeOutput(n.GetTime() / 1000f); 
             userIO.NoteLaneFOutput(n.GetStartLane());
             userIO.NoteLaneLOutput(n.GetEndLane());
             userIO.NoteKindDropdownOutput(NoteKindToInt(n.GetKind()));
             userIO.NoteLengthOutput(n.GetLength() / 1000f);
             userIO.NoteFieldDropdownOutput(n.GetField());
+            gameEvent.FocusBeatSet(n.GetTime());
 
             if (n.GetKind() == 'L')
             {
@@ -290,9 +437,9 @@ public class NotesDirector : MonoBehaviour
             
             fieldObj.SetActive(true);
         }
-        else if (objectKind == 2) // slide
+        else if (i == 2) // slide
         {
-            SlideData data = focusNote.GetComponent<SlideData>();
+            SlideData data = obj.GetComponent<SlideData>();
             Note n = data.note;
             userIO.NoteTimeOutput(n.GetTime() / 1000f);
             userIO.NoteLaneFOutput(n.GetStartLane());
@@ -300,6 +447,7 @@ public class NotesDirector : MonoBehaviour
             userIO.NoteFieldDropdownOutput(n.GetField());
             userIO.IsDummyToggleOutput(data.isDummy);
             userIO.SlideFieldColorDropdownOutput(data.fieldColor);
+            gameEvent.FocusBeatSet(n.GetTime());
             
             lengthObj.SetActive(false);
             laneObj.SetActive(true);
@@ -309,14 +457,15 @@ public class NotesDirector : MonoBehaviour
             maintainObj.SetActive(false);
             fieldObj.SetActive(true);
         }
-        else if (objectKind == 3) // slideMaintain
+        else if (i == 3) // slideMaintain
         {
-            SlideMaintain s = focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote];
-            userIO.NoteTimeOutput((s.time + focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f);
+            SlideMaintain s = obj.GetComponent<SlideMaintainData>().parentSc.slideMaintain[obj];
+            userIO.NoteTimeOutput((s.time + obj.GetComponent<SlideMaintainData>().parentSc.note.GetTime()) / 1000f);
             userIO.NoteLaneFOutput(s.startLane);
             userIO.NoteLaneLOutput(s.endLane);
             userIO.IsJudgeToggleOutput(s.isJudge);
             userIO.IsVariationToggleOutput(s.isVariation);
+            gameEvent.FocusBeatSet(s.time);
             
             lengthObj.SetActive(false);
             laneObj.SetActive(false);
@@ -326,9 +475,9 @@ public class NotesDirector : MonoBehaviour
             maintainObj.SetActive(true);
             fieldObj.SetActive(false);
         }
-        else if (objectKind == 1) // bpm
+        else if (i == 1) // bpm
         {
-            Bpm b = bpms[focusNote];
+            Bpm b = bpms[obj];
             userIO.NoteTimeOutput(b.GetTime() / 1000f);
             userIO.BpmOutput(b.GetBpm() / 1000f);
             
@@ -340,149 +489,119 @@ public class NotesDirector : MonoBehaviour
             maintainObj.SetActive(false);
             fieldObj.SetActive(false);
         }
-        else if (objectKind == 4) // speed
+        else if (i == 4) // speed
         {
-            Speed s = speedsDirector.fieldSpeeds[focusNote];
+            Speed s = speedsDirector.fieldSpeeds[obj];
             userIO.SpeedTimeOutput(s.GetTime() / 1000f);
             userIO.SpeedSpeedOutput(s.GetSpeed100() / 100f);
             userIO.SpeedIsVariationToggleOutput(s.GetIsVariation());
+            gameEvent.FocusBeatSet(s.GetTime());
             
             speedObj.SetActive(true);
             angleObj.SetActive(false);
             transparencyObj.SetActive(false);
         }
-        else if (objectKind == 5) // angle
+        else if (i == 5) // angle
         {
-            Angle a = anglesDirector.fieldAngles[focusNote];
+            Angle a = anglesDirector.fieldAngles[obj];
             userIO.SpeedTimeOutput(a.GetTime() / 1000f);
             userIO.AngleDegreeOutput(a.GetDegree());
             userIO.AngleVariationOutput(a.GetVariation() / 10f);
+            gameEvent.FocusBeatSet(a.GetTime());
             
             speedObj.SetActive(false);
             angleObj.SetActive(true);
             transparencyObj.SetActive(false);
         }
-        else if (objectKind == 6) // Transparency
+        else if (i == 6) // Transparency
         {
-            Transparency t = alphaDirector.fieldTransparencies[focusNote];
+            Transparency t = alphaDirector.fieldTransparencies[obj];
             userIO.SpeedTimeOutput(t.GetTime() / 1000f);
             userIO.TransparencyAlphaOutput(t.GetAlpha());
             userIO.TransparencyIsVariationToggleOutput(t.GetIsVariation());
+            gameEvent.FocusBeatSet(t.GetTime());
             
             speedObj.SetActive(false);
             angleObj.SetActive(false);
             transparencyObj.SetActive(true);
         }
     }
-
-    private void SetDisChoose()
-    {
-        if (focusNote == null) return;
-
-        if (objectKind == 0)
-        {
-            focusNote.GetComponent<NotesData>().DisChoose();
-        }
-        else if (objectKind == 1)
-        {
-            focusNote.GetComponent<BpmData>().DisChoose();
-        }
-        else if (objectKind == 2)
-        {
-            focusNote.GetComponent<SlideData>().DisChoose();
-        }
-        else if (objectKind == 3)
-        {
-            focusNote.GetComponent<SlideMaintainData>().DisChoose();
-        }
-        else if (objectKind == 4)
-        {
-            speedsDirector.SetDisChoose(focusNote);
-        }
-        else if (objectKind == 5)
-        {
-            anglesDirector.SetDisChoose(focusNote);
-        }
-        else if (objectKind == 6)
-        {
-            alphaDirector.SetDisChoose(focusNote);
-        }
-    }
-
-    public void Deselect()
-    {
-        SetDisChoose();
-        focusNote = null;
-        gameEvent.FocusBeatSet(gameEvent.time);
-    }
     
-    public void TimeSet(int cTime)
+    public void TimeSetAll(int cTime)
     {
         cTime = Math.Clamp(0, cTime, (int)(gameEvent.GetComponent<AudioSource>().clip.length * 1000));
         focusTime = cTime;
-        userIO.NoteTimeOutput(focusTime / 1000f);
-        
-        if (focusNote != null)
+
+        foreach (var kv in focusNotes)
         {
-            if (objectKind == 0)
-            {
-                focusNote.GetComponent<NotesData>().ChangeTime(focusTime);
-            }
-            else if (objectKind == 1)
-            {
-                bpms[focusNote].SetTime(focusTime);
-                focusNote.GetComponent<BpmData>().ChangeTime(focusTime / 1000f);
+            TimeSet(kv, focusTime);
+        }
+    }
+
+    public void TimeSet(KeyValuePair<int, GameObject> kv, int time)
+    {
+        time = Math.Clamp(time, 0, (int)(gameEvent.GetComponent<AudioSource>().clip.length * 1000));
+        
+        if (kv.Key == 0)
+        {
+            kv.Value.GetComponent<NotesData>().ChangeTime(time);
+        }
+        else if (kv.Key == 1)
+        {
+            bpms[kv.Value].SetTime(time);
+            kv.Value.GetComponent<BpmData>().ChangeTime(time / 1000f);
                 
-                notesController.MeasureLineSet(bpms);
-            }
-            else if (objectKind == 2)
+            notesController.MeasureLineSet(bpms);
+        }
+        else if (kv.Key == 2)
+        {
+            kv.Value.GetComponent<SlideData>().ChangeTime(time);
+        }
+        else if (kv.Key == 3)
+        {
+            int t = time - kv.Value.GetComponent<SlideMaintainData>().parentSc.note.GetTime();
+            if (t < 0)
             {
-                focusNote.GetComponent<SlideData>().ChangeTime(focusTime);
+                time -= t;
+                t = 0;
             }
-            else if (objectKind == 3)
-            {
-                int t = focusTime - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime();
-                if (t < 0)
-                {
-                    focusTime -= t;
-                    t = 0;
-                }
-                focusNote.GetComponent<SlideMaintainData>().SetTime(t);
-                userIO.NoteTimeOutput(focusTime / 1000f);
-            }
-            else if (objectKind == 4)
-            {
-                speedsDirector.SetTime(focusNote, focusTime);
-            }
-            else if (objectKind == 5)
-            {
-                anglesDirector.SetTime(focusNote, focusTime);
-            }
-            else if (objectKind == 6)
-            {
-                alphaDirector.SetTime(focusNote, focusTime);
-            }
+            kv.Value.GetComponent<SlideMaintainData>().SetTime(t);
+        }
+        else if (kv.Key == 4)
+        {
+            speedsDirector.SetTime(kv.Value, time);
+        }
+        else if (kv.Key == 5)
+        {
+            anglesDirector.SetTime(kv.Value, time);
+        }
+        else if (kv.Key == 6)
+        {
+            alphaDirector.SetTime(kv.Value, time);
+        }
+
+        if (focusNotes[0].Value == kv.Value)
+        {
+            userIO.NoteTimeOutput(time / 1000f);
+            gameEvent.FocusBeatSet(time);
         }
     }
     
     // Note
     public void NewNote()
     {
-        NewNote(gameEvent.time, 5, 7, 'N', 0, 0);
+        NewNote(gameEvent.time, 5, 7, 'N', 0, 0, false);
     }
     
-    public void NewNote(int time, int start, int end, char kind, int length, int field)
+    public void NewNote(int time, int start, int end, char kind, int length, int field, bool isAdd)
     {
         GameObject obj = Instantiate(notePrefab, noteParent.transform);
         obj.SetActive(true);
         obj.GetComponent<NotesData>().note = new Note(time, start, end, kind, length, field);
         obj.GetComponent<NotesData>().DefaultSettings(FieldColor(field), gameEvent.isNoteColor);
         
-        SetDisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<NotesData>().Choose();
-        objectKind = 0;
-        SetChoose();
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(0, obj));
     }
     
     private bool IsNote(string _tag)
@@ -493,7 +612,7 @@ public class NotesDirector : MonoBehaviour
             return false;
     }
     
-    public void NoteLaneSet(int start, int end)
+    public void NoteLaneSetAll(int start, int end)
     {
         noteLaneF = start;
         noteLaneL = end;
@@ -501,62 +620,97 @@ public class NotesDirector : MonoBehaviour
         noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
         noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
         
-        userIO.NoteLaneFOutput(noteLaneF);
-        userIO.NoteLaneLOutput(noteLaneL);
-        
-        if (focusNote != null)
+
+        foreach (var kv in focusNotes)
         {
-            if (objectKind == 0)
-                focusNote.GetComponent<NotesData>().ChangeLane(noteLaneF, noteLaneL);
-            else if (objectKind == 2)
-                focusNote.GetComponent<SlideData>().ChangeLane(noteLaneF, noteLaneL);
-            else
-                focusNote.GetComponent<SlideMaintainData>().SetLane(noteLaneF, noteLaneL);
+            NoteLaneSet(kv, noteLaneF, noteLaneL);
         }
     }
 
-    public void NoteKindSet(int value)
+    public void NoteLaneSet(KeyValuePair<int, GameObject> kv, int start, int end)
+    {
+        if (kv.Key == 0)
+            kv.Value.GetComponent<NotesData>().ChangeLane(start, end);
+        else if (kv.Key == 2)
+            kv.Value.GetComponent<SlideData>().ChangeLane(start, end);
+        else if (kv.Key == 3)
+            kv.Value.GetComponent<SlideMaintainData>().SetLane(start, end);
+        else
+            return;
+
+        if (focusNotes[0].Value == kv.Value)
+        {
+            userIO.NoteLaneFOutput(start);
+            userIO.NoteLaneLOutput(end);
+        }
+    }
+
+    public void NoteKindSetAll(int value)
     {
         noteKind = value;
-        if (focusNote != null)
+        foreach (var kv in focusNotes)
         {
-            focusNote.GetComponent<NotesData>().ChangeKind(NoteKindToChar(noteKind));
+            NoteKindSet(kv, noteKind);
         }
-        
-        if (focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
+    }
+
+    public void NoteKindSet(KeyValuePair<int, GameObject> kv, int kind)
+    {
+        if (kv.Key != 0) return;
+            
+        kv.Value.GetComponent<NotesData>().ChangeKind(NoteKindToChar(kind));
+
+        if (kv.Value.GetComponent<NotesData>().note.GetKind() == 'L')
             lengthObj.SetActive(true);
         else
             lengthObj.SetActive(false);
     }
     
-    public void NoteLengthSet(int cLength)
+    public void NoteLengthSetAll(int cLength)
     {
         noteLength = Math.Max(cLength, 0);
-        if (focusNote != null && focusNote.GetComponent<NotesData>().note.GetKind() == 'L')
+        foreach (var kv in focusNotes)
         {
-            if ((noteLength + focusTime) / 1000f > gameEvent.GetComponent<AudioSource>().clip.length)
-            {
-                noteLength = (int)((gameEvent.GetComponent<AudioSource>().clip.length - focusTime / 1000f) * 1000);
-            }
-            
-            userIO.NoteLengthOutput(noteLength / 1000f);
-            focusNote.GetComponent<NotesData>().ChangeLength(noteLength);
+            NoteLengthSet(kv, noteLength);
         }
     }
 
-    public void NoteFieldSet(int value)
+    public void NoteLengthSet(KeyValuePair<int, GameObject> kv, int len)
     {
-        if (objectKind == 0)
+        if (kv.Key != 0) return;
+        if (kv.Value.GetComponent<NotesData>().note.GetKind() != 'L') return;
+        
+        int t = kv.Value.GetComponent<NotesData>().note.GetTime();
+        if ((len + t) / 1000f > gameEvent.GetComponent<AudioSource>().clip.length)
         {
-            focusNote.GetComponent<NotesData>().ChangeField(value);
-            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
-            SetNoteColor(focusNote.transform);
+            len = (int)((gameEvent.GetComponent<AudioSource>().clip.length - t / 1000f) * 1000);
         }
-        else if (objectKind == 2)
+        kv.Value.GetComponent<NotesData>().ChangeLength(len);
+
+        if (focusNotes[0].Value == kv.Value)
         {
-            focusNote.GetComponent<SlideData>().ChangeField(value);
-            focusNote.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
-            focusNote.GetComponent<SlideData>().ChangeColor();
+            userIO.NoteLengthOutput(len / 1000f);
+            gameEvent.FocusBeatSet(t + len);
+        }
+    }
+
+    public void NoteFieldSetAll(int value)
+    {
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key == 0)
+            {
+                kv.Value.GetComponent<NotesData>().ChangeField(value);
+                kv.Value.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
+                SetNoteColor(kv.Value.transform);
+            }
+            else if (kv.Key == 2)
+            {
+                kv.Value.GetComponent<SlideData>().ChangeField(value);
+                kv.Value.transform.GetChild(3).GetComponent<SpriteRenderer>().color = FieldColor(value);
+                kv.Value.GetComponent<SlideData>().ChangeColor();
+            }
+            
         }
     }
 
@@ -607,55 +761,65 @@ public class NotesDirector : MonoBehaviour
     // Bpm
     public void NewBpm()
     {
-        NewBpm(gameEvent.time, 120f);
+        NewBpm(gameEvent.time, 120f, false);
     }
 
-    public void NewBpm(int time, float bpm)
+    public void NewBpm(int time, float bpm, bool isAdd)
     {
         GameObject obj = Instantiate(bpmPrefab, bpmParent.transform);
         obj.GetComponent<BpmData>().DefaultSettings(time / 1000f, bpm);
         obj.SetActive(true);
         bpms.Add(obj, new Bpm(time, (int)(bpm * 1000)));
         
-        SetDisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<BpmData>().Choose();
-        objectKind = 1;
-        SetChoose();
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(1, obj));
         
         notesController.MeasureLineSet(bpms);
     }
 
-    public void BpmSet(float bpm)
+    public void BpmSetAll(int bpm)
     {
-        bpmBpm = Math.Max(1f, Math.Min(1000f, bpm));
-        userIO.BpmOutput(bpmBpm);
+        bpmBpm = Math.Clamp(bpm, 1, 1000);
 
-        if (focusNote != null)
+        foreach(var kv in focusNotes)
         {
-            bpms[focusNote].SetBpm((int)(bpmBpm * 1000f));
-            focusNote.GetComponent<BpmData>().ChangeBpm(bpmBpm);
-            
-            notesController.MeasureLineSet(bpms);
+            BpmSet(kv, bpmBpm);
         }
+    }
+
+    public void BpmSet(KeyValuePair<int, GameObject> kv, int bpm)
+    {
+        if (kv.Key != 1) return;
+        
+        bpms[kv.Value].SetBpm(bpm);
+        kv.Value.GetComponent<BpmData>().ChangeBpm(bpm / 1000f);
+        
+        notesController.MeasureLineSet(bpms);
+        
+        if (focusNotes[0].Value == kv.Value)
+            userIO.BpmOutput(bpm / 1000f);
     }
 
     // slide
     public void NewSlide()
     {
-        if (focusNote == null || objectKind != 2 && objectKind != 3)
-            NewSlide(gameEvent.time, 5, 7, 0, false, 0, Array.Empty<SlideMaintain>());
-        else if (objectKind == 2)
-            NewSlideMaintain(
-                gameEvent.time - focusNote.GetComponent<SlideData>().note.GetTime(), 5,
-                7, true, true);
+        if (focusNotes.Count == 0)
+            NewSlide(gameEvent.time, 5, 7, 0, false, 0, Array.Empty<SlideMaintain>(), false);
         else
-            NewSlideMaintain(
-                gameEvent.time - focusNote.GetComponent<SlideMaintainData>().parentSc.note.GetTime(), 5,
-                7, true, true);
+        {
+            int t;
+            if (focusNotes[0].Key == 2) 
+                t = gameEvent.time - focusNotes[0].Value.GetComponent<SlideData>().note.GetTime();
+            else if (focusNotes[0].Key == 3)
+                t = gameEvent.time - focusNotes[0].Value.GetComponent<SlideMaintainData>().parentSc.note.GetTime();
+            else
+                return;
+            
+            NewSlideMaintain(t, 5, 7, true, true, false);
+        }
     }
 
-    public void NewSlide(int time, int start, int end, int field, bool isDummy, int color, SlideMaintain[] maintain)
+    public void NewSlide(int time, int start, int end, int field, bool isDummy, int color, SlideMaintain[] maintain, bool isAdd)
     {
         GameObject obj = Instantiate(slidePrefab, noteParent.transform);
         obj.GetComponent<SlideData>().note = new Note(time, start, end, 'S', 0, field);
@@ -663,185 +827,206 @@ public class NotesDirector : MonoBehaviour
         obj.GetComponent<SlideData>().fieldColor = color;
         obj.GetComponent<SlideData>().DefaultSettings(FieldColor(field), gameEvent.isNoteColor);
         obj.SetActive(true);
+
+        var kv = new KeyValuePair<int, GameObject>(2, obj);
+        if (!isAdd) ClearFocus();
+        AddObj(kv);
         
-        SetDisChoose();
-        focusNote = obj;
-        objectKind = 2;
         foreach (var data in maintain)
         {
             SlideMaintain a = data;
-            NewSlideMaintain(a.time, a.startLane, a.endLane, a.isJudge, a.isVariation);
+            NewSlideMaintain(a.time, a.startLane, a.endLane, a.isJudge, a.isVariation, false);
         }
-        SetDisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<SlideData>().Choose();
-        objectKind = 2;
-        SetChoose();
     }
 
-    public void SetDummy(bool dummy)
+    public void SetDummyAll(bool dummy)
     {
-        if (objectKind != 2 || focusNote == null)
-            return;
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 2)
+                continue;
         
-        focusNote.GetComponent<SlideData>().ChangeDummy(dummy);
+            kv.Value.GetComponent<SlideData>().ChangeDummy(dummy);
+        }
     }
     
-    public void SetColor(int value)
+    public void SetColorAll(int value)
     {
-        if (objectKind != 2 || focusNote == null)
-            return;
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 2)
+                continue;
         
-        focusNote.GetComponent<SlideData>().ChangeColor(value);
+            kv.Value.GetComponent<SlideData>().ChangeColor(value);
+        }
     }
     
     // SlideMaintain
-    public void NewSlideMaintain(int time, int start, int end, bool isJudge, bool isVariation)
+    public void NewSlideMaintain(int time, int start, int end, bool isJudge, bool isVariation, bool isAdd)
     {
         Transform pare;
-        if (objectKind == 2)
-            pare = focusNote.transform;
-        else
-            pare = focusNote.GetComponent<SlideMaintainData>().parent.transform;
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key == 2)
+                pare = kv.Value.transform;
+            else if (kv.Key == 3)
+                pare = kv.Value.GetComponent<SlideMaintainData>().parent.transform;
+            else
+                continue;
 
-        GameObject obj = Instantiate(slideMaintainPrefab, noteParent.transform);
+            GameObject obj = Instantiate(slideMaintainPrefab, noteParent.transform);
 
-        SlideMaintain mt = new SlideMaintain();
-        mt.time = Math.Max(0, time);
-        mt.startLane = start;
-        mt.endLane = end;
-        mt.isJudge = isJudge;
-        mt.isVariation = isVariation;
-        pare.GetComponent<SlideData>().NewMaintain(obj, mt);
+            SlideMaintain mt = new SlideMaintain();
+            mt.time = Math.Max(0, time);
+            mt.startLane = start;
+            mt.endLane = end;
+            mt.isJudge = isJudge;
+            mt.isVariation = isVariation;
+            pare.GetComponent<SlideData>().NewMaintain(obj, mt);
         
-        obj.SetActive(true);
+            obj.SetActive(true);
         
-        SetDisChoose();
-        focusNote = obj;
-        focusNote.GetComponent<SlideMaintainData>().Choose();
-        objectKind = 3;
-        SetChoose();
+            if (!isAdd) ClearFocus();
+            AddObj(new KeyValuePair<int, GameObject>(3, obj));
+        }
     }
 
-    public void SetJudge(bool judge)
+    public void SetJudgeAll(bool judge)
     {
-        if (objectKind != 3 || focusNote == null)
-            return;
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 3)
+                continue;
 
-        focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isJudge = judge;
+            kv.Value.GetComponent<SlideMaintainData>().parentSc.slideMaintain[kv.Value].isJudge = judge;
+        }
     }
 
-    public void SetVariation(bool variation)
+    public void SetVariationAll(bool variation)
     {
-        if (objectKind != 3 || focusNote == null)
-            return;
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 3)
+                continue;
 
-        focusNote.GetComponent<SlideMaintainData>().parentSc.slideMaintain[focusNote].isVariation = variation;
+            kv.Value.GetComponent<SlideMaintainData>().parentSc.slideMaintain[kv.Value].isVariation = variation;
+        }
     }
 
     public void NewSpeed()
     {
         int t = gameEvent.time;
-        NewSpeed(t, speedsDirector.GetTimeToLastSpeed(t), false);
+        NewSpeed(t, speedsDirector.GetTimeToLastSpeed(t), false, false);
     }
 
-    public void NewSpeed(int time, int speed100, bool isVariation)
+    public void NewSpeed(int time, int speed100, bool isVariation, bool isAdd)
     {
         GameObject o = speedsDirector.NewSpeeds(time, speed100, isVariation);
         
-        SetDisChoose();
-        focusNote = o;
-        speedsDirector.SetChoose(focusNote);
-        objectKind = 4;
-        SetChoose();
-        gameEvent.FocusBeatSet(speedsDirector.fieldSpeeds[focusNote].GetTime());
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(4, o));
     }
     
     public void NewAngle()
     {
         int t = gameEvent.time;
-        NewAngle(t, anglesDirector.GetTimeToLastAngle(t), 0);
+        NewAngle(t, anglesDirector.GetTimeToLastAngle(t), 0, false);
     }
 
-    public void NewAngle(int time, int degree, int variation)
+    public void NewAngle(int time, int degree, int variation, bool isAdd)
     {
         GameObject o = anglesDirector.NewAngles(time, degree, variation);
         
-        SetDisChoose();
-        focusNote = o;
-        anglesDirector.SetChoose(focusNote);
-        objectKind = 5;
-        SetChoose();
-        gameEvent.FocusBeatSet(anglesDirector.fieldAngles[focusNote].GetTime());
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(5, o));
     }
     
     public void NewTransparency()
     {
         int t = gameEvent.time;
-        NewTransparency(t, alphaDirector.GetTimeToLastAlpha(t), false);
+        NewTransparency(t, alphaDirector.GetTimeToLastAlpha(t), false, false);
     }
 
-    public void NewTransparency(int time, int alpha, bool isVariation)
+    public void NewTransparency(int time, int alpha, bool isVariation, bool isAdd)
     {
         GameObject o = alphaDirector.NewTransparencies(time, alpha, isVariation);
         
-        SetDisChoose();
-        focusNote = o;
-        speedsDirector.SetChoose(focusNote);
-        objectKind = 6;
-        SetChoose();
-        gameEvent.FocusBeatSet(alphaDirector.fieldTransparencies[focusNote].GetTime());
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(6, o));
     }
 
-    public void SetSpeedTime(int time)
-    {
-        int cTime = Math.Clamp(time, 0, (int)(gameEvent.GetComponent<AudioSource>().clip.length * 1000));
-        focusTime = cTime;
-        userIO.SpeedTimeOutput(focusTime / 1000f);
-        
-        if (objectKind == 4)
-            speedsDirector.SetTime(focusNote, focusTime);
-        else if (objectKind == 5)
-            anglesDirector.SetTime(focusNote, focusTime);
-        else if (objectKind == 6)
-            alphaDirector.SetTime(focusNote, focusTime);
-    }
-
-    public void SetSpeedSpeed(float speed)
+    public void SetSpeedSpeedAll(float speed)
     {
         float cSpeed = Math.Clamp(speed, -10000f, 10000f);
         int speed100 = (int)(cSpeed * 100);
         userIO.SpeedSpeedOutput(speed100 / 100f);
-        
-        speedsDirector.SetSpeed(focusNote, speed100);
+
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 4)
+                continue;
+            
+            speedsDirector.SetSpeed(kv.Value, speed100);
+        }
     }
 
-    public void SetSpeedIsVariation(bool isVariation)
+    public void SetSpeedIsVariationAll(bool isVariation)
     {
-        speedsDirector.SetIsVariation(focusNote, isVariation);
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 4)
+                continue;
+            
+            speedsDirector.SetIsVariation(kv.Value, isVariation);
+        }
     }
 
-    public void SetAngleDegree(int degree)
+    public void SetAngleDegreeAll(int degree)
     {
-        anglesDirector.SetDegree(focusNote, degree);
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 5)
+                continue;
+            
+            anglesDirector.SetDegree(kv.Value, degree);
+        }
     }
 
-    public void SetAngleVariation(int variation)
+    public void SetAngleVariationAll(int variation)
     {
-        if (Math.Abs(variation) < 10 && variation != 0)
+        if (Math.Abs(variation) < 10)
             variation = 0;
         userIO.AngleVariationOutput(variation / 10f);
-        anglesDirector.SetVariation(focusNote, variation);
+        
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 5)
+                continue;
+            
+            anglesDirector.SetVariation(kv.Value, variation);
+        }
     }
     
-    public void SetTransparencyAlpha(int alpha)
+    public void SetTransparencyAlphaAll(int alpha)
     {
-        alphaDirector.SetAlpha(focusNote, alpha);
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 6)
+                continue;
+            
+            alphaDirector.SetAlpha(kv.Value, alpha);
+        }
     }
     
-    public void SetTransparencyIsVariation(bool isVariation)
+    public void SetTransparencyIsVariationAll(bool isVariation)
     {
-        alphaDirector.SetIsVariation(focusNote, isVariation);
+        foreach (var kv in focusNotes)
+        {
+            if (kv.Key != 6)
+                continue;
+            
+            alphaDirector.SetIsVariation(kv.Value, isVariation);
+        }
     }
 
     public void SetSpeedFieldDropdown(int value)
