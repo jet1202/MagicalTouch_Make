@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NotesData : MonoBehaviour
 {
@@ -91,8 +92,13 @@ public class NotesData : MonoBehaviour
         Change();
     }
 
-    public void Choose()
+    public void Choose(bool isCore)
     {
+        if (isCore)
+            noteFlame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            noteFlame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+        
         noteFlame.SetActive(true);
     }
 

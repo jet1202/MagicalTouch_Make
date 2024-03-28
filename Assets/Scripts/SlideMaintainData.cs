@@ -26,8 +26,13 @@ public class SlideMaintainData : MonoBehaviour
         notesDirector.SetNoteColor(this.transform);
     }
 
-    public void Choose()
+    public void Choose(bool isCore)
     {
+        if (isCore)
+            flame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            flame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+        
         this.flame.SetActive(true);
     }
 

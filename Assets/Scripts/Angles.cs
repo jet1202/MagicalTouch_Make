@@ -233,8 +233,13 @@ public class Angles : MonoBehaviour
         linePreview.angles = anglesData;
     }
 
-    public void SetChoose(GameObject angles)
+    public void SetChoose(GameObject angles, bool isCore)
     {
+        if (isCore) 
+            angles.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            angles.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+
         angles.transform.GetChild(2).gameObject.SetActive(true);
     }
     

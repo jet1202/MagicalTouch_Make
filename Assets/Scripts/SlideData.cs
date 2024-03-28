@@ -114,8 +114,13 @@ public class SlideData : MonoBehaviour
         centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
     }
     
-    public void Choose()
+    public void Choose(bool isCore)
     {
+        if (isCore)
+            noteFlame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            noteFlame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+        
         noteFlame.SetActive(true);
     }
 

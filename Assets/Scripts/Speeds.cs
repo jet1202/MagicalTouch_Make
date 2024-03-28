@@ -127,8 +127,13 @@ public class Speeds : MonoBehaviour
         speedsData[nowField] = new List<Speed>(fieldSpeeds.Values);
     }
 
-    public void SetChoose(GameObject speeds)
+    public void SetChoose(GameObject speeds, bool isCore)
     {
+        if (isCore) 
+            speeds.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            speeds.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+        
         speeds.transform.GetChild(2).gameObject.SetActive(true);
     }
     

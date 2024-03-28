@@ -337,29 +337,28 @@ public class NotesDirector : MonoBehaviour
 
     private void SetChoose(KeyValuePair<int, GameObject> kv, bool isCore)
     {
-        //TODO: isCoreの処理
         switch (kv.Key)
         {
             case 0:
-                kv.Value.GetComponent<NotesData>().Choose();
+                kv.Value.GetComponent<NotesData>().Choose(isCore);
                 break;
             case 1:
-                kv.Value.GetComponent<BpmData>().Choose();
+                kv.Value.GetComponent<BpmData>().Choose(isCore);
                 break;
             case 2:
-                kv.Value.GetComponent<SlideData>().Choose();
+                kv.Value.GetComponent<SlideData>().Choose(isCore);
                 break;
             case 3:
-                kv.Value.GetComponent<SlideMaintainData>().Choose();
+                kv.Value.GetComponent<SlideMaintainData>().Choose(isCore);
                 break;
             case 4:
-                speedsDirector.SetChoose(kv.Value);
+                speedsDirector.SetChoose(kv.Value, isCore);
                 break;
             case 5:
-                anglesDirector.SetChoose(kv.Value);
+                anglesDirector.SetChoose(kv.Value, isCore);
                 break;
             case 6:
-                alphaDirector.SetChoose(kv.Value);
+                alphaDirector.SetChoose(kv.Value, isCore);
                 break;
         }
     }

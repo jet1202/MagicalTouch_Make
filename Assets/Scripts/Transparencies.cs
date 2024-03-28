@@ -113,8 +113,13 @@ public class Transparencies : MonoBehaviour
         linePreview.transparencies = alphaData;
     }
 
-    public void SetChoose(GameObject transparencies)
+    public void SetChoose(GameObject transparencies, bool isCore)
     {
+        if (isCore) 
+            transparencies.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        else
+            transparencies.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+
         transparencies.transform.GetChild(2).gameObject.SetActive(true);
     }
 
