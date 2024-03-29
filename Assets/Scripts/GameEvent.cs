@@ -144,6 +144,13 @@ public class GameEvent : MonoBehaviour
                         int t;
                         foreach (var kv in notesDirector.focusNotes)
                         {
+                            if (kv.Key == 3) // SlideMaintain
+                            {
+                                if (notesDirector.focusNotes.Contains(
+                                        new KeyValuePair<int, GameObject>(2, kv.Value.GetComponent<SlideMaintainData>().parent)))
+                                    continue;
+                            }
+
                             t = GetFocusTime(kv);
                             nowBeat = NextBeat(key == 1, t);
                             
@@ -215,13 +222,13 @@ public class GameEvent : MonoBehaviour
                     int time = GetFocusTime(kv);
                     nowBeat = NextBeat(true, time);
                     
-                    if (kv.Key == 0)
+                    if (kv.Key == 0) // Notes
                     {
                         Note data = kv.Value.GetComponent<NotesData>().note;
                         notesDirector.NewNote(BeatToTime(nowBeat),
                             data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength(), data.GetField(), true);
                     }
-                    else if (kv.Key == 2)
+                    else if (kv.Key == 2) // Slides
                     {
                         Note data = kv.Value.GetComponent<SlideData>().note;
                         bool dummy = kv.Value.GetComponent<SlideData>().isDummy;

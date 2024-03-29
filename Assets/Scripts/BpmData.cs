@@ -26,10 +26,16 @@ public class BpmData : MonoBehaviour
     public void Choose(bool isCore)
     {
         if (isCore)
-            flame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        {
+            flame.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+            flame.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(1f, 0.3f, 0.3f, 1f);
+        }
         else
-            flame.GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
-        
+        {
+            flame.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+            flame.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f, 0.7f);
+        }
+
         flame.SetActive(true);
     }
 

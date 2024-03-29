@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -50,6 +49,7 @@ public class NotesDirector : MonoBehaviour
     private float rayDistance = 30f;
     private Vector2 downMousePos = new Vector2();
     bool isDrag = false;
+    private bool isClick = false;
     
     public Dictionary<GameObject, Bpm> bpms = new Dictionary<GameObject, Bpm>();
 
@@ -66,65 +66,104 @@ public class NotesDirector : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                downMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                isDrag = false;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D[] hs = Physics2D.RaycastAll((Vector2)ray.origin, (Vector2)ray.direction, rayDistance);
+                foreach (var h in hs)
+                {
+                    if (h.transform.CompareTag("EditRange"))
+                        isClick = true;
+                }
+                if (isClick)
+                {
+                    downMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    isDrag = false;
+                }
+                
             }
 
             if (Input.GetMouseButton(0))
             {
-                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (isDrag)
+                if (isClick)
                 {
-                    Vector2 center = (downMousePos + pos) / 2;
-                    float width = Math.Abs(downMousePos.x - pos.x);
-                    float height = Math.Abs(downMousePos.y - pos.y);
-                    selectRectangleObj.transform.position = new Vector3(center.x, center.y, 0);
-                    selectRectangleObj.transform.localScale = new Vector3(width, height, 1);
-                }
-                else
-                {
-                    if (Vector2.Distance(downMousePos, pos) > 0.3f)
+                    Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    if (isDrag)
                     {
-                        isDrag = true;
-                        selectRectangleObj.SetActive(true);
+                        Vector2 center = (downMousePos + pos) / 2;
+                        float width = Math.Abs(downMousePos.x - pos.x);
+                        float height = Math.Abs(downMousePos.y - pos.y);
+                        selectRectangleObj.transform.position = new Vector3(center.x, center.y, 0);
+                        selectRectangleObj.transform.localScale = new Vector3(width, height, 1);
+                    }
+                    else
+                    {
+                        if (Vector2.Distance(downMousePos, pos) > 0.3f)
+                        {
+                            isDrag = true;
+                            selectRectangleObj.SetActive(true);
+                        }
                     }
                 }
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                RaycastHit2D[] hits;
-                if (isDrag)
+                if (isClick)
                 {
-                    selectRectangleObj.SetActive(false);
-                    
-                    Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector2 center = (downMousePos + pos) / 2;
-                    float width = Math.Abs(downMousePos.x - pos.x);
-                    float height = Math.Abs(downMousePos.y - pos.y);
-                    
-                    hits = Physics2D.BoxCastAll(center, new Vector2(width, height), 0, Vector2.zero);
-                }
-                else
-                {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    hits = new RaycastHit2D[1] {Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance)};
-                }
+                    GameObject[] hits;
+                    if (isDrag)
+                    {
+                        selectRectangleObj.SetActive(false);
 
-                foreach (var hit in hits)
-                {
+                        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        Vector2 lu = new Vector2(Math.Min(downMousePos.x, pos.x), Math.Max(downMousePos.y, pos.y));
+                        Vector2 rd = new Vector2(Math.Max(downMousePos.x, pos.x), Math.Min(downMousePos.y, pos.y));
+
+                        bool isUp = true;
+                        List<RaycastHit2D> hitList = new List<RaycastHit2D>();
+                        for (float i = lu.y; isUp; i -= 0.5f)
+                        {
+                            if (rd.y >= i)
+                            {
+                                isUp = false;
+                                i = rd.y;
+                            }
+
+                            foreach (var hit in Physics2D.LinecastAll(new Vector2(lu.x, i), new Vector2(rd.x, i)))
+                            {
+                                if (!hitList.Contains(hit))
+                                    hitList.Add(hit);
+                            }
+                        }
+
+                        hits = new GameObject[hitList.Count];
+                        for (int i = 0; i < hitList.Count; i++)
+                            hits[i] = hitList[i].collider.gameObject;
+                    }
+                    else
+                    {
+                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                        hits = new GameObject[1]
+                            { Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, rayDistance).collider.gameObject };
+                    }
+
                     int mode = 0;
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         mode += 1;
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                         mode += 2;
-                    
-                    int k = GetObjKind(hit.collider.gameObject);
-                    
-                    ClickResponse(mode, new KeyValuePair<int, GameObject>(k, hit.collider.gameObject), isDrag);
-                }
 
-                isDrag = false;
+                    if (mode == 0) ClearFocus();
+                    
+                    foreach (var hit in hits)
+                    {
+                        int k = GetObjKind(hit);
+                        if (k != -1)
+                            ClickResponse(mode, new KeyValuePair<int, GameObject>(k, hit), isDrag);
+                    }
+
+                    isDrag = false;
+                    isClick = false;
+                }
             }
 
             // 左右キー操作
@@ -216,6 +255,8 @@ public class NotesDirector : MonoBehaviour
                 ClearFocus();
             }
         }
+        
+        // TODO: Mirror
     }
 
     private void ClickResponse(int mode, KeyValuePair<int, GameObject> kv, bool isDrag)
@@ -224,19 +265,18 @@ public class NotesDirector : MonoBehaviour
         {
             case 0:
                 // Normal
-                ClearFocus();
                 AddObj(kv);
                 break;
             case 1:
                 // Shift
-                if (GetFocusNotesIndex(kv.Value) == -1 && !isDrag)
+                if (GetFocusNotesIndex(kv.Value) == -1 || isDrag)
                     AddObj(kv);
                 else
                     CoreObj(kv);
                 break;
             case 2:
                 // Ctrl
-                if (GetFocusNotesIndex(kv.Value) == -1 && !isDrag)
+                if (GetFocusNotesIndex(kv.Value) == -1 || isDrag)
                     ;
                 else
                     DeleteObj(kv);
@@ -814,7 +854,7 @@ public class NotesDirector : MonoBehaviour
             else
                 return;
             
-            NewSlideMaintain(t, 5, 7, true, true, false);
+            NewSlideMaintain(t, 5, 7, true, true, focusNotes[0], false);
         }
     }
 
@@ -834,7 +874,7 @@ public class NotesDirector : MonoBehaviour
         foreach (var data in maintain)
         {
             SlideMaintain a = data;
-            NewSlideMaintain(a.time, a.startLane, a.endLane, a.isJudge, a.isVariation, false);
+            NewSlideMaintain(a.time, a.startLane, a.endLane, a.isJudge, a.isVariation, kv, isAdd);
         }
     }
 
@@ -861,33 +901,30 @@ public class NotesDirector : MonoBehaviour
     }
     
     // SlideMaintain
-    public void NewSlideMaintain(int time, int start, int end, bool isJudge, bool isVariation, bool isAdd)
+    public void NewSlideMaintain(int time, int start, int end, bool isJudge, bool isVariation, KeyValuePair<int, GameObject> kv, bool isAdd)
     {
         Transform pare;
-        foreach (var kv in focusNotes)
-        {
-            if (kv.Key == 2)
-                pare = kv.Value.transform;
-            else if (kv.Key == 3)
-                pare = kv.Value.GetComponent<SlideMaintainData>().parent.transform;
-            else
-                continue;
+        if (kv.Key == 2)
+            pare = kv.Value.transform;
+        else if (kv.Key == 3)
+            pare = kv.Value.GetComponent<SlideMaintainData>().parent.transform;
+        else
+            return;
 
-            GameObject obj = Instantiate(slideMaintainPrefab, noteParent.transform);
+        GameObject obj = Instantiate(slideMaintainPrefab, noteParent.transform);
 
-            SlideMaintain mt = new SlideMaintain();
-            mt.time = Math.Max(0, time);
-            mt.startLane = start;
-            mt.endLane = end;
-            mt.isJudge = isJudge;
-            mt.isVariation = isVariation;
-            pare.GetComponent<SlideData>().NewMaintain(obj, mt);
+        SlideMaintain mt = new SlideMaintain();
+        mt.time = Math.Max(0, time);
+        mt.startLane = start;
+        mt.endLane = end;
+        mt.isJudge = isJudge;
+        mt.isVariation = isVariation;
+        pare.GetComponent<SlideData>().NewMaintain(obj, mt);
         
-            obj.SetActive(true);
+        obj.SetActive(true);
         
-            if (!isAdd) ClearFocus();
-            AddObj(new KeyValuePair<int, GameObject>(3, obj));
-        }
+        if (!isAdd) ClearFocus();
+        AddObj(new KeyValuePair<int, GameObject>(3, obj));
     }
 
     public void SetJudgeAll(bool judge)
