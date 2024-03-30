@@ -254,9 +254,42 @@ public class NotesDirector : MonoBehaviour
                 }
                 ClearFocus();
             }
+            
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                int k;
+                GameObject obj;
+                int start, end;
+                foreach (var kv in focusNotes)
+                {
+                    k = kv.Key;
+                    obj = kv.Value;
+                    
+                    if (k == 0)
+                    {
+                        var data = obj.GetComponent<NotesData>().note;
+                        start = data.GetStartLane();
+                        end = data.GetEndLane();
+                    }
+                    else if (k == 2)
+                    {
+                        var data = obj.GetComponent<SlideData>().note;
+                        start = data.GetStartLane();
+                        end = data.GetEndLane();
+                    }
+                    else if (k == 3)
+                    {
+                        var data = obj.GetComponent<SlideMaintainData>().parentSc.slideMaintain[obj];
+                        start = data.startLane;
+                        end = data.endLane;
+                    }
+                    else
+                        return;
+                    
+                    NoteLaneSet(kv, 12-end, 12-start);
+                }
+            }
         }
-        
-        // TODO: Mirror
     }
 
     private void ClickResponse(int mode, KeyValuePair<int, GameObject> kv, bool isDrag)
