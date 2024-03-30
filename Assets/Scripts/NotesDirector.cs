@@ -166,7 +166,7 @@ public class NotesDirector : MonoBehaviour
                 }
             }
 
-            // 左右キー操作
+            // 上下キー操作
             int key = 0;
             if (Input.GetKeyDown(KeyCode.UpArrow))
                 key--;

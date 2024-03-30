@@ -238,6 +238,17 @@ public class GameEvent : MonoBehaviour
                             data.GetStartLane(), data.GetEndLane(), data.GetField(), dummy, color,
                             kv.Value.GetComponent<SlideData>().slideMaintain.Values.ToArray(), true);
                     }
+                    else if (kv.Key == 3) // SlideMaintains
+                    {
+                        var parent = kv.Value.GetComponent<SlideMaintainData>().parent;
+                        if (bFocusNotes.Contains(new KeyValuePair<int, GameObject>(2, parent)))
+                            continue;
+
+                        SlideMaintain data = kv.Value.GetComponent<SlideMaintainData>().parentSc.slideMaintain[kv.Value];
+                        var pt = parent.GetComponent<SlideData>().note.GetTime();
+                        notesDirector.NewSlideMaintain(BeatToTime(nowBeat) - pt,
+                            data.startLane, data.endLane, data.isJudge, data.isVariation, kv, true);
+                    }
                     else if (kv.Key == 4) // Speeds
                     {
                         Speed data = speedsDirector.fieldSpeeds[kv.Value];
