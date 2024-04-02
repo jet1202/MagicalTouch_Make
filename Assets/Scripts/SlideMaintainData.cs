@@ -8,7 +8,7 @@ public class SlideMaintainData : MonoBehaviour
     [SerializeField] private NotesDirector notesDirector;
     
     private float startLanePosy = 4f;
-    private float laneDif = 0.6f;
+    private float laneDif = 0.3f;
 
     private GameObject body;
     private GameObject flame;
@@ -51,9 +51,9 @@ public class SlideMaintainData : MonoBehaviour
         float start = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].startLane);
         float end = startLanePosy - (laneDif * parentSc.slideMaintain[gameObject].endLane);
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
-        int dis = parentSc.slideMaintain[gameObject].endLane - parentSc.slideMaintain[gameObject].startLane;
-        body.GetComponent<SpriteRenderer>().size = new Vector2(dis, 0.1f);
-        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis + 0.2f, 0.2f);
+        float dis = parentSc.slideMaintain[gameObject].endLane - parentSc.slideMaintain[gameObject].startLane;
+        body.GetComponent<SpriteRenderer>().size = new Vector2(dis / 2f, 0.1f);
+        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis / 2f + 0.2f, 0.2f);
         this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, laneDif * dis);
     }
 
@@ -72,8 +72,8 @@ public class SlideMaintainData : MonoBehaviour
         float end = startLanePosy - (laneDif * endLane);
         transform.localPosition = new Vector3(transform.localPosition.x, (start + end) / 2f, 0f);
         int dis = endLane - startLane;
-        body.GetComponent<SpriteRenderer>().size = new Vector2(dis, 0.1f);
-        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis + 0.2f, 0.2f);
+        body.GetComponent<SpriteRenderer>().size = new Vector2(dis / 2f, 0.1f);
+        flame.GetComponent<SpriteRenderer>().size = new Vector2(dis / 2f + 0.2f, 0.2f);
         this.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, laneDif * dis);
 
         parentSc.slideMaintain[this.gameObject].startLane = startLane;

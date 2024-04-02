@@ -689,9 +689,8 @@ public class NotesDirector : MonoBehaviour
         noteLaneF = start;
         noteLaneL = end;
         
-        noteLaneF = Math.Min(Math.Max(0, noteLaneF), 11);
-        noteLaneL = Math.Max(Math.Min(12, noteLaneL), noteLaneF + 1);
-        
+        noteLaneF = Math.Min(Math.Max(0, noteLaneF), 23);
+        noteLaneL = Math.Max(Math.Min(24, noteLaneL), noteLaneF + 1);
 
         foreach (var kv in focusNotes)
         {

@@ -619,7 +619,7 @@ public class GameEvent : MonoBehaviour
         TabClose();
     }
 
-    public void DataImport(string notePath, string bpmPath, string fieldPath)
+    public void DataImport(string notePath, string bpmPath, string fieldPath, bool isOld)
     {
 
         if (!File.Exists(bpmPath))
@@ -724,6 +724,24 @@ public class GameEvent : MonoBehaviour
                 
                 foreach (var n in notesData)
                 {
+                    if (isOld)
+                    {
+                        int start = Math.Clamp(n.Value.GetStartLane() * 2, 0, 24);
+                        int end = Math.Clamp(n.Value.GetEndLane() * 2, 0, 24);
+                        n.Value.SetLane(start, end);
+
+                        if (n.Value.GetKind() == 'S')
+                        {
+                            foreach (var item in slidesData[n.Key].item)
+                            {
+                                int s = Math.Clamp(item.startLane * 2, 0, 24);
+                                int e = Math.Clamp(item.endLane * 2, 0, 24);
+                                item.startLane = s;
+                                item.endLane = e;
+                            }
+                        }
+                    }
+                    
                     if (n.Value.GetKind() == 'S')
                         notesDirector.NewSlide(n.Value.GetTime(), n.Value.GetStartLane(), n.Value.GetEndLane(),
                             n.Value.GetField(), slidesData[n.Key].isDummy, slidesData[n.Key].color,
@@ -756,7 +774,7 @@ public class GameEvent : MonoBehaviour
 
         try
         {
-            ExportJson.ExportingSheet(notes, path + "\\Note.json");
+            ExportJson.ExportingSheet(notes, path + "\\Data.json");
             ExportJson.ExportingBpm(path + "\\Bpm.json", new List<Bpm>(notesDirector.bpms.Values));
             ExportJson.ExportingField(path + "\\Field.json", fieldSettingController.fieldsCount,
                 fieldSettingController.fieldsIsDummy, speedsDirector.speedsData, anglesDirector.anglesData,

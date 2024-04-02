@@ -24,6 +24,8 @@ public class UserIO : MonoBehaviour
     [SerializeField] private TMP_InputField dataImportField;
     [SerializeField] private TMP_InputField dataExportPathField;
     
+    [SerializeField] private Toggle oldDataToggle;
+    
     // Button ========================================
     
     // MainButton
@@ -105,12 +107,17 @@ public class UserIO : MonoBehaviour
     public void DataImportButton()
     {
         string directoryPath = dataImportField.text.Trim(' ', '"', '\n');
-
-        string notePath = directoryPath + "/Note.json";
+        
+        bool isOld = oldDataToggle.isOn;
+        string notePath;
+        if (isOld)
+            notePath = directoryPath + "/Note.json";
+        else
+            notePath = directoryPath + "/Data.json";
         string bpmPath = directoryPath + "/Bpm.json";
         string fieldPath = directoryPath + "/Field.json";
         
-        gameEvent.DataImport(notePath, bpmPath, fieldPath);
+        gameEvent.DataImport(notePath, bpmPath, fieldPath, isOld);
         
         DataExportPathOutput(directoryPath);
     }

@@ -18,7 +18,7 @@ public class NotesData : MonoBehaviour
     [SerializeField] private GameObject longInsidePrefab;
     
     private float startLanePosy = 4f;
-    private float laneDif = 0.6f;
+    private float laneDif = 0.3f;
     private GameObject noteBody;
     private GameObject noteFlame;
     private GameObject noteLength;
@@ -61,25 +61,25 @@ public class NotesData : MonoBehaviour
         Vector3 pos = new Vector3(note.GetTime() / 1000f * gameEvent.speed, startLanePosy - laneDif * (note.GetStartLane() + note.GetEndLane()) / 2f, 0f);
         // noteBody
         transform.localPosition = pos;
-        noteBody.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.5f, 1f);
+        noteBody.GetComponent<SpriteRenderer>().size = new Vector2(dis * 0.25f, 1f);
         // noteFlame
         noteFlame.transform.localPosition =
             new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f, pos.z);
         noteFlame.transform.localScale = 
-            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.4f, dis * 0.6f + 0.1f, 1f);
+            new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.4f, dis * laneDif + 0.1f, 1f);
         // noteLength
         noteLength.transform.localPosition = 
             new Vector3(gameEvent.speed * note.GetLength() / 2000, 0f, 0f);
         noteLength.transform.localScale = 
-            new Vector3(gameEvent.speed * note.GetLength() / 1000f, dis * 0.6f - 0.1f, 1f);
+            new Vector3(gameEvent.speed * note.GetLength() / 1000f, dis * laneDif - 0.1f, 1f);
         // noteFieldColor
         noteFieldColor.transform.localScale =
-            new Vector3(0.05f, dis * 0.6f - 0.3f, 1f);
+            new Vector3(0.05f, dis * laneDif - 0.3f, 1f);
         // collider2D
         GetComponent<BoxCollider2D>().offset =
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f);
         GetComponent<BoxCollider2D>().size = 
-            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.3f, 0.6f * dis);
+            new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.3f, dis * laneDif);
 
         centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
             new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
