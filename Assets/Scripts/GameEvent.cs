@@ -389,7 +389,6 @@ public class GameEvent : MonoBehaviour
             spBeat = lines[measure] + (int)Math.Round(beatTimeA * i);
             if (spBeat > nowTime)
             {
-                Debug.Log($"nowTime: {nowTime}, spBeat: {spBeat}, b: {i - 1}");
                 isD = false;
                 b = i - 1;
                 break;

@@ -13,7 +13,7 @@ public class LinePreview : MonoBehaviour
     public List<List<Transparency>> transparencies;
     private bool isPreview = false;
     private Transform linesParent;
-    private float time;
+    private int time;
 
     public bool isAlpha = false;
 
@@ -67,13 +67,13 @@ public class LinePreview : MonoBehaviour
         isPreview = preview;
     }
 
-    private float TimeToAngle(float time, List<Angle> angleWork)
+    private float TimeToAngle(int time, List<Angle> angleWork)
     {
         int leng = angleWork.Count;
         int index = leng - 1;
         for (int i = 0; i < leng; i++)
         {
-            if (angleWork[i].GetTime() > time * 1000)
+            if (angleWork[i].GetTime() > time)
             {
                 index = i - 1;
                 break;
@@ -95,8 +95,8 @@ public class LinePreview : MonoBehaviour
             Angle before = angleWork[index];
             Angle after = angleWork[index + 1];
             
-            float T = time - before.GetTime() / 1000f;
-            float t1 = (after.GetTime() - before.GetTime()) / 1000f;
+            float T = time - before.GetTime();
+            float t1 = after.GetTime() - before.GetTime();
             float a1 = after.GetDegree() - before.GetDegree();
             float v = before.GetVariation() / 10f;
 
@@ -114,13 +114,13 @@ public class LinePreview : MonoBehaviour
         }
     }
     
-    private float TimeToAlpha(float t, List<Transparency> transparencyWork)
+    private float TimeToAlpha(int t, List<Transparency> transparencyWork)
     {
         int leng = transparencyWork.Count;
         int index = leng - 1;
         for (int i = 0; i < leng; i++)
         {
-            if (transparencyWork[i].GetTime() > t * 1000)
+            if (transparencyWork[i].GetTime() > t)
             {
                 index = i - 1;
                 break;
@@ -142,8 +142,8 @@ public class LinePreview : MonoBehaviour
             Transparency before = transparencyWork[index];
             Transparency after = transparencyWork[index + 1];
             
-            float T = time - before.GetTime() / 1000f;
-            float t1 = (after.GetTime() - before.GetTime()) / 1000f;
+            float T = t - before.GetTime();
+            float t1 = after.GetTime() - before.GetTime();
             int a1 = after.GetAlpha() - before.GetAlpha();
             bool iv = before.GetIsVariation();
 
