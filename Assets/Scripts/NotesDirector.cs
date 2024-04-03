@@ -176,6 +176,7 @@ public class NotesDirector : MonoBehaviour
             if (key != 0)
             {
                 bool isShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                int ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ? 1 : 2;
                 int k;
                 GameObject obj;
                 int start, end;
@@ -205,7 +206,7 @@ public class NotesDirector : MonoBehaviour
                     else
                         return;
 
-                    NoteLaneSet(kv, start + key, end + (isShift ? 0 : key));
+                    NoteLaneSet(kv, start + key * ctrl, end + (isShift ? 0 : key) * ctrl);
                 }
             }
 
@@ -700,6 +701,9 @@ public class NotesDirector : MonoBehaviour
 
     public void NoteLaneSet(KeyValuePair<int, GameObject> kv, int start, int end)
     {
+        end = Math.Clamp(end, 1, 24);
+        start = Math.Clamp(start, 0, end - 1);
+        
         if (kv.Key == 0)
             kv.Value.GetComponent<NotesData>().ChangeLane(start, end);
         else if (kv.Key == 2)
