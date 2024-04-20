@@ -321,7 +321,7 @@ public class GameEvent : MonoBehaviour
         }
     }
 
-    private int GetFocusTime(KeyValuePair<int, GameObject> kv)
+    public int GetFocusTime(KeyValuePair<int, GameObject> kv)
     {
         int t = 0;
         switch (kv.Key)

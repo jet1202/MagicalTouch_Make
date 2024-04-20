@@ -348,6 +348,7 @@ public class UserIO : MonoBehaviour
     // NoteTab
     public void NoteTimeInput(string text)
     {
+        Debug.Log("timeInput");
         int time = (int)Math.Round(float.Parse(text) * 1000f);
         notesDirector.TimeSetAll(time);
     }

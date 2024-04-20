@@ -634,19 +634,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: TimeInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -2017,19 +2005,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: NoteLaneFInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -5799,19 +5775,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: NoteTimeInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -5999,19 +5963,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: TransparencyAlphaInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -7363,19 +7315,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: BpmInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -7660,19 +7600,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: SpeedTimeInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -9509,7 +9437,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.175}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -9520,7 +9448,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 20, y: 7.2}
+  m_Size: {x: 20, y: 7.55}
   m_EdgeRadius: 0
 --- !u!4 &589802111
 Transform:
@@ -13606,19 +13534,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: AngleVariationInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -15828,19 +15744,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: NoteLengthInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -19416,19 +19320,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: NoteLaneLInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -28937,19 +28829,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: AngleDegreeInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -32698,19 +32578,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: SplitInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -36138,19 +36006,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1825082434}
-        m_TargetAssemblyTypeName: UserIO, Assembly-CSharp
-        m_MethodName: SpeedSpeedInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []

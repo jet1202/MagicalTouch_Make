@@ -287,7 +287,7 @@ public class NotesDirector : MonoBehaviour
                     else
                         return;
                     
-                    NoteLaneSet(kv, 12-end, 12-start);
+                    NoteLaneSet(kv, 24-end, 24-start);
                 }
             }
         }
@@ -599,15 +599,28 @@ public class NotesDirector : MonoBehaviour
             transparencyObj.SetActive(true);
         }
     }
-    
+
     public void TimeSetAll(int cTime)
     {
-        cTime = Math.Clamp(0, cTime, (int)(gameEvent.GetComponent<AudioSource>().clip.length * 1000));
+        bool isc;
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+            isc = true;
+        else
+            isc = false;
+
+        int musicLen = (int)(gameEvent.GetComponent<AudioSource>().clip.length * 1000);
+        if (!isc)
+            cTime = Math.Clamp(0, cTime, musicLen);
         focusTime = cTime;
 
+        int t;
         foreach (var kv in focusNotes)
         {
-            TimeSet(kv, focusTime);
+            if (isc)
+                t = Math.Clamp(0, gameEvent.GetFocusTime(kv) + focusTime, musicLen);
+            else
+                t = focusTime;
+            TimeSet(kv, t);
         }
     }
 
@@ -854,7 +867,7 @@ public class NotesDirector : MonoBehaviour
 
     public void BpmSetAll(int bpm)
     {
-        bpmBpm = Math.Clamp(bpm, 1, 1000);
+        bpmBpm = Math.Clamp(bpm, 1, 1000000);
 
         foreach(var kv in focusNotes)
         {
