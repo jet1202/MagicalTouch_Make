@@ -8,6 +8,7 @@ public class SlideData : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private CenterDirector centerDirector;
+    [SerializeField] private FieldSettingController fieldSettingController;
 
     [SerializeField] private Sprite slideBody;
     [SerializeField] private Sprite slideDummy;
@@ -41,12 +42,15 @@ public class SlideData : MonoBehaviour
         noteFieldColor.SetActive(isColor);
         
         int leng = centerDirector.NotesData.Count;
+        char k = IsDummyNote() ? 'D' : note.GetKind();
         for (int i = 0; i <= leng; i++)
         {
             if (!centerDirector.NotesData.ContainsKey(i))
             {
                 Number = i;
-                centerDirector.NotesData.Add(Number, new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength())));
+                centerDirector.NotesData.Add(Number,
+                    new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
+                        new KeyValuePair<char, int>(k, note.GetLength())));
                 break;
             }
         }
@@ -78,8 +82,7 @@ public class SlideData : MonoBehaviour
         GetComponent<BoxCollider2D>().size = 
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.3f, dis * laneDif);
 
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
-            new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
+        CenterNotesDataUpdate();
         LineChange();
     }
 
@@ -111,7 +114,10 @@ public class SlideData : MonoBehaviour
     
     private void CenterNotesDataUpdate()
     {
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
+        char k = IsDummyNote() ? 'D' : note.GetKind();
+        centerDirector.NotesData[Number] =
+            new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
+                new KeyValuePair<char, int>(k, note.GetLength()));
     }
     
     public void Choose(bool isCore)
@@ -160,6 +166,7 @@ public class SlideData : MonoBehaviour
     public void ChangeField(int field)
     {
         note.SetField(field);
+        CenterNotesDataUpdate();
     }
     
     public void ClearNote()
@@ -190,6 +197,7 @@ public class SlideData : MonoBehaviour
         else
             noteBody.GetComponent<SpriteRenderer>().sprite = slideBody;
         isDummy = d;
+        CenterNotesDataUpdate();
     }
 
     public void ChangeColor()
@@ -212,6 +220,11 @@ public class SlideData : MonoBehaviour
             s.Key.transform.GetChild(0).GetComponent<SpriteRenderer>().color = SlideColor(c, a);
             notesDirector.SetNoteColor(s.Key.transform);
         }
+    }
+    
+    private bool IsDummyNote()
+    {
+        return isDummy || fieldSettingController.fieldsIsDummy[note.GetField()];
     }
 
     public Color SlideColor(int n, float a)

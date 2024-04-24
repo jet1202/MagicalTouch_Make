@@ -676,7 +676,7 @@ public class NotesDirector : MonoBehaviour
     // Note
     public void NewNote()
     {
-        NewNote(gameEvent.time, 5, 7, 'N', 0, 0, false);
+        NewNote(gameEvent.time, 8, 16, 'N', 0, 0, false);
     }
     
     public void NewNote(int time, int start, int end, char kind, int length, int field, bool isAdd)
@@ -892,7 +892,7 @@ public class NotesDirector : MonoBehaviour
     public void NewSlide()
     {
         if (focusNotes.Count == 0)
-            NewSlide(gameEvent.time, 5, 7, 0, false, 0, Array.Empty<SlideMaintain>(), false);
+            NewSlide(gameEvent.time, 8, 16, 0, false, 0, Array.Empty<SlideMaintain>(), false);
         else
         {
             int t;
@@ -903,7 +903,7 @@ public class NotesDirector : MonoBehaviour
             else
                 return;
             
-            NewSlideMaintain(t, 5, 7, true, true, focusNotes[0], false);
+            NewSlideMaintain(t, 8, 16, true, true, focusNotes[0], false);
         }
     }
 
@@ -1116,6 +1116,7 @@ public class NotesDirector : MonoBehaviour
 
     public void SetSpeedFieldDropdown(int value)
     {
+        ClearFocus();
         speedsDirector.ChangeField(value);
         speedsDirector.SetColor(FieldColor(value));
         anglesDirector.SetColor(FieldColor(value));

@@ -34,6 +34,8 @@ public class CenterDirector : MonoBehaviour
         var hoge = new List<KeyValuePair<int, KeyValuePair<char, int>>>(NotesData.Values);
         foreach (var p in hoge)
         {
+            if (p.Value.Key == 'D') continue;
+            
             n.Add(new KeyValuePair<int, char>(p.Key, p.Value.Key));
             if (p.Value.Key == 'L')
                 n.Add(new KeyValuePair<int, char>(p.Key + p.Value.Value, 'E'));

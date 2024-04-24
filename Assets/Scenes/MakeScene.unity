@@ -7092,6 +7092,7 @@ MonoBehaviour:
   gameEvent: {fileID: 1825082431}
   notesDirector: {fileID: 2040143208}
   centerDirector: {fileID: 1673888454}
+  fieldSettingController: {fileID: 165815384}
   slideBody: {fileID: 21300000, guid: 749dcff6a38b8b04fad1ba6d506e9f13, type: 3}
   slideDummy: {fileID: 21300000, guid: 4e82b257e84fcf84f81c1d76f7dbbc7e, type: 3}
   Number: 0
@@ -9021,7 +9022,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &559836595
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10912,6 +10913,7 @@ MonoBehaviour:
   gameEvent: {fileID: 1825082431}
   notesDirector: {fileID: 2040143208}
   centerDirector: {fileID: 1673888454}
+  fieldSettingController: {fileID: 165815384}
   normalNote: {fileID: 21300000, guid: d148730cecbcd81429d03fbb3e64738f, type: 3}
   holdNote: {fileID: 21300000, guid: 6ff0a6d53600ae04e8dfe5df5b673bf8, type: 3}
   flickNote: {fileID: 21300000, guid: 540909eb9f1d7144d96897c7e10828e0, type: 3}
@@ -15264,7 +15266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &910367817
 RectTransform:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ public class NotesData : MonoBehaviour
     [SerializeField] private GameEvent gameEvent;
     [SerializeField] private NotesDirector notesDirector;
     [SerializeField] private CenterDirector centerDirector;
+    [SerializeField] private FieldSettingController fieldSettingController;
     
     [SerializeField] private Sprite normalNote;
     [SerializeField] private Sprite holdNote;
@@ -39,12 +40,13 @@ public class NotesData : MonoBehaviour
         noteFieldColor.SetActive(isColor);
         
         int leng = centerDirector.NotesData.Count;
+        char k = IsDummyNote() ? 'D' : note.GetKind();
         for (int i = 0; i <= leng; i++)
         {
             if (!centerDirector.NotesData.ContainsKey(i))
             {
                 Number = i;
-                centerDirector.NotesData.Add(Number, new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength())));
+                centerDirector.NotesData.Add(Number, new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(k, note.GetLength())));
                 break;
             }
         }
@@ -81,8 +83,7 @@ public class NotesData : MonoBehaviour
         GetComponent<BoxCollider2D>().size = 
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.3f, dis * laneDif);
 
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
-            new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
+        CenterNotesDataUpdate();
         
         ChangeLongInside();
     }
@@ -161,11 +162,14 @@ public class NotesData : MonoBehaviour
     public void ChangeField(int field)
     {
         note.SetField(field);
+        CenterNotesDataUpdate();
     }
 
     private void CenterNotesDataUpdate()
     {
-        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(), new KeyValuePair<char, int>(note.GetKind(), note.GetLength()));
+        char k = IsDummyNote() ? 'D' : note.GetKind();
+        centerDirector.NotesData[Number] = new KeyValuePair<int, KeyValuePair<char, int>>(note.GetTime(),
+            new KeyValuePair<char, int>(k, note.GetLength()));
     }
 
     public void ClearNote()
@@ -189,6 +193,11 @@ public class NotesData : MonoBehaviour
             obj.transform.localPosition = new Vector3(x, 0f, 0f);
             obj.SetActive(true);
         }
+    }
+
+    private bool IsDummyNote()
+    {
+        return fieldSettingController.fieldsIsDummy[note.GetField()];
     }
     
     private Sprite NoteKind(char kind)
