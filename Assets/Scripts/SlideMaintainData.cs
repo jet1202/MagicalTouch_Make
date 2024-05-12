@@ -85,6 +85,7 @@ public class SlideMaintainData : MonoBehaviour
     public void Clear()
     {
         parentSc.slideMaintain.Remove(gameObject);
+        parentSc.LineChange();
         Destroy(this.gameObject);
     }
 }

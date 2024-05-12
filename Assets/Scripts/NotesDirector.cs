@@ -62,6 +62,42 @@ public class NotesDirector : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.N)) NewNote();
                 if (Input.GetKeyDown(KeyCode.B)) NewBpm();
+                if (Input.GetKeyDown(KeyCode.S)) NewSlide();
+
+                if (Input.GetKeyDown(KeyCode.M))
+                {
+                    int k;
+                    GameObject obj;
+                    int start, end;
+                    foreach (var kv in focusNotes)
+                    {
+                        k = kv.Key;
+                        obj = kv.Value;
+
+                        if (k == 0)
+                        {
+                            var data = obj.GetComponent<NotesData>().note;
+                            start = data.GetStartLane();
+                            end = data.GetEndLane();
+                        }
+                        else if (k == 2)
+                        {
+                            var data = obj.GetComponent<SlideData>().note;
+                            start = data.GetStartLane();
+                            end = data.GetEndLane();
+                        }
+                        else if (k == 3)
+                        {
+                            var data = obj.GetComponent<SlideMaintainData>().parentSc.slideMaintain[obj];
+                            start = data.startLane;
+                            end = data.endLane;
+                        }
+                        else
+                            return;
+
+                        NoteLaneSet(kv, 24 - end, 24 - start);
+                    }
+                }
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -254,41 +290,6 @@ public class NotesDirector : MonoBehaviour
                     
                 }
                 ClearFocus();
-            }
-            
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-                int k;
-                GameObject obj;
-                int start, end;
-                foreach (var kv in focusNotes)
-                {
-                    k = kv.Key;
-                    obj = kv.Value;
-                    
-                    if (k == 0)
-                    {
-                        var data = obj.GetComponent<NotesData>().note;
-                        start = data.GetStartLane();
-                        end = data.GetEndLane();
-                    }
-                    else if (k == 2)
-                    {
-                        var data = obj.GetComponent<SlideData>().note;
-                        start = data.GetStartLane();
-                        end = data.GetEndLane();
-                    }
-                    else if (k == 3)
-                    {
-                        var data = obj.GetComponent<SlideMaintainData>().parentSc.slideMaintain[obj];
-                        start = data.startLane;
-                        end = data.endLane;
-                    }
-                    else
-                        return;
-                    
-                    NoteLaneSet(kv, 24-end, 24-start);
-                }
             }
         }
     }

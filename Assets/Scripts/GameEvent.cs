@@ -211,31 +211,32 @@ public class GameEvent : MonoBehaviour
             }
             
 
-            // 複製機能の実装
+            // 複製機能
             if (Input.GetKeyDown(KeyCode.C))
             {
                 var bFocusNotes = new List<KeyValuePair<int, GameObject>>(notesDirector.focusNotes);
                 notesDirector.ClearFocus();
+                
+                bool isCtrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
                 foreach (var kv in bFocusNotes)
                 {
                     int time = GetFocusTime(kv);
                     nowBeat = NextBeat(true, time);
+                    int t = isCtrl ? time : BeatToTime(nowBeat);
                     
                     if (kv.Key == 0) // Notes
                     {
                         Note data = kv.Value.GetComponent<NotesData>().note;
-                        notesDirector.NewNote(BeatToTime(nowBeat),
-                            data.GetStartLane(), data.GetEndLane(), data.GetKind(), data.GetLength(), data.GetField(), true);
+                        notesDirector.NewNote(t, data.GetStartLane(), data.GetEndLane(), data.GetKind(),
+                            data.GetLength(), data.GetField(), true);
                     }
                     else if (kv.Key == 2) // Slides
                     {
                         Note data = kv.Value.GetComponent<SlideData>().note;
                         bool dummy = kv.Value.GetComponent<SlideData>().isDummy;
                         int color = kv.Value.GetComponent<SlideData>().fieldColor;
-                        notesDirector.NewSlide(
-                            BeatToTime(nowBeat),
-                            data.GetStartLane(), data.GetEndLane(), data.GetField(), dummy, color,
+                        notesDirector.NewSlide(t, data.GetStartLane(), data.GetEndLane(), data.GetField(), dummy, color,
                             kv.Value.GetComponent<SlideData>().slideMaintain.Values.ToArray(), true);
                     }
                     else if (kv.Key == 3) // SlideMaintains
@@ -246,25 +247,25 @@ public class GameEvent : MonoBehaviour
 
                         SlideMaintain data = kv.Value.GetComponent<SlideMaintainData>().parentSc.slideMaintain[kv.Value];
                         var pt = parent.GetComponent<SlideData>().note.GetTime();
-                        notesDirector.NewSlideMaintain(BeatToTime(nowBeat) - pt,
-                            data.startLane, data.endLane, data.isJudge, data.isVariation, kv, true);
+                        notesDirector.NewSlideMaintain(t - pt, data.startLane, data.endLane, data.isJudge,
+                            data.isVariation, kv, true);
                     }
                     else if (kv.Key == 4) // Speeds
                     {
                         Speed data = speedsDirector.fieldSpeeds[kv.Value];
-                        notesDirector.NewSpeed(BeatToTime(nowBeat),
+                        notesDirector.NewSpeed(t,
                             data.GetSpeed100(), data.GetIsVariation(), true);
                     }
                     else if (kv.Key == 5) // Angles
                     {
                         Angle data = anglesDirector.fieldAngles[kv.Value];
-                        notesDirector.NewAngle(BeatToTime(nowBeat),
+                        notesDirector.NewAngle(t,
                             data.GetDegree(), data.GetVariation(), true);
                     }
                     else if (kv.Key == 6) // Transparencies
                     {
                         Transparency data = alphaDirector.fieldTransparencies[kv.Value];
-                        notesDirector.NewTransparency(BeatToTime(nowBeat),
+                        notesDirector.NewTransparency(t,
                             data.GetAlpha(), data.GetIsVariation(), true);
                     }
                 }
@@ -298,7 +299,7 @@ public class GameEvent : MonoBehaviour
             Screen.fullScreen = !Screen.fullScreen;
         }
 
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightAlt))
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
             // open
             if (Input.GetKeyDown(KeyCode.O))
