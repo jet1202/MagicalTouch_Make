@@ -75,7 +75,7 @@ public class SlideData : MonoBehaviour
             new Vector3(Mathf.Max(gameEvent.speed * note.GetLength() / 1000f - 0.15f, 0f) + 0.4f, dis * laneDif + 0.1f, 1f);
         // noteFieldColor
         noteFieldColor.transform.localScale =
-            new Vector3(0.05f, dis * 0.6f, 1f);
+            new Vector3(0.05f, dis * 0.3f, 1f);
         // collider2D
         GetComponent<BoxCollider2D>().offset =
             new Vector2(Mathf.Max(gameEvent.speed * note.GetLength() / 2000 - 0.075f, 0f), 0f);
