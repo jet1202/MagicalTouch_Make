@@ -1281,25 +1281,29 @@ public class NotesDirector : MonoBehaviour
         return color;
     }
 
-    public float[] GetLongInsideTime(int startTime, int length)
+    public int[] GetLongInsideTime(int startTime, int length)
     {
-        List<float> insideTime = new List<float>();
+        List<int> insideTime = new List<int>();
         if (length <= 100) return insideTime.ToArray();
         
         int split = longSplit;
 
         int leng = notesController.bpmLines.Count;
-        for (int i = 0; i < leng - 1; i++)
+
+        int i = 0;
+        while (i < leng && notesController.bpmLines[i + 1] < startTime)
+            i++;
+        for (; i < leng - 1; i++)
         {
             int s = notesController.bpmLines[i + 1] - notesController.bpmLines[i];
             for (int j = 0; j < longSplit; j++)
             {
-                float t = (notesController.bpmLines[i] + (float)s / split * j) / 1000f;
-                if (startTime / 1000f < t && t < (startTime + length - 100) / 1000f)
+                int t = (int)Math.Round(notesController.bpmLines[i] + (float)s / split * j);
+                if (startTime < t && t < startTime + length - 100)
                     insideTime.Add(t);
             }
         }
-        insideTime.Add((startTime + length - 100) / 1000f);
+        insideTime.Add(startTime + length - 100);
 
         return insideTime.ToArray();
     }

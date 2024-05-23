@@ -180,15 +180,15 @@ public class NotesData : MonoBehaviour
 
     public void ChangeLongInside()
     {
-        float[] t = notesDirector.GetLongInsideTime(note.GetTime(), note.GetLength());
+        int[] t = notesDirector.GetLongInsideTime(note.GetTime(), note.GetLength());
         longInsideParent.SetActive(gameEvent.isLongInside);
 
         foreach (Transform g in longInsideParent.transform)
             Destroy(g.gameObject);
 
-        foreach (float time in t)
+        foreach (int time in t)
         {
-            float x = (time - note.GetTime() / 1000f) * gameEvent.speed;
+            float x = (time - note.GetTime()) / 1000f * gameEvent.speed;
             GameObject obj = Instantiate(longInsidePrefab, longInsideParent.transform);
             obj.transform.localPosition = new Vector3(x, 0f, 0f);
             obj.SetActive(true);
